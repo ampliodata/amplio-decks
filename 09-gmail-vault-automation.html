@@ -290,7 +290,7 @@ footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
     <p class="lead">Most update work happens in email — a client says yes, a contractor sends a doc, a prospect asks a question. Instead of copy-pasting into Notion, we label. Claude reads labelled emails, extracts the signal, and writes to the right place in the vault.</p>
     <div class="email-mock">
       <div class="email-head">
-        <div class="subj">update_odisei: Gaby confirmed Q2 dashboard scope</div>
+        <div class="subj">update_walter: Odisei — Gaby confirmed Q2 dashboard scope</div>
         <div class="meta"><span>From: walter@ampliodata.io</span><span>To: hello@ampliodata.io</span></div>
         <span class="label">Amplio Updates</span>
       </div>
@@ -341,7 +341,7 @@ footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
         <h4>The email</h4>
         <p class="text-sm">The source of truth for this update. Subject line carries the routing key, body carries the signal.</p>
         <ul>
-          <li>subject: update_[client]:...</li>
+          <li>subject: update_[person]: [client] — ...</li>
           <li>body: signal + context</li>
           <li>label: Amplio Updates</li>
           <li>sender: @ampliodata.io</li>
@@ -369,13 +369,15 @@ footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
     <h2>Subject-line grammar.</h2>
     <p class="lead">The subject line is a mini-command. Prefixes route the email to the right corner of the vault.</p>
     <div class="triggers">
-      <div class="trigger"><span class="phrase">update_[client]:</span><span class="action">Updates that client's <code>_overview.md</code>. Adds a signal. Logs recommendation if one is present.</span></div>
+      <div class="trigger"><span class="phrase">update_walter:</span><span class="action">Walter reports. Body/attachments decide routing — a client name routes to <code>06-Clients/[name]/_overview.md</code>, otherwise to the area mentioned.</span></div>
+      <div class="trigger"><span class="phrase">update_daragh:</span><span class="action">Daragh reports. Typically skill feedback, library curation, playbook edits. Routes to <code>03-Resources/Skills/</code> or the referenced file.</span></div>
+      <div class="trigger"><span class="phrase">update_amplio:</span><span class="action">Internal Amplio update. Routes to <code>02-Areas/Amplio-Internal/</code>. Never routed to 06-Clients/.</span></div>
       <div class="trigger"><span class="phrase">newclient_[name]:</span><span class="action">Creates <code>06-Clients/[name]/</code> from the template. Updates Client-Index. Seeds data-context.</span></div>
       <div class="trigger"><span class="phrase">newprospect_[name]:</span><span class="action">Creates prospect in <code>_Prospects/</code>. Updates Pipeline Dashboard. Scores lead if ICP data attached.</span></div>
       <div class="trigger"><span class="phrase">meeting_[client]:</span><span class="action">Creates dated file in <code>[client]/meeting-notes/</code>. Extracts signals. Logs recommendations to tracker.</span></div>
       <div class="trigger"><span class="phrase">graduate_[name]:</span><span class="action">Promotes prospect → client. Moves folder, expands template, archives pipeline entry.</span></div>
-      <div class="trigger"><span class="phrase">update_amplio:</span><span class="action">Internal. Updates <code>02-Areas/Amplio-Internal/</code>. Never routed to 06-Clients/.</span></div>
     </div>
+    <p class="text-sm mt-32">The part after <code>update_</code> is the <strong>author</strong>, not the client. Walter sends <code>update_walter:</code>, Daragh sends <code>update_daragh:</code>. The client or topic goes in the description portion of the subject and in the body.</p>
   </div>
 </section>
 
