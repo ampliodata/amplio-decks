@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amplio Data — PM & Account Manager Onboarding Guide</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --charcoal: #131313;
+  --off-black: #121212;
+  --white: #FFFFFF;
+  --off-white: #F5F5F5;
+  --warm-white: #FAFAFA;
+  --purple: #8B2CF5;
+  --purple-light: rgba(139,44,245,0.08);
+  --purple-15: rgba(139,44,245,0.15);
+  --dark-gray: #3A3A3A;
+  --mid-gray: #6B6B6B;
+  --light-gray: #D3D3D3;
+  --pale-gray: #E8E8E8;
+  --border: rgba(0,0,0,0.08);
+  --red: #DE362A;
+  --orange: #FF9500;
+  --green: #34C759;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-purple: 0 4px 20px rgba(139,44,245,0.3);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Satoshi', -apple-system, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: -0.2px;
+  line-height: 1.6;
+  color: var(--charcoal);
+  background: var(--white);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* NAV */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0;
+}
+.nav-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-logo { height: 24px; width: auto; }
+.nav-links { display: flex; gap: 28px; }
+.nav-links a {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--mid-gray);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--purple); }
+
+/* SECTIONS */
+.container { max-width: 1080px; margin: 0 auto; padding: 0 40px; }
+.section-white { background: var(--white); color: var(--charcoal); padding: 96px 0; }
+.section-light { background: var(--off-white); color: var(--charcoal); padding: 96px 0; }
+.section-dark { background: var(--charcoal); color: var(--white); padding: 96px 0; }
+
+/* TYPOGRAPHY */
+h1 {
+  font-size: 56px;
+  font-weight: 700;
+  letter-spacing: -2.5px;
+  line-height: 1.05;
+  margin-bottom: 24px;
+}
+h2 {
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -1.5px;
+  line-height: 1.15;
+  margin-bottom: 20px;
+}
+h3 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  line-height: 1.3;
+  margin-bottom: 12px;
+}
+h4 {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+.lead {
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--mid-gray);
+}
+.text-sm { font-size: 13px; line-height: 1.5; color: var(--mid-gray); }
+.text-xs { font-size: 11px; line-height: 1.4; }
+.eyebrow {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--purple);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 16px;
+}
+.section-dark .eyebrow { color: rgba(139,44,245,0.8); }
+.section-dark .lead { color: rgba(255,255,255,0.6); }
+.section-dark h2 { color: var(--white); }
+.purple { color: var(--purple); }
+.bold { font-weight: 700; }
+
+/* GRIDS */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
+
+/* CARDS */
+.card {
+  background: var(--white);
+  border-radius: 6px;
+  padding: 24px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease;
+}
+.card:hover { box-shadow: var(--shadow-md); }
+.card-elevated {
+  background: var(--white);
+  border-radius: 6px;
+  padding: 28px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+}
+.card-light {
+  background: var(--off-white);
+  border-radius: 6px;
+  padding: 20px;
+  border: 1px solid var(--border);
+}
+.card-dark {
+  background: var(--dark-gray);
+  border-radius: 6px;
+  padding: 24px;
+  border: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+.card-dark h3, .card-dark h4 { color: var(--white); }
+.card-dark p, .card-dark .text-sm { color: rgba(255,255,255,0.6); }
+.card-purple {
+  background: var(--purple);
+  border-radius: 6px;
+  padding: 24px;
+  color: var(--white);
+  box-shadow: var(--shadow-purple);
+}
+.card-purple h3, .card-purple h4, .card-purple p { color: var(--white); }
+
+/* BADGES & PILLS */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 28px;
+  border-radius: 6px;
+  background: var(--purple);
+  color: var(--white);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 0 8px;
+}
+.pill {
+  display: inline-block;
+  background: var(--purple-light);
+  border: 1px solid var(--purple-15);
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--purple);
+}
+.pill-dark {
+  display: inline-block;
+  background: rgba(139,44,245,0.15);
+  border: 1px solid rgba(139,44,245,0.25);
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--purple);
+}
+
+/* KPI */
+.kpi-num {
+  font-size: 44px;
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1;
+  color: var(--purple);
+  margin-bottom: 6px;
+}
+.kpi-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--mid-gray);
+}
+.section-dark .kpi-label { color: rgba(255,255,255,0.5); }
+
+/* FLOW ARROWS */
+.flow-arrow { color: var(--purple); font-size: 20px; font-weight: 700; opacity: 0.6; display: flex; align-items: center; justify-content: center; }
+.flow-arrow-down { text-align: center; color: var(--purple); font-size: 18px; opacity: 0.5; padding: 8px 0; }
+
+/* TIMELINE */
+.timeline { border-left: 2px solid var(--purple); margin-left: 16px; padding-left: 28px; }
+.tl-item { position: relative; padding-bottom: 28px; }
+.tl-item:last-child { padding-bottom: 0; }
+.tl-item::before {
+  content: '';
+  position: absolute;
+  left: -35px;
+  top: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--purple);
+}
+.tl-item h4 { margin-bottom: 4px; }
+
+/* DIVIDER */
+.divider { border-top: 1px solid var(--pale-gray); margin: 48px 0; }
+.section-dark .divider { border-color: rgba(255,255,255,0.1); }
+
+/* TABLES */
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th {
+  text-align: left;
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--mid-gray);
+  padding: 12px 16px;
+  border-bottom: 2px solid var(--pale-gray);
+}
+td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.section-dark th { color: rgba(255,255,255,0.4); border-bottom-color: rgba(255,255,255,0.1); }
+.section-dark td { color: rgba(255,255,255,0.8); border-bottom-color: rgba(255,255,255,0.06); }
+
+/* PROCESS FLOW */
+.process-flow {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+.process-step {
+  flex: 1;
+  text-align: center;
+  padding: 20px 16px;
+  position: relative;
+}
+.process-step .step-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--purple);
+  color: var(--white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.process-step h4 { font-size: 14px; margin-bottom: 4px; }
+.process-step .text-sm { font-size: 12px; }
+.process-connector {
+  display: flex;
+  align-items: center;
+  color: var(--purple);
+  font-size: 18px;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+/* HERO */
+.hero { padding-top: 160px; padding-bottom: 96px; }
+.hero-subtitle {
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--mid-gray);
+  max-width: 600px;
+  line-height: 1.6;
+  margin-bottom: 40px;
+}
+
+/* TABS */
+.tabs { display: flex; gap: 8px; margin-bottom: 32px; flex-wrap: wrap; }
+.tab {
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--white);
+  color: var(--mid-gray);
+  transition: all 0.2s;
+}
+.tab:hover { border-color: var(--purple); color: var(--purple); }
+.tab.active {
+  background: var(--purple);
+  color: var(--white);
+  border-color: var(--purple);
+}
+.section-dark .tab {
+  background: var(--dark-gray);
+  border-color: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.6);
+}
+.section-dark .tab:hover { border-color: var(--purple); color: var(--purple); }
+.section-dark .tab.active {
+  background: var(--purple);
+  color: var(--white);
+  border-color: var(--purple);
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ACCORDION */
+.accordion-item {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  background: var(--white);
+}
+.accordion-header {
+  padding: 16px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 15px;
+  transition: background 0.2s;
+}
+.accordion-header:hover { background: var(--off-white); }
+.accordion-header .arrow {
+  transition: transform 0.2s;
+  font-size: 12px;
+  color: var(--mid-gray);
+}
+.accordion-item.open .accordion-header .arrow { transform: rotate(90deg); }
+.accordion-body {
+  display: none;
+  padding: 0 20px 20px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--mid-gray);
+}
+.accordion-item.open .accordion-body { display: block; }
+
+/* MISC */
+.mb-8 { margin-bottom: 8px; }
+.mb-16 { margin-bottom: 16px; }
+.mb-24 { margin-bottom: 24px; }
+.mb-32 { margin-bottom: 32px; }
+.mb-48 { margin-bottom: 48px; }
+.mb-64 { margin-bottom: 64px; }
+.mt-16 { margin-top: 16px; }
+.mt-32 { margin-top: 32px; }
+.mt-48 { margin-top: 48px; }
+.gap-24 { gap: 24px; }
+.gap-32 { gap: 32px; }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.text-center { text-align: center; }
+.max-w-700 { max-width: 700px; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--off-white); }
+::-webkit-scrollbar-thumb { background: var(--light-gray); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--mid-gray); }
+
+/* SMOOTH SCROLL */
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  h1 { font-size: 36px; letter-spacing: -1.5px; }
+  h2 { font-size: 28px; letter-spacing: -1px; }
+  .container { padding: 0 20px; }
+  .section-white, .section-light, .section-dark { padding: 64px 0; }
+  .hero { padding-top: 120px; }
+  .process-flow { flex-direction: column; }
+  .process-connector { transform: rotate(90deg); padding: 4px 0; }
+  .nav-links { display: none; }
+  .kpi-num { font-size: 32px; }
+}
+
+/* FOOTER */
+footer {
+  background: var(--charcoal);
+  color: rgba(255,255,255,0.4);
+  padding: 48px 0;
+  font-size: 13px;
+}
+footer a { color: rgba(255,255,255,0.6); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 387 98" fill="none" class="nav-logo">
+      <path fill="#0C0C0C" d="m106.441 79.658 23.8-65.164h15.704l23.622 65.164H155.81l-5.264-15.007h-25.392l-5.264 15.007h-13.449Zm22.561-26.03h17.651l-8.847-25.19-8.804 25.19Zm41.881 26.03V30.874h11.768v6.419c1.444-2.302 3.45-4.132 6.016-5.49 2.595-1.357 5.397-2.021 8.405-1.992 3.303.03 6.193.767 8.67 2.214 2.507 1.416 4.365 3.364 5.574 5.843 1.415-2.42 3.48-4.368 6.193-5.843 2.713-1.505 5.736-2.243 9.068-2.214 5.191.03 9.364 1.653 12.52 4.87 3.155 3.217 4.733 7.467 4.733 12.75v32.227h-12.121V49.644c0-2.804-.826-5.047-2.477-6.73-1.652-1.681-3.849-2.537-6.592-2.567-2.654-.03-4.866.9-6.635 2.79-1.74 1.858-2.61 4.22-2.61 7.082v29.44h-12.121V49.156c0-2.656-.811-4.781-2.433-6.375-1.622-1.594-3.745-2.405-6.37-2.435-2.713-.03-4.969.96-6.768 2.966-1.799 2.007-2.698 4.56-2.698 7.659v28.686h-12.122Zm105.096-49.714c6.812 0 12.386 2.39 16.721 7.172 4.336 4.751 6.488 10.846 6.459 18.283-.029 7.467-2.241 13.56-6.636 18.283-4.394 4.722-10.026 7.068-16.898 7.038a20.316 20.316 0 0 1-8.67-1.814c-2.743-1.27-4.969-2.981-6.68-5.136v23.862h-12.121V30.874h12.032l-.044 6.463c1.829-2.273 4.173-4.073 7.034-5.4 2.861-1.329 5.795-1.993 8.803-1.993Zm-16.102 25.499c-.03 4.161 1.283 7.614 3.937 10.359 2.654 2.715 5.913 4.058 9.776 4.028 3.864.03 6.989-1.284 9.378-3.94 2.419-2.655 3.628-6.138 3.628-10.447 0-4.309-1.209-7.791-3.628-10.447-2.389-2.686-5.514-4.029-9.378-4.029-3.834 0-7.078 1.372-9.732 4.117-2.654 2.745-3.981 6.198-3.981 10.359ZM314.056 12.9v66.758h-12.077V12.9h12.077Zm5.165 66.758V30.874h12.12v48.784h-12.12Zm-.133-53.92v-12.35h12.651v12.35h-12.651Zm40.687 54.983c-7.462.03-13.596-2.332-18.403-7.083-4.778-4.752-7.181-10.861-7.211-18.328 0-4.928 1.092-9.34 3.274-13.236 2.183-3.896 5.22-6.906 9.113-9.031 3.892-2.155 8.301-3.232 13.227-3.232 3.716 0 7.166.635 10.351 1.904 3.214 1.24 5.942 2.98 8.184 5.223 2.241 2.214 3.996 4.914 5.264 8.102 1.297 3.158 1.946 6.581 1.946 10.27 0 3.69-.649 7.113-1.946 10.27-1.268 3.158-3.023 5.844-5.264 8.058-2.242 2.213-4.97 3.954-8.184 5.223-3.185 1.24-6.635 1.86-10.351 1.86Zm-13.05-25.41c0 4.249 1.194 7.702 3.583 10.358 2.418 2.627 5.573 3.94 9.467 3.94 3.922 0 7.092-1.313 9.511-3.94 2.447-2.656 3.671-6.11 3.671-10.359 0-4.309-1.224-7.776-3.671-10.403-2.419-2.656-5.589-3.984-9.511-3.984-3.923 0-7.093 1.328-9.512 3.984-2.388 2.656-3.568 6.124-3.538 10.403ZM87.455 40.877H5.76A5.763 5.763 0 0 0 0 46.642a5.763 5.763 0 0 0 5.76 5.764h81.695a5.763 5.763 0 0 0 5.76-5.764 5.763 5.763 0 0 0-5.76-5.765Z"/>
+      <path fill="#0C0C0C" d="M40.848 5.764V87.52a5.761 5.761 0 1 0 11.52 0V5.764A5.763 5.763 0 0 0 46.609 0a5.763 5.763 0 0 0-5.76 5.764Z"/>
+      <path fill="#0C0C0C" d="M71.418 13.662 13.65 71.47a5.768 5.768 0 0 0 0 8.152 5.757 5.757 0 0 0 8.147 0l57.766-57.809a5.768 5.768 0 0 0 0-8.152 5.757 5.757 0 0 0-8.146 0Z"/>
+    </svg>
+    <div class="nav-links">
+      <a href="#what-we-do">What We Do</a>
+      <a href="#client-lifecycle">Client Lifecycle</a>
+      <a href="#tools">Tools & Systems</a>
+      <a href="#processes">Processes</a>
+      <a href="#technical">Technical</a>
+      <a href="#day-to-day">Your Day-to-Day</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="section-white hero">
+  <div class="container">
+    <div class="eyebrow">/PM & ACCOUNT MANAGER ONBOARDING</div>
+    <h1>Welcome to <span class="purple">Amplio Data</span></h1>
+    <p class="hero-subtitle">Your complete guide to managing client relationships, delivering results, and keeping accounts healthy. This is how we operate.</p>
+    <div class="grid-4 mt-48">
+      <div class="card-elevated text-center">
+        <div class="kpi-num">+23%</div>
+        <div class="kpi-label">Avg ROAS lift</div>
+      </div>
+      <div class="card-elevated text-center">
+        <div class="kpi-num">48h</div>
+        <div class="kpi-label">Full setup time</div>
+      </div>
+      <div class="card-elevated text-center">
+        <div class="kpi-num">-90%</div>
+        <div class="kpi-label">Data back-and-forth</div>
+      </div>
+      <div class="card-elevated text-center">
+        <div class="kpi-num">100+</div>
+        <div class="kpi-label">Teams served</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT WE DO -->
+<section class="section-light" id="what-we-do">
+  <div class="container">
+    <div class="eyebrow">/WHAT WE DO</div>
+    <h2>We embed senior <span class="purple">data &amp; analytics</span> expertise inside marketing teams</h2>
+    <p class="lead mb-48">We fix tracking, prove ROI, and automate reporting. Powered by AI. Not a consultancy that advises from the outside — we sit inside the team.</p>
+
+    <h3 class="mb-24">Our core services</h3>
+    <div class="grid-3 gap-24">
+      <div class="card">
+        <div class="pill mb-16">Tracking</div>
+        <h4>GA4, GTM &amp; Server-side Setup</h4>
+        <p class="text-sm">Full implementation of Google Analytics 4, Google Tag Manager, server-side GTM via Stape, enhanced conversions, and consent mode v2. We recover 20-40% of lost conversions.</p>
+      </div>
+      <div class="card">
+        <div class="pill mb-16">Attribution</div>
+        <h4>Conversion Tracking &amp; ROI Proof</h4>
+        <p class="text-sm">Cross-platform attribution, GA4-to-ads platform reconciliation, and closed-loop reporting that connects campaigns to revenue. 34% of sessions are hidden by consent — we measure the gap.</p>
+      </div>
+      <div class="card">
+        <div class="pill mb-16">Reporting</div>
+        <h4>Automated Dashboards &amp; Intelligence</h4>
+        <p class="text-sm">AI-powered reporting, anomaly detection, consent impact analysis, and performance dashboards. Monthly reports that tell the story — not just show the numbers.</p>
+      </div>
+      <div class="card">
+        <div class="pill mb-16">Privacy</div>
+        <h4>Consent &amp; Compliance</h4>
+        <p class="text-sm">CMP implementation (Cookiebot, Usercentrics), Consent Mode v2 setup, privacy-compliant tracking that satisfies GDPR without sacrificing data quality.</p>
+      </div>
+      <div class="card">
+        <div class="pill mb-16">Ads</div>
+        <h4>Google Ads Management</h4>
+        <p class="text-sm">Campaign management, bid strategy, audience optimization — all powered by clean data. Better tracking = better campaigns = better ROAS.</p>
+      </div>
+      <div class="card">
+        <div class="pill mb-16">Integration</div>
+        <h4>CRM &amp; Data Integration</h4>
+        <p class="text-sm">Connect GA4 to HubSpot, Salesforce, or any CRM. Pipeline attribution, lead scoring, and end-to-end visibility from first touch to closed deal.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3 class="mb-24">Service tiers — what we quote</h3>
+    <div class="grid-3 gap-24">
+      <div class="card">
+        <div class="badge mb-16">T1</div>
+        <h3>Foundation</h3>
+        <p class="purple bold mb-8" style="font-size:24px;">€400 — €1,500</p>
+        <p class="text-sm mb-16" style="color:var(--mid-gray);">One-time project</p>
+        <p class="text-sm">GA4 + GTM setup, consent mode, basic tracking audit. Perfect for startups, small e-commerce, and "get the basics right" projects. Quick win, fast delivery.</p>
+      </div>
+      <div class="card-elevated" style="border: 2px solid var(--purple);">
+        <div class="badge mb-16">T2</div>
+        <h3>Maintained</h3>
+        <p class="purple bold mb-8" style="font-size:24px;">€700 — €1,200<span style="font-size:14px;font-weight:400;">/mo</span></p>
+        <p class="text-sm mb-16" style="color:var(--mid-gray);">Monthly retainer</p>
+        <p class="text-sm">Ongoing tracking management, monthly reporting, server-side GTM, enhanced conversions. The sweet spot for growth-stage companies and agencies. Where most deals land.</p>
+      </div>
+      <div class="card">
+        <div class="badge mb-16">T3</div>
+        <h3>Managed</h3>
+        <p class="purple bold mb-8" style="font-size:24px;">€1,800+<span style="font-size:14px;font-weight:400;">/mo</span></p>
+        <p class="text-sm mb-16" style="color:var(--mid-gray);">Monthly retainer</p>
+        <p class="text-sm">Full embedded analytics team. Multi-property tracking, Google Ads management, cross-platform attribution, custom dashboards, and dedicated account management. For agencies and larger brands.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLIENT LIFECYCLE -->
+<section class="section-dark" id="client-lifecycle">
+  <div class="container">
+    <div class="eyebrow">/CLIENT LIFECYCLE</div>
+    <h2>Managing accounts from <span class="purple">onboarding</span> to <span class="purple">renewal</span></h2>
+    <p class="lead mb-48">Every client follows a lifecycle. Your job is to guide them through each stage — making sure they're getting value, staying engaged, and growing with us.</p>
+
+    <h3 style="color:var(--white);" class="mb-24">Process flow</h3>
+    <div class="process-flow mb-48">
+      <div class="process-step card-dark">
+        <div class="step-num">1</div>
+        <h4>Onboarding</h4>
+        <p class="text-sm">Kickoff call, data collection, access setup</p>
+      </div>
+      <div class="process-connector">→</div>
+      <div class="process-step card-dark">
+        <div class="step-num">2</div>
+        <h4>Setup &amp; Tracking</h4>
+        <p class="text-sm">Implementation, QA, verification</p>
+      </div>
+      <div class="process-connector">→</div>
+      <div class="process-step card-dark">
+        <div class="step-num">3</div>
+        <h4>Steady State</h4>
+        <p class="text-sm">Monthly reporting, maintenance</p>
+      </div>
+      <div class="process-connector">→</div>
+      <div class="process-step card-dark">
+        <div class="step-num">4</div>
+        <h4>Review &amp; Expand</h4>
+        <p class="text-sm">QBR, upsell, tier migration</p>
+      </div>
+      <div class="process-connector">→</div>
+      <div class="process-step card-purple">
+        <div class="step-num" style="background:var(--white);color:var(--purple);">5</div>
+        <h4>Renewal</h4>
+        <p style="color:rgba(255,255,255,0.8);font-size:12px;">Contract renewal, retention</p>
+      </div>
+    </div>
+
+    <h3 style="color:var(--white);" class="mb-24">Lifecycle stages — tabs</h3>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab(event, 'lifecycle-1')">Onboarding</div>
+      <div class="tab" onclick="switchTab(event, 'lifecycle-2')">Setup &amp; Tracking</div>
+      <div class="tab" onclick="switchTab(event, 'lifecycle-3')">Steady State</div>
+      <div class="tab" onclick="switchTab(event, 'lifecycle-4')">Review &amp; Expand</div>
+      <div class="tab" onclick="switchTab(event, 'lifecycle-5')">Renewal</div>
+    </div>
+
+    <!-- Tab 1: Onboarding -->
+    <div id="lifecycle-1" class="tab-content active">
+      <div class="grid-2 gap-24">
+        <div class="card-dark">
+          <div class="pill-dark mb-16">Week 1-2</div>
+          <h3>Client Onboarding</h3>
+          <p class="text-sm mb-16">Kick-off call, access collection (GA4, GTM, CMP, ad platforms), set expectations. Create client space in vault from template. Add to Attio Client Success list as 'Onboarding'. Set up data-context.md.</p>
+          <h4 style="color:var(--white);">Sub-items to collect</h4>
+          <ul style="color:rgba(255,255,255,0.6); font-size:14px; line-height:1.8; margin-left:20px; margin-top:8px;">
+            <li>GA4 property ID + access</li>
+            <li>GTM container access (Admin)</li>
+            <li>CMP admin credentials if applicable</li>
+            <li>Ad platform read access (Google, Meta, etc.)</li>
+            <li>CRM credentials if applicable</li>
+            <li>Brand / company background</li>
+            <li>Marketing goals &amp; success metrics</li>
+          </ul>
+        </div>
+        <div class="card-dark">
+          <h4 style="color:var(--white);">Your checklist</h4>
+          <ul style="color:rgba(255,255,255,0.6); font-size:14px; line-height:1.8; margin-left:20px; margin-top:8px;">
+            <li>Create 06-Clients/[name]/ from template</li>
+            <li>Fill _overview.md with client details</li>
+            <li>Create data-context.md (manual or API)</li>
+            <li>Schedule recurring meeting cadence (weekly/biweekly)</li>
+            <li>Set first health score baseline (usually 70-75)</li>
+            <li>Log onboarding meeting notes in vault</li>
+            <li>Update Attio Client Success list</li>
+            <li>Introduce to technical team (Walter/impl)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 2: Setup & Tracking -->
+    <div id="lifecycle-2" class="tab-content">
+      <div class="grid-2 gap-24">
+        <div class="card-dark">
+          <div class="pill-dark mb-16">Week 2-4</div>
+          <h3>Technical Setup</h3>
+          <p class="text-sm mb-16">GA4 configuration, GTM implementation, server-side setup, consent mode, enhanced conversions. You'll QA this work — verify events fire correctly, check real-time reports, validate consent signals.</p>
+          <h4 style="color:var(--white);">Key QA checkpoints</h4>
+          <ul style="color:rgba(255,255,255,0.6); font-size:14px; line-height:1.8; margin-left:20px; margin-top:8px;">
+            <li>GA4 real-time showing events firing</li>
+            <li>GTM preview mode clean (no errors)</li>
+            <li>Consent mode signals verified</li>
+            <li>Enhanced conversions configured</li>
+            <li>Server-side container active &amp; healthy</li>
+            <li>Cross-domain tracking if multi-site</li>
+          </ul>
+        </div>
+        <div class="card-dark">
+          <h4 style="color:var(--white);">QA & Go-Live Checklist</h4>
+          <ul style="color:rgba(255,255,255,0.6); font-size:14px; line-height:1.8; margin-left:20px; margin-top:8px;">
+            <li>Spot-check 3-5 key user journeys in real-time</li>
+            <li>Verify purchase/form conversion event firing</li>
+            <li>Check GA4 data freshness (current day)</li>
+            <li>Review GTM container version (latest deployed)</li>
+            <li>Test consent mode behavior (reject/accept)</li>
+            <li>Audit server-side container logs for errors</li>
+            <li>Sign-off from technical team</li>
+            <li>Kickoff reporting cadence</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3: Steady State -->
+    <div id="lifecycle-3" class="tab-content">
+      <div class="grid-2 gap-24">
+        <div class="card-dark">
+          <div class="pill-dark mb-16">Month 2+</div>
+          <h3>Ongoing Management</h3>
+          <p class="text-sm mb-16">Monthly reporting, tracking maintenance, anomaly detection, client check-ins. This is where you prove ongoing value. Monthly reports should tell a story, not just show numbers.</p>
+          <h4 style="color:var(--white);">Your rhythm</h4>
+          <ul style="color:rgba(255,255,255,0.6); font-size:14px; line-height:1.8; margin-left:20px; margin-top:8px;">
+            <li>Weekly: Check data freshness, spot anomalies</li>
+            <li>Bi-weekly: Client check-in call or email</li>
+            <li>Monthly: Full report + meeting</li>
+            <li>Quarterly: Deep-dive business review</li>
+          </ul>
+        </div>
+        <div class="card-dark">
+          <h4 style="color:var(--white);">Monthly deliverables</h4>
+          <ul style="color:rgba(255,255,255,0.6); font-size:14px; line-height:1.8; margin-left:20px; margin-top:8px;">
+            <li>Monthly performance report (due 5th of month)</li>
+            <li>Tracking health audit (data quality check)</li>
+            <li>Anomaly alerts (automated + explained)</li>
+            <li>Recommendation log update</li>
+            <li>Client health score refresh</li>
+            <li>Update Attio Client Success list status</li>
+            <li>Meeting notes in vault 06-Clients/[name]/</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 4: Review & Expand -->
+    <div id="lifecycle-4" class="tab-content">
+      <div class="grid-2 gap-24">
+        <div class="card-dark">
+          <div class="pill-dark mb-16">Quarterly</div>
+          <h3>QBR &amp; Expansion</h3>
+          <p class="text-sm mb-16">Quarterly business reviews, upsell opportunities, tier upgrades. Look for expansion signals: client asking about new services, growing ad spend, launching new markets.</p>
+          <h4 style="color:var(--white);">QBR agenda</h4>
+          <ul style="color:rgba(255,255,255,0.6); font-size:14px; line-height:1.8; margin-left:20px; margin-top:8px;">
+            <li>Q performance summary (wins + challenges)</li>
+            <li>ROI delivered + learnings</li>
+            <li>Recommendation adoption rate</li>
+            <li>Health score trend</li>
+            <li>Expansion opportunities</li>
+            <li>Next quarter priorities</li>
+          </ul>
+        </div>
+        <div class="card-dark">
+          <h4 style="color:var(--white);">Expansion signals to watch</h4>
+          <ul style="color:rgba(255,255,255,0.6); font-size:14px; line-height:1.8; margin-left:20px; margin-top:8px;">
+            <li>Client mentions new platforms (Meta, TikTok)</li>
+            <li>Growing ad spend (20%+ QoQ)</li>
+            <li>New product launches coming</li>
+            <li>Multi-market expansion plans</li>
+            <li>Requests for deeper reporting</li>
+            <li>Wants us to manage their Google Ads</li>
+            <li>Full data integration requests</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 5: Renewal -->
+    <div id="lifecycle-5" class="tab-content">
+      <div class="grid-2 gap-24">
+        <div class="card-dark">
+          <div class="pill-dark mb-16">Annual</div>
+          <h3>Renewal &amp; Retention</h3>
+          <p class="text-sm mb-16">Contract renewal, retention strategy, churn prevention. Start renewal conversations 60 days before contract end. Use health scores and recommendation adoption data to build your case.</p>
+          <h4 style="color:var(--white);">Renewal timeline</h4>
+          <ul style="color:rgba(255,255,255,0.6); font-size:14px; line-height:1.8; margin-left:20px; margin-top:8px;">
+            <li>90 days before: Identify renewal dates</li>
+            <li>60 days before: Start value conversation</li>
+            <li>45 days before: Present business case</li>
+            <li>30 days before: Send proposal</li>
+            <li>15 days before: Final close push</li>
+            <li>Day 1 of renewal: Update Attio, invoice</li>
+          </ul>
+        </div>
+        <div class="card-dark">
+          <h4 style="color:var(--white);">Renewal prep checklist</h4>
+          <ul style="color:rgba(255,255,255,0.6); font-size:14px; line-height:1.8; margin-left:20px; margin-top:8px;">
+            <li>Pull 12-month performance summary</li>
+            <li>Calculate ROI delivered (€ value)</li>
+            <li>Review recommendation adoption rate</li>
+            <li>Check health score trend (improving?)</li>
+            <li>Document wins + testimonials</li>
+            <li>Prepare renewal proposal with roadmap</li>
+            <li>Identify expansion/tier upgrade opportunity</li>
+            <li>Flag churn risk to Walter if needed</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS & SYSTEMS -->
+<section class="section-white" id="tools">
+  <div class="container">
+    <div class="eyebrow">/TOOLS & SYSTEMS</div>
+    <h2>Your <span class="purple">toolkit</span></h2>
+    <p class="lead mb-48">These are the systems you'll use daily. Master them in your first two weeks.</p>
+
+    <div class="grid-2 gap-32 mb-48">
+      <div>
+        <h3 class="mb-24">Your tools</h3>
+        <div class="card mb-16">
+          <div class="flex items-center" style="gap:12px;">
+            <div class="badge">CRM</div>
+            <div>
+              <h4 style="margin-bottom:2px;">Attio</h4>
+              <p class="text-sm">Client records, health tracking, deal management, notes. Your daily workspace for account management.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card mb-16">
+          <div class="flex items-center" style="gap:12px;">
+            <div class="badge">AI</div>
+            <div>
+              <h4 style="margin-bottom:2px;">Claude (Cowork mode)</h4>
+              <p class="text-sm">AI assistant connected to the vault, Attio, Gmail. Pull client briefs, generate reports, extract signals, score health.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card mb-16">
+          <div class="flex items-center" style="gap:12px;">
+            <div class="badge">KB</div>
+            <div>
+              <h4 style="margin-bottom:2px;">The Vault (Second Brain)</h4>
+              <p class="text-sm">Knowledge base with templates, playbooks, client intel, health scores. Read before every client interaction.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card mb-16">
+          <div class="flex items-center" style="gap:12px;">
+            <div class="badge">AN</div>
+            <div>
+              <h4 style="margin-bottom:2px;">GA4 &amp; GTM</h4>
+              <p class="text-sm">Google Analytics 4 for performance data, Google Tag Manager for tracking QA. You need hands-on proficiency.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card mb-16">
+          <div class="flex items-center" style="gap:12px;">
+            <div class="badge">INV</div>
+            <div>
+              <h4 style="margin-bottom:2px;">Xolo</h4>
+              <p class="text-sm">Invoicing platform. Track client billing, payment status, and legal entities.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="flex items-center" style="gap:12px;">
+            <div class="badge">EM</div>
+            <div>
+              <h4 style="margin-bottom:2px;">Gmail</h4>
+              <p class="text-sm">Client communications, update emails, meeting follow-ups. Filtered with Amplio Updates label.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3 class="mb-24">Attio for Account Managers</h3>
+        <div class="card-elevated mb-16">
+          <div class="flex items-center justify-between mb-16">
+            <h4>Client Success List</h4>
+            <span class="pill">Primary</span>
+          </div>
+          <p class="text-sm mb-16">Your main view. Track every client through their lifecycle.</p>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;">
+            <span style="display:inline-block;background:var(--purple-light);color:var(--purple);padding:4px 10px;border-radius:4px;font-size:11px;font-weight:600;">Onboarding</span>
+            <span style="font-size:11px;color:var(--mid-gray);padding:4px 0;">→</span>
+            <span style="display:inline-block;background:var(--purple-light);color:var(--purple);padding:4px 10px;border-radius:4px;font-size:11px;font-weight:600;">Steady</span>
+            <span style="font-size:11px;color:var(--mid-gray);padding:4px 0;">→</span>
+            <span style="display:inline-block;background:var(--purple-light);color:var(--purple);padding:4px 10px;border-radius:4px;font-size:11px;font-weight:600;">Expansion</span>
+            <span style="font-size:11px;color:var(--mid-gray);padding:4px 0;">→</span>
+            <span style="display:inline-block;background:var(--purple);color:var(--white);padding:4px 10px;border-radius:4px;font-size:11px;font-weight:600;">Renewal</span>
+          </div>
+          <p class="text-sm"><strong>Key entry fields:</strong> Health (Excellent/Good/Fair/Risk), MRR, Services Active, Next Review Date, Last Contact.</p>
+        </div>
+        <div class="card-elevated">
+          <h4 class="mb-16">Key Attio fields you own</h4>
+          <div style="overflow-x:auto;font-size:13px;">
+            <table style="width:100%; margin-top:8px;">
+              <thead>
+                <tr>
+                  <th style="text-align:left;">Field</th>
+                  <th style="text-align:left;">When you update</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight:600;">Health Status</td>
+                  <td>After every meaningful interaction</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">MRR</td>
+                  <td>When tier/scope changes</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">Services Active</td>
+                  <td>At onboarding + scope changes</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">Next Review Date</td>
+                  <td>After each review/meeting</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">Last Contact</td>
+                  <td>After every touchpoint</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">Notes</td>
+                  <td>Same day as interaction</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESSES -->
+<section class="section-light" id="processes">
+  <div class="container">
+    <div class="eyebrow">/INTERNAL PROCESSES</div>
+    <h2>How we <span class="purple">operate</span></h2>
+    <p class="lead mb-48">These processes keep us organized and make sure nothing falls through the cracks.</p>
+
+    <h3 class="mb-24">Core PM processes</h3>
+    <div class="accordion-item open">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Meeting notes protocol</span>
+        <span class="arrow">▶</span>
+      </div>
+      <div class="accordion-body">
+        After every client meeting, create a dated note in <code style="background:var(--purple-light);padding:2px 6px;border-radius:3px;">06-Clients/[name]/meeting-notes/</code> (use the meeting notes template). Include: attendees, agenda, decisions made, action items, and signals extracted. Update the client's <code style="background:var(--purple-light);padding:2px 6px;border-radius:3px;">_overview.md</code> with any status changes. Log all recommendations in <code style="background:var(--purple-light);padding:2px 6px;border-radius:3px;">recommendations-tracker.md</code>.
+      </div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Client health scoring</span>
+        <span class="arrow">▶</span>
+      </div>
+      <div class="accordion-body">
+        Every active client gets a health score (0-100) based on 6 dimensions: <strong>Data Quality (20%)</strong>, <strong>Engagement Frequency (20%)</strong>, <strong>Recommendation Adoption (20%)</strong>, <strong>Revenue/Performance Trend (20%)</strong>, <strong>Contract Health (10%)</strong>, <strong>Vault Completeness (10%)</strong>. Score thresholds: <strong style="color:var(--green);">85-100 Healthy</strong>, <strong style="color:var(--orange);">70-84 Watch</strong>, <strong style="color:var(--red);">50-69 At Risk</strong>, <strong style="color:var(--red);">0-49 Critical</strong> (immediate escalation to Walter). Update health scores quarterly or after significant changes.
+      </div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Signal extraction from communications</span>
+        <span class="arrow">▶</span>
+      </div>
+      <div class="accordion-body">
+        When processing any client communication (email, call, meeting, update email), extract qualitative signals and append to the client's <code style="background:var(--purple-light);padding:2px 6px;border-radius:3px;">_overview.md</code> under <strong>## Client Signals</strong>. Categories: <strong>FR</strong> (Feature Request), <strong>OB</strong> (Objection), <strong>SAT+</strong>/<strong>SAT-</strong> (Satisfaction), <strong>PS</strong> (Priority Shift), <strong>EX</strong> (Expansion), <strong>CH</strong> (Churn), <strong>DA</strong> (Data/Access), <strong>IC</strong> (Industry Context). Format: <code>- [YYYY-MM-DD] [CODE] — [description] (source: email/meeting)</code>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Recommendation tracking &amp; learning loop</span>
+        <span class="arrow">▶</span>
+      </div>
+      <div class="accordion-body">
+        Every recommendation you make to a client gets logged in their <code style="background:var(--purple-light);padding:2px 6px;border-radius:3px;">recommendations-tracker.md</code>. Track: what was recommended, when, linked pattern (if applicable), priority (High/Medium/Low), whether it was actioned, and the outcome. This feeds the cross-client learning system — it's how we learn which advice actually works. Close the loop: measure if the recommendation moved the needle.
+      </div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Escalation paths</span>
+        <span class="arrow">▶</span>
+      </div>
+      <div class="accordion-body">
+        <strong style="color:var(--red);">Health score 0-49 (Critical):</strong> Same-day alert to Walter. <strong>Payment issues:</strong> Flag in Attio + notify Walter within 24h. <strong>Technical emergency</strong> (tracking completely down): Escalate to Walter immediately. <strong>Client mentions leaving:</strong> CH signal + direct escalation to Walter same day. <strong>Scope creep:</strong> Document in meeting notes, discuss with Walter before agreeing to additional work. <strong>Data access problems:</strong> Flag immediately, block reporting if needed, escalate if client can't/won't fix.
+      </div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Monthly reporting workflow</span>
+        <span class="arrow">▶</span>
+      </div>
+      <div class="accordion-body">
+        Monthly reports due by the 5th of each month. Workflow: (1) Pull data from GA4, run analysis. (2) Check for anomalies vs. prior month. (3) Generate performance report using the monthly report template. (4) Include: traffic trends, conversion metrics, consent impact analysis, any anomalies detected, and recommendations. (5) Add client commentary & next month's priorities. (6) Send to client + log report in vault under 06-Clients/[name]/. (7) Schedule follow-up call to review.
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3 class="mb-24">The Vault — your knowledge system</h3>
+    <p class="text-sm mb-24" style="max-width:700px;">We run a structured knowledge vault (Obsidian-style) that acts as our company brain. It stores everything: client intel, playbooks, templates, research, and cross-client patterns. AI keeps it alive and growing.</p>
+    <div class="grid-2 gap-32 mb-48">
+      <div>
+        <h4 class="mb-16">Vault structure</h4>
+        <div class="card-light" style="font-family:'Roboto Mono',monospace; font-size:13px; line-height:2; color:var(--mid-gray);">
+          <span style="color:var(--purple);">Amplio-Brain/</span><br>
+          ├── <span style="color:var(--charcoal); font-weight:600;">00-Inbox/</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--mid-gray);"># Raw captures</span><br>
+          ├── <span style="color:var(--charcoal); font-weight:600;">01-Projects/</span> &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--mid-gray);"># Time-bound work</span><br>
+          ├── <span style="color:var(--charcoal); font-weight:600;">02-Areas/</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--mid-gray);"># Ongoing responsibilities</span><br>
+          ├── <span style="color:var(--charcoal); font-weight:600;">03-Resources/</span> &nbsp;&nbsp;&nbsp;<span style="color:var(--mid-gray);"># Brand, Playbooks, Templates</span><br>
+          ├── <span style="color:var(--charcoal); font-weight:600;">04-Archives/</span> &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--mid-gray);"># Completed work</span><br>
+          ├── <span style="color:var(--charcoal); font-weight:600;">05-Galaxy/</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--mid-gray);"># Atomic linked notes</span><br>
+          ├── <span style="color:var(--purple); font-weight:600;">06-Clients/</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--mid-gray);"># Client spaces + pipeline</span><br>
+          ├── <span style="color:var(--charcoal); font-weight:600;">CLAUDE.md</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--mid-gray);"># Master schema</span><br>
+          └── <span style="color:var(--charcoal); font-weight:600;">memory.md</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--mid-gray);"># Session continuity</span>
+        </div>
+      </div>
+      <div>
+        <h4 class="mb-16">Why it matters for PMs</h4>
+        <div class="card mb-16">
+          <h4>Client Intelligence</h4>
+          <p class="text-sm">Every client has a dedicated space in <code style="background:var(--purple-light);padding:2px 6px;border-radius:3px;">06-Clients/</code> with an overview, meeting notes, data context, and recommendations. Before any call, read the client's <code style="background:var(--purple-light);padding:2px 6px;border-radius:3px;">_overview.md</code>.</p>
+        </div>
+        <div class="card mb-16">
+          <h4>Health Scoring</h4>
+          <p class="text-sm">Scoring models and frameworks live in <code style="background:var(--purple-light);padding:2px 6px;border-radius:3px;">03-Resources/Playbooks/</code>. Check them quarterly to assess client health objectively.</p>
+        </div>
+        <div class="card mb-16">
+          <h4>Templates &amp; Playbooks</h4>
+          <p class="text-sm">Meeting notes templates, report templates, onboarding checklists — all in <code style="background:var(--purple-light);padding:2px 6px;border-radius:3px;">03-Resources/Templates/</code>. Never start from scratch.</p>
+        </div>
+        <div class="card">
+          <h4>Cross-Client Learning</h4>
+          <p class="text-sm">Our "cross-client patterns" doc surfaces insights that apply across clients. Read it monthly to spot trends and improve your account management.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="mb-24">Key vault files you'll reference daily</h3>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>When you need to...</th>
+            <th>Read this file</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Prep for a client meeting</td>
+            <td><code style="background:var(--purple-light);padding:2px 6px;border-radius:3px;">06-Clients/[name]/_overview.md</code></td>
+          </tr>
+          <tr>
+            <td>Check client health model</td>
+            <td><code style="background:var(--purple-light);padding:2px 6px;border-radius:3px;">03-Resources/Playbooks/client-health-scoring-model.md</code></td>
+          </tr>
+          <tr>
+            <td>Extract client signals</td>
+            <td><code style="background:var(--purple-light);padding:2px 6px;border-radius:3px;">03-Resources/Playbooks/client-signals-extraction-sop.md</code></td>
+          </tr>
+          <tr>
+            <td>Write a monthly report</td>
+            <td><code style="background:var(--purple-light);padding:2px 6px;border-radius:3px;">03-Resources/Templates/monthly-report-template.md</code></td>
+          </tr>
+          <tr>
+            <td>Log meeting notes</td>
+            <td><code style="background:var(--purple-light);padding:2px 6px;border-radius:3px;">03-Resources/Templates/meeting-notes-template.md</code></td>
+          </tr>
+          <tr>
+            <td>Track recommendations</td>
+            <td><code style="background:var(--purple-light);padding:2px 6px;border-radius:3px;">06-Clients/[name]/recommendations-tracker.md</code></td>
+          </tr>
+          <tr>
+            <td>Onboard a new client</td>
+            <td><code style="background:var(--purple-light);padding:2px 6px;border-radius:3px;">03-Resources/Templates/client-space-template.md</code></td>
+          </tr>
+          <tr>
+            <td>Write a renewal proposal</td>
+            <td><code style="background:var(--purple-light);padding:2px 6px;border-radius:3px;">03-Resources/Templates/proposal-template.md</code></td>
+          </tr>
+          <tr>
+            <td>Check brand voice/tone</td>
+            <td><code style="background:var(--purple-light);padding:2px 6px;border-radius:3px;">03-Resources/Brand/brand-voice-guide.md</code></td>
+          </tr>
+          <tr>
+            <td>Understand Attio CRM fields</td>
+            <td><code style="background:var(--purple-light);padding:2px 6px;border-radius:3px;">03-Resources/Playbooks/attio-crm-structure-blueprint.md</code></td>
+          </tr>
+          <tr>
+            <td>Review cross-client patterns</td>
+            <td><code style="background:var(--purple-light);padding:2px 6px;border-radius:3px;">03-Resources/Research/cross-client-patterns.md</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- TECHNICAL KNOWLEDGE -->
+<section class="section-dark" id="technical">
+  <div class="container">
+    <div class="eyebrow">/TECHNICAL KNOWLEDGE</div>
+    <h2>Hands-on <span class="purple">GA4 &amp; GTM</span> proficiency</h2>
+    <p class="lead mb-48">As a PM, you need to QA tracking, pull reports, and troubleshoot basic issues. Here's what you need to know.</p>
+
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab(event, 'tech-1')">GA4 Essentials</div>
+      <div class="tab" onclick="switchTab(event, 'tech-2')">GTM Basics</div>
+      <div class="tab" onclick="switchTab(event, 'tech-3')">Server-Side GTM</div>
+      <div class="tab" onclick="switchTab(event, 'tech-4')">Consent & Privacy</div>
+    </div>
+
+    <!-- GA4 Tab -->
+    <div id="tech-1" class="tab-content active">
+      <div class="grid-2 gap-24">
+        <div class="card-dark">
+          <h3 style="color:var(--white);">Navigating GA4</h3>
+          <ul style="color:rgba(255,255,255,0.6); font-size:14px; line-height:1.8; margin-left:20px; margin-top:8px;">
+            <li><strong>Real-time reports:</strong> Verify events firing live</li>
+            <li><strong>Acquisition reports:</strong> Traffic sources, campaign performance</li>
+            <li><strong>Engagement reports:</strong> Events, conversions, pages, sessions</li>
+            <li><strong>Monetization reports:</strong> E-commerce, revenue, ROAS</li>
+            <li><strong>Explore:</strong> Custom funnels, path analysis, cohort analysis</li>
+          </ul>
+          <p style="color:rgba(255,255,255,0.8); font-size:14px; line-height:1.8; margin-top:16px;">
+            <strong style="color:var(--white);">Key metrics you'll reference:</strong> Sessions, Users, Conversion Rate, Revenue, ROAS, Avg Session Duration, Bounce Rate.
+          </p>
+        </div>
+        <div class="card-dark">
+          <h3 style="color:var(--white);">GA4 QA Checklist</h3>
+          <ul style="color:rgba(255,255,255,0.6); font-size:14px; line-height:1.8; margin-left:20px; margin-top:8px;">
+            <li>Events tab shows expected events (page_view, purchase, etc.)</li>
+            <li>Conversions are marked correctly (not just events)</li>
+            <li>User properties configured (subscription_status, lifetime_value, etc.)</li>
+            <li>Data streams active &amp; receiving data</li>
+            <li>Enhanced measurement enabled (scroll, video, search, site search)</li>
+            <li>Google Signals enabled (for cross-device)</li>
+            <li>Data retention set to 14 months</li>
+            <li>Property timezone matches client location</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- GTM Tab -->
+    <div id="tech-2" class="tab-content">
+      <div class="grid-2 gap-24">
+        <div class="card-dark">
+          <h3 style="color:var(--white);">Reading a GTM Container</h3>
+          <ul style="color:rgba(255,255,255,0.6); font-size:14px; line-height:1.8; margin-left:20px; margin-top:8px;">
+            <li><strong>Tags:</strong> What fires (GA4 config tag, conversion linker, ad platform pixels, etc.)</li>
+            <li><strong>Triggers:</strong> When they fire (page view, click, form submission, scroll, custom event)</li>
+            <li><strong>Variables:</strong> Data they use (page URL, element text, GTM data layer values)</li>
+            <li><strong>Container versions:</strong> Each version is a snapshot. Check the latest is live.</li>
+          </ul>
+          <p style="color:rgba(255,255,255,0.8); font-size:14px; line-height:1.8; margin-top:16px;">
+            <strong style="color:var(--white);">You don't need to build tags,</strong> but you need to read and QA them. Use <strong style="color:var(--purple);">Preview mode</strong> to verify.
+          </p>
+        </div>
+        <div class="card-dark">
+          <h3 style="color:var(--white);">GTM Preview Mode (Essential)</h3>
+          <ul style="color:rgba(255,255,255,0.6); font-size:14px; line-height:1.8; margin-left:20px; margin-top:8px;">
+            <li><strong>Enter preview mode:</strong> Click "Preview" in GTM. Copy unique URL to browser.</li>
+            <li><strong>See what fires:</strong> "Tags Fired on This Page" shows which tags + triggers executed.</li>
+            <li><strong>Check data layer:</strong> Data layer shows all variables pushed by the website.</li>
+            <li><strong>Spot errors:</strong> Red = tag blocked/failed. Yellow = tag defined but not fired. Green = success.</li>
+            <li><strong>Test consent:</strong> Reject consent, refresh page, see if GA4 tag fires (it shouldn't).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Server-Side GTM Tab -->
+    <div id="tech-3" class="tab-content">
+      <div class="grid-2 gap-24">
+        <div class="card-dark">
+          <h3 style="color:var(--white);">Why Server-Side GTM</h3>
+          <p style="color:rgba(255,255,255,0.8); font-size:14px; line-height:1.8;">
+            <strong style="color:var(--white);">Client-side GTM:</strong> Data sent from the browser → ad blockers, consent tools, privacy extensions can block it. Result: 20-40% lost conversions.
+          </p>
+          <p style="color:rgba(255,255,255,0.8); font-size:14px; line-height:1.8; margin-top:12px;">
+            <strong style="color:var(--white);">Server-side GTM:</strong> Data sent from our server (Stape) → recovers cookieless data, bypasses blockers, respects consent. We recover 20-40% of lost conversions for every client.
+          </p>
+          <p style="color:rgba(255,255,255,0.8); font-size:14px; line-height:1.8; margin-top:12px;">
+            <strong style="color:var(--purple);">Bottom line:</strong> Server-side is a key value driver. Clients expect it at T2/T3 tiers.
+          </p>
+        </div>
+        <div class="card-dark">
+          <h3 style="color:var(--white);">What to Check</h3>
+          <ul style="color:rgba(255,255,255,0.6); font-size:14px; line-height:1.8; margin-left:20px; margin-top:8px;">
+            <li>Server container URL active &amp; DNS resolving</li>
+            <li>Client-side to server-side forwarding working (check GTM preview)</li>
+            <li>Enhanced conversions configured (match email, phone, address)</li>
+            <li>First-party cookies set correctly (check browser Network tab)</li>
+            <li>Consent signals passed through (consent_mode parameters)</li>
+            <li>Event payloads complete (not truncated)</li>
+            <li>No 500 errors in Stape logs</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Consent Tab -->
+    <div id="tech-4" class="tab-content">
+      <div class="grid-2 gap-24">
+        <div class="card-dark">
+          <h3 style="color:var(--white);">Consent Mode v2</h3>
+          <p style="color:rgba(255,255,255,0.8); font-size:14px; line-height:1.8;">
+            <strong style="color:var(--white);">What it is:</strong> Google's framework for adjusting tag behavior based on user consent signals. Two modes: <strong>Basic</strong> (block tags without consent) and <strong>Advanced</strong> (send cookieless pings for modeling).
+          </p>
+          <p style="color:rgba(255,255,255,0.8); font-size:14px; line-height:1.8; margin-top:12px;">
+            <strong style="color:var(--white);">What we do:</strong> Implement <strong style="color:var(--purple);">Advanced mode</strong> for most clients. Result: recovers measurement data Google can model even without full consent. 34% of sessions are hidden by consent — this is the gap we solve.
+          </p>
+        </div>
+        <div class="card-dark">
+          <h3 style="color:var(--white);">What to Verify</h3>
+          <ul style="color:rgba(255,255,255,0.6); font-size:14px; line-height:1.8; margin-left:20px; margin-top:8px;">
+            <li>CMP banner loads on first visit (Cookiebot, Usercentrics, etc.)</li>
+            <li>Consent choices stored correctly (localStorage/cookies)</li>
+            <li>GA4 consent_state parameters firing correctly</li>
+            <li>Ad platform tags respect consent (no firing without user consent)</li>
+            <li>Server-side consent propagation working</li>
+            <li>34% sessions hidden by consent — this is the measurement gap we solve</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DAY TO DAY -->
+<section class="section-white" id="day-to-day">
+  <div class="container">
+    <div class="eyebrow">/YOUR DAY-TO-DAY</div>
+    <h2>What a <span class="purple">typical week</span> looks like</h2>
+    <p class="lead mb-48">Here's the rhythm. Client management is a blend of proactive check-ins, reactive troubleshooting, and continuous improvement — all backed by data.</p>
+
+    <div class="grid-2 gap-32 mb-48">
+      <div>
+        <h3 class="mb-24">Weekly rhythm</h3>
+        <div class="card mb-16" style="border-left: 3px solid var(--purple);">
+          <h4>Monday</h4>
+          <p class="text-sm"><strong>Client health review &amp; planning.</strong> Review all client health scores. Check which clients need outreach. Plan the week's meetings and deliverables. Process any weekend update emails. Flag any alerts to Walter.</p>
+        </div>
+        <div class="card mb-16" style="border-left: 3px solid var(--purple);">
+          <h4>Tuesday-Wednesday</h4>
+          <p class="text-sm"><strong>Client work &amp; meetings.</strong> Run client calls (kick-off, check-in, QBR). QA tracking setups (real-time GA4, GTM preview). Pull GA4 data for reports. Update meeting notes and extract signals. Log recommendations.</p>
+        </div>
+        <div class="card mb-16" style="border-left: 3px solid var(--purple);">
+          <h4>Thursday</h4>
+          <p class="text-sm"><strong>Reporting &amp; analysis.</strong> Build monthly reports (if due). Review cross-client patterns. Prepare QBR materials. Update vault with new insights. Spot trends that affect multiple clients.</p>
+        </div>
+        <div class="card" style="border-left: 3px solid var(--purple);">
+          <h4>Friday</h4>
+          <p class="text-sm"><strong>Admin &amp; improvement.</strong> Update all Attio records. Refresh health scores. Plan next week. Flag anything that needs Walter's input. Review recommendation outcomes and measure impact.</p>
+        </div>
+      </div>
+      <div>
+        <h3 class="mb-24">Your tools (daily)</h3>
+        <div class="card mb-16">
+          <div class="flex items-center" style="gap:12px;">
+            <div class="badge">CRM</div>
+            <div>
+              <h4 style="margin-bottom:2px;">Attio</h4>
+              <p class="text-sm">Client management, health tracking, notes. Your daily workspace.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card mb-16">
+          <div class="flex items-center" style="gap:12px;">
+            <div class="badge">AI</div>
+            <div>
+              <h4 style="margin-bottom:2px;">Claude Cowork</h4>
+              <p class="text-sm">Pull client briefs, generate reports, score health, extract signals.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card mb-16">
+          <div class="flex items-center" style="gap:12px;">
+            <div class="badge">KB</div>
+            <div>
+              <h4 style="margin-bottom:2px;">The Vault</h4>
+              <p class="text-sm">Templates, playbooks, client intel, health scoring models.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card mb-16">
+          <div class="flex items-center" style="gap:12px;">
+            <div class="badge">AN</div>
+            <div>
+              <h4 style="margin-bottom:2px;">GA4 &amp; GTM</h4>
+              <p class="text-sm">QA tracking, pull reports, verify real-time data.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card mb-16">
+          <div class="flex items-center" style="gap:12px;">
+            <div class="badge">INV</div>
+            <div>
+              <h4 style="margin-bottom:2px;">Xolo</h4>
+              <p class="text-sm">Track invoices, payment status, renewals.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="flex items-center" style="gap:12px;">
+            <div class="badge">EM</div>
+            <div>
+              <h4 style="margin-bottom:2px;">Gmail</h4>
+              <p class="text-sm">Client communications and update emails.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3 class="mb-24">Key numbers to remember</h3>
+    <div class="grid-4 gap-24 mb-48">
+      <div class="card-elevated text-center">
+        <div class="kpi-num" style="font-size:32px;">€400-€1.5K</div>
+        <div class="kpi-label">Foundation (one-time)</div>
+      </div>
+      <div class="card-elevated text-center">
+        <div class="kpi-num" style="font-size:32px;">€700-€1.2K</div>
+        <div class="kpi-label">Maintained (/month)</div>
+      </div>
+      <div class="card-elevated text-center">
+        <div class="kpi-num" style="font-size:32px;">€1,800+</div>
+        <div class="kpi-label">Managed (/month)</div>
+      </div>
+      <div class="card-elevated text-center">
+        <div class="kpi-num" style="font-size:32px;">70</div>
+        <div class="kpi-label">Health score alert</div>
+      </div>
+    </div>
+
+    <h3 class="mb-24">When to escalate to Walter</h3>
+    <div class="card-light" style="max-width:700px;">
+      <p style="font-size:14px; line-height:1.8; color:var(--mid-gray);">
+        <strong style="color:var(--charcoal);">Health score below 50 (Critical):</strong> Same-day alert. <strong style="color:var(--charcoal);">Client mentions leaving (CH signal):</strong> Direct escalation. <strong style="color:var(--charcoal);">Invoice overdue 30+ days:</strong> Flag in Attio + notify. <strong style="color:var(--charcoal);">Technical emergency (tracking completely down):</strong> Escalate immediately. <strong style="color:var(--charcoal);">Scope creep:</strong> Document + discuss before committing. <strong style="color:var(--charcoal);">Client requests Walter specifically:</strong> Schedule immediately.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- BRAND VOICE -->
+<section class="section-light">
+  <div class="container">
+    <div class="eyebrow">/QUICK REFERENCE</div>
+    <h2>Brand <span class="purple">voice</span> cheat sheet</h2>
+    <p class="lead mb-48">Every message you send represents Amplio. Here's the voice in a nutshell.</p>
+
+    <div class="grid-2 gap-24 mb-48">
+      <div class="card">
+        <h4 style="color:var(--green);">Do this</h4>
+        <p style="font-size:14px; line-height:1.8; margin-top:8px;">
+          <strong>Confident, not arrogant:</strong> "We've lifted ROAS by 23% on average."<br>
+          <strong>Direct, not blunt:</strong> "Your GA4 isn't tracking purchases correctly — here's why."<br>
+          <strong>Technical, not intimidating:</strong> "Server-side GTM isolates conversion data from third-party cookies."<br>
+          <strong>Warm, not casual:</strong> "Let's fix this tracking gap together."
+        </p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--red);">Not this</h4>
+        <p style="font-size:14px; line-height:1.8; margin-top:8px;">
+          <strong>Arrogant:</strong> "We're the best data experts you'll find."<br>
+          <strong>Blunt:</strong> "Your setup is broken and amateur."<br>
+          <strong>Intimidating:</strong> "You need sGTM implementation asap."<br>
+          <strong>Too casual:</strong> "Yo, ur tracking is sus lol."
+        </p>
+      </div>
+    </div>
+
+    <div class="grid-2 gap-24">
+      <div class="card">
+        <h4>Preferred terms</h4>
+        <p style="font-size:14px; line-height:1.8; margin-top:8px;">
+          Say <strong style="color:var(--purple);">tracking</strong> (not instrumentation).<br>
+          Say <strong style="color:var(--purple);">insights</strong> (not learnings).<br>
+          Say <strong style="color:var(--purple);">setup</strong> (not deployment).<br>
+          Say <strong style="color:var(--purple);">fix / solve</strong> (not optimize / enhance).<br>
+          Say <strong style="color:var(--purple);">AI-powered</strong> (not ML / algorithm-driven).<br>
+          Say <strong style="color:var(--purple);">health score</strong> (not account health / maturity).
+        </p>
+      </div>
+      <div class="card">
+        <h4>Communication rules</h4>
+        <p style="font-size:14px; line-height:1.8; margin-top:8px;">
+          <strong>Cold outreach:</strong> Under 100 words.<br>
+          <strong>Warm follow-up:</strong> Under 150 words.<br>
+          <strong>Structure:</strong> Hook → Problem → Proof → CTA (soft).<br>
+          <strong>Tone:</strong> Respectful, curious, specific.<br>
+          <strong>End with:</strong> A question, not a hard ask.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="flex items-center justify-between">
+      <div>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 387 98" fill="none" style="height:20px;width:auto;margin-bottom:8px;display:block;">
+          <path fill="#FFFFFF" d="m106.441 79.658 23.8-65.164h15.704l23.622 65.164H155.81l-5.264-15.007h-25.392l-5.264 15.007h-13.449Zm22.561-26.03h17.651l-8.847-25.19-8.804 25.19Zm41.881 26.03V30.874h11.768v6.419c1.444-2.302 3.45-4.132 6.016-5.49 2.595-1.357 5.397-2.021 8.405-1.992 3.303.03 6.193.767 8.67 2.214 2.507 1.416 4.365 3.364 5.574 5.843 1.415-2.42 3.48-4.368 6.193-5.843 2.713-1.505 5.736-2.243 9.068-2.214 5.191.03 9.364 1.653 12.52 4.87 3.155 3.217 4.733 7.467 4.733 12.75v32.227h-12.121V49.644c0-2.804-.826-5.047-2.477-6.73-1.652-1.681-3.849-2.537-6.592-2.567-2.654-.03-4.866.9-6.635 2.79-1.74 1.858-2.61 4.22-2.61 7.082v29.44h-12.121V49.156c0-2.656-.811-4.781-2.433-6.375-1.622-1.594-3.745-2.405-6.37-2.435-2.713-.03-4.969.96-6.768 2.966-1.799 2.007-2.698 4.56-2.698 7.659v28.686h-12.122Zm105.096-49.714c6.812 0 12.386 2.39 16.721 7.172 4.336 4.751 6.488 10.846 6.459 18.283-.029 7.467-2.241 13.56-6.636 18.283-4.394 4.722-10.026 7.068-16.898 7.038a20.316 20.316 0 0 1-8.67-1.814c-2.743-1.27-4.969-2.981-6.68-5.136v23.862h-12.121V30.874h12.032l-.044 6.463c1.829-2.273 4.173-4.073 7.034-5.4 2.861-1.329 5.795-1.993 8.803-1.993Zm-16.102 25.499c-.03 4.161 1.283 7.614 3.937 10.359 2.654 2.715 5.913 4.058 9.776 4.028 3.864.03 6.989-1.284 9.378-3.94 2.419-2.655 3.628-6.138 3.628-10.447 0-4.309-1.209-7.791-3.628-10.447-2.389-2.686-5.514-4.029-9.378-4.029-3.834 0-7.078 1.372-9.732 4.117-2.654 2.745-3.981 6.198-3.981 10.359ZM314.056 12.9v66.758h-12.077V12.9h12.077Zm5.165 66.758V30.874h12.12v48.784h-12.12Zm-.133-53.92v-12.35h12.651v12.35h-12.651Zm40.687 54.983c-7.462.03-13.596-2.332-18.403-7.083-4.778-4.752-7.181-10.861-7.211-18.328 0-4.928 1.092-9.34 3.274-13.236 2.183-3.896 5.22-6.906 9.113-9.031 3.892-2.155 8.301-3.232 13.227-3.232 3.716 0 7.166.635 10.351 1.904 3.214 1.24 5.942 2.98 8.184 5.223 2.241 2.214 3.996 4.914 5.264 8.102 1.297 3.158 1.946 6.581 1.946 10.27 0 3.69-.649 7.113-1.946 10.27-1.268 3.158-3.023 5.844-5.264 8.058-2.242 2.213-4.97 3.954-8.184 5.223-3.185 1.24-6.635 1.86-10.351 1.86Zm-13.05-25.41c0 4.249 1.194 7.702 3.583 10.358 2.418 2.627 5.573 3.94 9.467 3.94 3.922 0 7.092-1.313 9.511-3.94 2.447-2.656 3.671-6.11 3.671-10.359 0-4.309-1.224-7.776-3.671-10.403-2.419-2.656-5.589-3.984-9.511-3.984-3.923 0-7.093 1.328-9.512 3.984-2.388 2.656-3.568 6.124-3.538 10.403ZM87.455 40.877H5.76A5.763 5.763 0 0 0 0 46.642a5.763 5.763 0 0 0 5.76 5.764h81.695a5.763 5.763 0 0 0 5.76-5.764 5.763 5.763 0 0 0-5.76-5.765Z"/>
+          <path fill="#FFFFFF" d="M40.848 5.764V87.52a5.761 5.761 0 1 0 11.52 0V5.764A5.763 5.763 0 0 0 46.609 0a5.763 5.763 0 0 0-5.76 5.764Z"/>
+          <path fill="#FFFFFF" d="M71.418 13.662 13.65 71.47a5.768 5.768 0 0 0 0 8.152 5.757 5.757 0 0 0 8.147 0l57.766-57.809a5.768 5.768 0 0 0 0-8.152 5.757 5.757 0 0 0-8.146 0Z"/>
+        </svg>
+        <p style="color:rgba(255,255,255,0.4); font-size:13px;">Better Data. Smarter Campaigns. Proven ROI.</p>
+      </div>
+      <div style="text-align:right;">
+        <p style="color:rgba(255,255,255,0.3); font-size:11px;">PM & Account Manager Onboarding Guide — Confidential</p>
+        <p style="color:rgba(255,255,255,0.3); font-size:11px;">Amplio Data® — Barcelona, Spain</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Tab switching
+function switchTab(event, tabId) {
+  const section = event.target.closest('.section-dark, .section-white, .section-light');
+  section.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  section.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+}
+
+// Accordion
+function toggleAccordion(header) {
+  const item = header.parentElement;
+  const wasOpen = item.classList.contains('open');
+  // Close all in parent
+  item.parentElement.querySelectorAll('.accordion-item').forEach(a => a.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+
+// Smooth scroll for nav links
+document.querySelectorAll('.nav-links a').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const target = document.querySelector(link.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+</script>
+
+</body>
+</html>
