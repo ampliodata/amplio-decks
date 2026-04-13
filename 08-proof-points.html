@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amplio Data — The Vault Architecture</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* AMPLIO PRESENTATION SYSTEM — shared stylesheet for onboarding suite */
+:root {
+  --charcoal: #131313; --off-black: #0C0C0C;
+  --white: #FFFFFF; --off-white: #F5F5F5; --warm-white: #FAFAFA;
+  --purple: #8B2CF5; --purple-dark: #6B22C4;
+  --purple-light: rgba(139,44,245,0.08); --purple-15: rgba(139,44,245,0.15); --purple-30: rgba(139,44,245,0.3);
+  --dark-gray: #3A3A3A; --mid-gray: #6B6B6B; --light-gray: #D3D3D3; --pale-gray: #E8E8E8;
+  --border: rgba(0,0,0,0.08); --border-dark: rgba(255,255,255,0.08);
+  --red: #DE362A; --orange: #FF9500; --green: #34C759;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-purple: 0 4px 20px rgba(139,44,245,0.3);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body { font-family: 'Satoshi', -apple-system, sans-serif; font-size: 16px; font-weight: 400; letter-spacing: -0.2px; line-height: 1.6; color: var(--charcoal); background: var(--white); -webkit-font-smoothing: antialiased; }
+
+.progress-bar { position: fixed; top: 0; left: 0; height: 2px; background: var(--purple); z-index: 200; width: 0%; transition: width 0.1s linear; }
+
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(255,255,255,0.92); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 14px 0; }
+.nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 40px; display: flex; align-items: center; justify-content: space-between; }
+.nav-logo { height: 24px; width: auto; }
+.nav-badge { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); text-transform: uppercase; letter-spacing: 1px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px; }
+
+.side-nav { position: fixed; left: 40px; top: 50%; transform: translateY(-50%); z-index: 50; display: flex; flex-direction: column; gap: 6px; }
+.side-nav a { display: flex; align-items: center; gap: 12px; font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); text-decoration: none; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; transition: all 0.2s; padding: 6px 0; }
+.side-nav a::before { content: ''; display: inline-block; width: 20px; height: 1px; background: var(--mid-gray); transition: all 0.2s; }
+.side-nav a:hover, .side-nav a.active { color: var(--purple); opacity: 1; }
+.side-nav a.active::before, .side-nav a:hover::before { width: 40px; background: var(--purple); }
+.side-nav a .label { white-space: nowrap; }
+
+.container { max-width: 1080px; margin: 0 auto; padding: 0 40px; }
+.container-wide { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+
+.section-white { background: var(--white); color: var(--charcoal); padding: 120px 0; }
+.section-light { background: var(--off-white); color: var(--charcoal); padding: 120px 0; }
+.section-dark { background: #1C1C1E; color: var(--white); padding: 140px 0; }
+.section-dark h2, .section-dark h3, .section-dark h4 { color: var(--white); }
+.section-dark .lead { color: rgba(255,255,255,0.6); }
+.section-dark .text-sm { color: rgba(255,255,255,0.5); }
+.section-dark .eyebrow { color: rgba(139,44,245,0.9); }
+
+h1 { font-size: 88px; font-weight: 700; letter-spacing: -4px; line-height: 0.95; margin-bottom: 32px; }
+h2 { font-size: 48px; font-weight: 700; letter-spacing: -2px; line-height: 1.05; margin-bottom: 24px; }
+h3 { font-size: 24px; font-weight: 700; letter-spacing: -0.8px; line-height: 1.25; margin-bottom: 14px; }
+h4 { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; line-height: 1.35; margin-bottom: 8px; }
+.lead { font-size: 22px; font-weight: 400; line-height: 1.55; color: var(--mid-gray); max-width: 720px; letter-spacing: -0.3px; }
+.text-sm { font-size: 14px; line-height: 1.6; color: var(--mid-gray); }
+.text-xs { font-size: 11px; line-height: 1.4; }
+.eyebrow { font-family: 'Roboto Mono', monospace; font-size: 12px; font-weight: 500; color: var(--purple); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 24px; display: inline-block; }
+.number-label { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); letter-spacing: 1px; text-transform: uppercase; }
+.purple { color: var(--purple); }
+.bold { font-weight: 700; }
+.italic { font-style: italic; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.grid-2-asym { display: grid; grid-template-columns: 1fr 1.4fr; gap: 60px; align-items: start; }
+
+.card { background: var(--white); border-radius: 6px; padding: 28px; border: 1px solid var(--border); transition: all 0.25s ease; }
+.card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.card-flat { background: var(--white); border-radius: 6px; padding: 28px; border: 1px solid var(--border); }
+.card-light { background: var(--off-white); border-radius: 6px; padding: 24px; border: 1px solid var(--border); }
+.card-dark { background: #2A2A2D; border-radius: 8px; padding: 40px; border: 1px solid rgba(255,255,255,0.08); }
+.card-dark h3, .card-dark h4 { color: var(--white); }
+.card-dark p, .card-dark .text-sm { color: rgba(255,255,255,0.65); }
+.card-dark code { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); padding: 2px 6px; border-radius: 3px; font-family: 'Roboto Mono', monospace; font-size: 12px; }
+.card-purple { background: var(--purple); border-radius: 6px; padding: 28px; color: var(--white); box-shadow: var(--shadow-purple); }
+.card-purple h3, .card-purple h4 { color: var(--white); }
+.card-outlined { background: transparent; border: 1px solid var(--border); border-radius: 6px; padding: 28px; }
+
+.badge { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 26px; border-radius: 4px; background: var(--purple); color: var(--white); font-family: 'Roboto Mono', monospace; font-size: 11px; font-weight: 500; padding: 0 8px; letter-spacing: 0.5px; }
+.badge-ghost { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 26px; border-radius: 4px; background: var(--purple-light); color: var(--purple); font-family: 'Roboto Mono', monospace; font-size: 11px; font-weight: 500; padding: 0 10px; letter-spacing: 0.5px; border: 1px solid var(--purple-15); }
+.pill { display: inline-flex; align-items: center; background: var(--purple-light); border: 1px solid var(--purple-15); border-radius: 999px; padding: 5px 14px; font-size: 12px; font-weight: 500; color: var(--purple); letter-spacing: 0; }
+.pill-dark { display: inline-flex; align-items: center; background: rgba(139,44,245,0.15); border: 1px solid rgba(139,44,245,0.25); border-radius: 999px; padding: 5px 14px; font-size: 12px; font-weight: 500; color: #C898FD; }
+
+.kpi-num { font-size: 56px; font-weight: 900; letter-spacing: -3px; line-height: 1; color: var(--purple); margin-bottom: 8px; }
+.kpi-label { font-size: 13px; font-weight: 500; color: var(--mid-gray); }
+.section-dark .kpi-label { color: rgba(255,255,255,0.5); }
+
+.timeline { border-left: 2px solid var(--purple); margin-left: 16px; padding-left: 32px; position: relative; }
+.tl-item { position: relative; padding-bottom: 32px; }
+.tl-item:last-child { padding-bottom: 0; }
+.tl-item::before { content: ''; position: absolute; left: -39px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--purple); box-shadow: 0 0 0 4px var(--white); }
+.section-dark .tl-item::before { box-shadow: 0 0 0 4px #1C1C1E; }
+.tl-item h4 { margin-bottom: 6px; }
+.tl-day { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--purple); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font-family: 'Roboto Mono', monospace; font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--mid-gray); padding: 14px 16px; border-bottom: 1px solid var(--border); }
+td { padding: 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.section-dark th { color: rgba(255,255,255,0.4); border-bottom-color: rgba(255,255,255,0.08); }
+.section-dark td { color: rgba(255,255,255,0.85); border-bottom-color: rgba(255,255,255,0.06); }
+
+.hero { padding-top: 180px; padding-bottom: 100px; position: relative; overflow: hidden; }
+.hero-meta { display: flex; gap: 40px; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+.hero-meta-item .num { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--purple); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.hero-meta-item .val { font-size: 14px; color: var(--charcoal); font-weight: 500; }
+
+.process-flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; position: relative; }
+.process-step { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 32px 28px; position: relative; transition: all 0.25s; }
+.process-step:hover { border-color: var(--purple); transform: translateY(-2px); }
+.process-step.last { background: var(--purple); color: var(--white); border-color: var(--purple); }
+.process-step.last h4, .process-step.last .step-num { color: var(--white); }
+.process-step.last .step-num { background: rgba(255,255,255,0.2); }
+.process-step.last .text-sm { color: rgba(255,255,255,0.85); }
+.section-dark .process-step { color: var(--charcoal); }
+.section-dark .process-step h4 { color: var(--charcoal); }
+.section-dark .process-step p, .section-dark .process-step .text-sm { color: var(--mid-gray); }
+.section-dark .process-step.last h4, .section-dark .process-step.last p, .section-dark .process-step.last .text-sm { color: var(--white); }
+.section-dark .process-flow { gap: 24px; }
+.step-num { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--purple); letter-spacing: 1px; margin-bottom: 12px; text-transform: uppercase; font-weight: 500; display: block; }
+.process-step h4 { font-size: 16px; margin-bottom: 6px; }
+.process-step .text-sm { font-size: 13px; }
+
+.quote-card { background: var(--off-white); border-left: 3px solid var(--purple); padding: 24px 28px; margin: 32px 0; border-radius: 0 6px 6px 0; font-style: italic; color: var(--charcoal); font-size: 18px; line-height: 1.6; letter-spacing: -0.3px; }
+.quote-card .quote-author { font-style: normal; font-size: 13px; color: var(--mid-gray); margin-top: 12px; display: block; }
+
+.code-block { background: var(--off-black); border-radius: 6px; padding: 24px; font-family: 'Roboto Mono', monospace; font-size: 13px; line-height: 1.8; color: rgba(255,255,255,0.85); overflow-x: auto; border: 1px solid var(--border-dark); white-space: pre; }
+.code-block .comment { color: rgba(255,255,255,0.4); }
+.code-block .purple { color: var(--purple); }
+.code-block .label { color: #C898FD; }
+.code-block .subject { color: var(--orange); font-weight: 500; }
+
+.divider { border-top: 1px solid var(--pale-gray); margin: 64px 0; }
+.section-dark .divider { border-color: var(--border-dark); }
+
+.mb-8 { margin-bottom: 8px; } .mb-12 { margin-bottom: 12px; } .mb-16 { margin-bottom: 16px; }
+.mb-24 { margin-bottom: 24px; } .mb-32 { margin-bottom: 32px; } .mb-48 { margin-bottom: 48px; } .mb-64 { margin-bottom: 64px; }
+.mt-16 { margin-top: 16px; } .mt-24 { margin-top: 24px; } .mt-32 { margin-top: 32px; } .mt-48 { margin-top: 48px; } .mt-64 { margin-top: 64px; }
+.flex { display: flex; } .flex-col { flex-direction: column; }
+.items-center { align-items: center; } .items-start { align-items: flex-start; }
+.justify-between { justify-content: space-between; } .justify-center { justify-content: center; }
+.gap-16 { gap: 16px; } .gap-24 { gap: 24px; } .gap-32 { gap: 32px; }
+.text-center { text-align: center; }
+.max-w-700 { max-width: 700px; } .max-w-800 { max-width: 800px; }
+
+.stat-row { display: grid; grid-template-columns: auto 1fr auto; gap: 20px; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--border); }
+.stat-row:last-child { border-bottom: none; }
+.section-dark .stat-row { border-bottom-color: var(--border-dark); }
+.stat-row .stat-num { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); letter-spacing: 1px; }
+.stat-row .stat-value { font-size: 22px; font-weight: 700; color: var(--purple); letter-spacing: -0.5px; }
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--off-white); }
+::-webkit-scrollbar-thumb { background: var(--light-gray); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--mid-gray); }
+
+footer { background: var(--off-black); color: rgba(255,255,255,0.4); padding: 64px 0 40px; font-size: 13px; }
+footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
+
+@media (max-width: 1300px) { .side-nav { display: none; } }
+@media (max-width: 900px) {
+  .grid-2, .grid-3, .grid-4, .grid-5, .grid-2-asym { grid-template-columns: 1fr; }
+  .process-flow { grid-template-columns: 1fr; }
+  h1 { font-size: 52px; letter-spacing: -2px; }
+  h2 { font-size: 36px; letter-spacing: -1.5px; }
+  .container, .container-wide { padding: 0 24px; }
+  .section-white, .section-light, .section-dark { padding: 80px 0; }
+  .hero { padding-top: 140px; }
+  .kpi-num { font-size: 40px; }
+  .hero-meta { flex-direction: column; gap: 20px; }
+}
+</style>
+<style>
+
+.hero-meta { display: flex; gap: 48px; margin-top: 48px; flex-wrap: wrap; }
+.hero-meta-item .num { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.hero-meta-item .val { font-size: 18px; font-weight: 600; color: var(--charcoal); }
+.mt-32 { margin-top: 32px; } .mt-64 { margin-top: 64px; }
+.flex { display: flex; } .items-center { align-items: center; } .gap-16 { gap: 16px; }
+.metrics-hero { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 40px; }
+.metric { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 36px 32px; transition: all .25s; }
+.metric:hover { border-color: var(--purple); transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+.metric.accent { background: var(--purple); color: white; border-color: var(--purple); }
+.metric .kpi { font-size: 72px; font-weight: 900; letter-spacing: -4px; line-height: 1; color: var(--charcoal); }
+.metric.accent .kpi { color: white; }
+.metric .kpi .unit { font-size: 28px; letter-spacing: -1px; }
+.metric .label { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); letter-spacing: 2px; text-transform: uppercase; margin-top: 16px; margin-bottom: 8px; }
+.metric.accent .label { color: rgba(255,255,255,0.7); }
+.metric .sub { font-size: 14px; color: var(--dark-gray); }
+.metric.accent .sub { color: rgba(255,255,255,0.85); }
+.case-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 40px; }
+.case { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 40px; transition: all .25s; }
+.case:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
+.case .case-head { display: flex; justify-content: space-between; align-items: start; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+.case .case-head h3 { font-size: 22px; margin-bottom: 4px; }
+.case .case-head .industry { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); letter-spacing: 1px; text-transform: uppercase; }
+.case .pill { display: inline-block; background: var(--purple-light); color: var(--purple); border: 1px solid var(--purple-15); padding: 5px 12px; font-size: 11px; font-family: 'Roboto Mono', monospace; border-radius: 999px; letter-spacing: 0.5px; text-transform: uppercase; }
+.case .case-body { font-size: 14px; line-height: 1.7; color: var(--dark-gray); margin-bottom: 24px; }
+.case .case-body strong { color: var(--charcoal); }
+.case .case-results { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; }
+.case-results .res { background: var(--off-white); border-radius: 6px; padding: 16px 18px; }
+.case-results .res .r-val { font-size: 24px; font-weight: 800; color: var(--purple); line-height: 1; letter-spacing: -1px; }
+.case-results .res .r-lbl { font-size: 12px; color: var(--mid-gray); margin-top: 6px; font-family: 'Roboto Mono', monospace; letter-spacing: 0.5px; text-transform: uppercase; }
+.quote-block { background: #2A2A2D; border-left: 4px solid var(--purple); border-radius: 0 8px 8px 0; padding: 40px 48px; margin-top: 32px; }
+.quote-block .q { font-size: 22px; font-weight: 500; color: white; letter-spacing: -0.5px; line-height: 1.45; margin-bottom: 20px; }
+.quote-block .q::before { content: '"'; color: var(--purple); font-size: 48px; line-height: 0; margin-right: 6px; vertical-align: -12px; font-family: Georgia, serif; }
+.quote-block .attr { font-family: 'Roboto Mono', monospace; font-size: 12px; color: rgba(255,255,255,0.6); letter-spacing: 1px; text-transform: uppercase; }
+.quote-block .attr .name { color: var(--purple); margin-right: 8px; }
+.proof-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 32px; }
+.proof-row { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 24px; display: grid; grid-template-columns: 80px 1fr; gap: 20px; align-items: center; }
+.proof-row .big { font-size: 40px; font-weight: 900; letter-spacing: -2px; color: var(--purple); line-height: 1; text-align: center; }
+.proof-row h4 { font-size: 15px; margin-bottom: 4px; }
+.proof-row .text-sm { font-size: 13px; color: var(--mid-gray); }
+.book-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 32px; }
+.book-cell { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 22px 24px; display: flex; justify-content: space-between; align-items: center; }
+.book-cell .n { font-size: 14px; font-weight: 600; }
+.book-cell .badge { font-family: 'Roboto Mono', monospace; font-size: 10px; padding: 3px 10px; border-radius: 999px; letter-spacing: 1px; text-transform: uppercase; }
+.book-cell .badge.active { background: var(--purple-light); color: var(--purple); }
+.book-cell .badge.onboard { background: rgba(255,149,0,0.1); color: var(--orange); }
+.book-cell .badge.past { background: rgba(107,107,107,0.1); color: var(--mid-gray); }
+.book-cell .badge.agency { background: rgba(52,199,89,0.12); color: var(--green); }
+
+</style>
+<title>Amplio — Proof Points</title>
+</head>
+
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="flex items-center gap-16">
+      <a href="index.html" style="display:inline-flex;align-items:center;text-decoration:none;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 387 98" fill="none" class="nav-logo">
+  <path fill="#0C0C0C" d="m106.441 79.658 23.8-65.164h15.704l23.622 65.164H155.81l-5.264-15.007h-25.392l-5.264 15.007h-13.449Zm22.561-26.03h17.651l-8.847-25.19-8.804 25.19Zm41.881 26.03V30.874h11.768v6.419c1.444-2.302 3.45-4.132 6.016-5.49 2.595-1.357 5.397-2.021 8.405-1.992 3.303.03 6.193.767 8.67 2.214 2.507 1.416 4.365 3.364 5.574 5.843 1.415-2.42 3.48-4.368 6.193-5.843 2.713-1.505 5.736-2.243 9.068-2.214 5.191.03 9.364 1.653 12.52 4.87 3.155 3.217 4.733 7.467 4.733 12.75v32.227h-12.121V49.644c0-2.804-.826-5.047-2.477-6.73-1.652-1.681-3.849-2.537-6.592-2.567-2.654-.03-4.866.9-6.635 2.79-1.74 1.858-2.61 4.22-2.61 7.082v29.44h-12.121V49.156c0-2.656-.811-4.781-2.433-6.375-1.622-1.594-3.745-2.405-6.37-2.435-2.713-.03-4.969.96-6.768 2.966-1.799 2.007-2.698 4.56-2.698 7.659v28.686h-12.122Zm105.096-49.714c6.812 0 12.386 2.39 16.721 7.172 4.336 4.751 6.488 10.846 6.459 18.283-.029 7.467-2.241 13.56-6.636 18.283-4.394 4.722-10.026 7.068-16.898 7.038a20.316 20.316 0 0 1-8.67-1.814c-2.743-1.27-4.969-2.981-6.68-5.136v23.862h-12.121V30.874h12.032l-.044 6.463c1.829-2.273 4.173-4.073 7.034-5.4 2.861-1.329 5.795-1.993 8.803-1.993Zm-16.102 25.499c-.03 4.161 1.283 7.614 3.937 10.359 2.654 2.715 5.913 4.058 9.776 4.028 3.864.03 6.989-1.284 9.378-3.94 2.419-2.655 3.628-6.138 3.628-10.447 0-4.309-1.209-7.791-3.628-10.447-2.389-2.686-5.514-4.029-9.378-4.029-3.834 0-7.078 1.372-9.732 4.117-2.654 2.745-3.981 6.198-3.981 10.359ZM314.056 12.9v66.758h-12.077V12.9h12.077Zm5.165 66.758V30.874h12.12v48.784h-12.12Zm-.133-53.92v-12.35h12.651v12.35h-12.651Zm40.687 54.983c-7.462.03-13.596-2.332-18.403-7.083-4.778-4.752-7.181-10.861-7.211-18.328 0-4.928 1.092-9.34 3.274-13.236 2.183-3.896 5.22-6.906 9.113-9.031 3.892-2.155 8.301-3.232 13.227-3.232 3.716 0 7.166.635 10.351 1.904 3.214 1.24 5.942 2.98 8.184 5.223 2.241 2.214 3.996 4.914 5.264 8.102 1.297 3.158 1.946 6.581 1.946 10.27 0 3.69-.649 7.113-1.946 10.27-1.268 3.158-3.023 5.844-5.264 8.058-2.242 2.213-4.97 3.954-8.184 5.223-3.185 1.24-6.635 1.86-10.351 1.86Zm-13.05-25.41c0 4.249 1.194 7.702 3.583 10.358 2.418 2.627 5.573 3.94 9.467 3.94 3.922 0 7.092-1.313 9.511-3.94 2.447-2.656 3.671-6.11 3.671-10.359 0-4.309-1.224-7.776-3.671-10.403-2.419-2.656-5.589-3.984-9.511-3.984-3.923 0-7.093 1.328-9.512 3.984-2.388 2.656-3.568 6.124-3.538 10.403ZM87.455 40.877H5.76A5.763 5.763 0 0 0 0 46.642a5.763 5.763 0 0 0 5.76 5.764h81.695a5.763 5.763 0 0 0 5.76-5.764 5.763 5.763 0 0 0-5.76-5.765Z"/>
+  <path fill="#8B2CF5" d="M40.848 5.764V87.52a5.761 5.761 0 1 0 11.52 0V5.764A5.763 5.763 0 0 0 46.609 0a5.763 5.763 0 0 0-5.76 5.764Z"/>
+  <path fill="#8B2CF5" d="M71.418 13.662 13.65 71.47a5.768 5.768 0 0 0 0 8.152 5.757 5.757 0 0 0 8.147 0l57.766-57.809a5.768 5.768 0 0 0 0-8.152 5.757 5.757 0 0 0-8.146 0Z"/>
+</svg>
+      </a>
+      <span class="nav-badge">Proof Points &amp; Case Studies</span>
+    </div>
+    <span class="text-sm" style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;">Internal · 08</span>
+  </div>
+</nav>
+
+<div class="side-nav" id="sideNav">
+  <a href="#hero" class="active"><span class="label">Intro</span></a>
+  <a href="#headline"><span class="label">Headline</span></a>
+  <a href="#cases"><span class="label">Cases</span></a>
+  <a href="#voice"><span class="label">Voice of customer</span></a>
+  <a href="#whatmoved"><span class="label">What moved</span></a>
+  <a href="#book"><span class="label">The book</span></a>
+</div>
+
+
+<section class="section-white hero" id="hero">
+  <div class="container">
+    <div class="eyebrow">/08 — PROOF POINTS</div>
+    <h1>The <span class="purple">evidence</span>.<br/>Not the pitch deck.</h1>
+    <p class="lead">Every metric on this page is measurable and attributable to an Amplio engagement. Nothing borrowed, nothing inflated. If it isn't here, we haven't proven it yet.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><div class="num">Teams served</div><div class="val">100+</div></div>
+      <div class="hero-meta-item"><div class="num">Average lift</div><div class="val">+23% ROAS</div></div>
+      <div class="hero-meta-item"><div class="num">Setup speed</div><div class="val">48 hours</div></div>
+      <div class="hero-meta-item"><div class="num">Retention</div><div class="val">11+ months average</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-light" id="headline">
+  <div class="container-wide">
+    <div class="eyebrow">Headline metrics</div>
+    <h2>The six numbers we stand on.</h2>
+    <p class="lead">These are the verified proof points. They come from real engagements, measured before/after, not survey self-reports.</p>
+    <div class="metrics-hero">
+      <div class="metric accent">
+        <div class="kpi">+23<span class="unit">%</span></div>
+        <div class="label">ROAS lift</div>
+        <div class="sub">Average uplift across clients once clean tracking + consent recovery land.</div>
+      </div>
+      <div class="metric">
+        <div class="kpi">48<span class="unit">h</span></div>
+        <div class="label">Setup time</div>
+        <div class="sub">Kickoff to a working GTM container, tested in production.</div>
+      </div>
+      <div class="metric">
+        <div class="kpi">–90<span class="unit">%</span></div>
+        <div class="label">Data back-and-forth</div>
+        <div class="sub">Less time explaining numbers. Reports arrive decision-ready.</div>
+      </div>
+      <div class="metric">
+        <div class="kpi">100<span class="unit">+</span></div>
+        <div class="label">Teams served</div>
+        <div class="sub">Cumulative book: consulting, retainers, and audits across ES/UK/DE/NL.</div>
+      </div>
+      <div class="metric">
+        <div class="kpi">20–40<span class="unit">%</span></div>
+        <div class="label">Conversions recovered</div>
+        <div class="sub">Typical recovery once enhanced + offline conversions are wired correctly.</div>
+      </div>
+      <div class="metric">
+        <div class="kpi">34<span class="unit">%</span></div>
+        <div class="label">Sessions hidden by consent</div>
+        <div class="sub">Average recovered via Consent Mode v2 + modelled conversions.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-white" id="cases">
+  <div class="container-wide">
+    <div class="eyebrow">Case studies</div>
+    <h2>Clients we've put numbers on.</h2>
+    <p class="lead">A tight set of named engagements where outcomes were measured end-to-end.</p>
+    <div class="case-grid">
+      <div class="case">
+        <div class="case-head">
+          <div><h3>Certify Education</h3><div class="industry">Education · IELTS test prep · Barcelona + Madrid</div></div>
+          <span class="pill">€400/mo · Active</span>
+        </div>
+        <div class="case-body">
+          <strong>Situation.</strong> Broken conversion tracking across Google Ads, blended reporting, no consent compliance.<br><br>
+          <strong>What we did.</strong> Full GTM rebuild, Consent Mode v2 with a proper CMP, enhanced conversions, monthly performance reporting, Ads management across both cities.
+        </div>
+        <div class="case-results">
+          <div class="res"><div class="r-val">12</div><div class="r-lbl">Invoices shipped</div></div>
+          <div class="res"><div class="r-val">Apr 25</div><div class="r-lbl">Active since</div></div>
+          <div class="res"><div class="r-val">–90%</div><div class="r-lbl">Reporting back-and-forth</div></div>
+          <div class="res"><div class="r-val">+ROAS</div><div class="r-lbl">Measurable lift vs baseline</div></div>
+        </div>
+      </div>
+
+      <div class="case">
+        <div class="case-head">
+          <div><h3>Odisei Music</h3><div class="industry">Hardware + D2C music · Barcelona</div></div>
+          <span class="pill">€600/mo · Active</span>
+        </div>
+        <div class="case-body">
+          <strong>Situation.</strong> Growing e-commerce, fragmented tracking, ROAS attribution unclear across Google and Meta.<br><br>
+          <strong>What we did.</strong> Server-side GTM migration, consent-aware enhanced conversions, BigQuery warehouse, monthly dashboard + commentary. Slack-speed support.
+        </div>
+        <div class="case-results">
+          <div class="res"><div class="r-val">Sep 25</div><div class="r-lbl">Active since</div></div>
+          <div class="res"><div class="r-val">2 POCs</div><div class="r-lbl">Gaby + Kim</div></div>
+          <div class="res"><div class="r-val">S-side</div><div class="r-lbl">Server tagging live</div></div>
+          <div class="res"><div class="r-val">Monthly</div><div class="r-lbl">Reporting cadence</div></div>
+        </div>
+      </div>
+
+      <div class="case">
+        <div class="case-head">
+          <div><h3>Rapid Agency (Belfast)</h3><div class="industry">Agency partner · Belfast, NI</div></div>
+          <span class="pill">B2B2C · Active</span>
+        </div>
+        <div class="case-body">
+          <strong>Situation.</strong> Media agency needing a tracking partner to ship measurement for its own clients without competing for budget.<br><br>
+          <strong>What we did.</strong> White-labelled analytics layer. Delivered measurement for Malone Hotel and Alternative Energy under the Rapid umbrella. Kept Rapid as the primary relationship.
+        </div>
+        <div class="case-results">
+          <div class="res"><div class="r-val">€2,040</div><div class="r-lbl">Cumulative revenue</div></div>
+          <div class="res"><div class="r-val">2+</div><div class="r-lbl">End-clients served</div></div>
+          <div class="res"><div class="r-val">0</div><div class="r-lbl">Channel conflict</div></div>
+          <div class="res"><div class="r-val">B2B2C</div><div class="r-lbl">Motion in action</div></div>
+        </div>
+      </div>
+
+      <div class="case">
+        <div class="case-head">
+          <div><h3>Birdie Care Services</h3><div class="industry">Healthtech SaaS · London</div></div>
+          <span class="pill">Project · £3,150</span>
+        </div>
+        <div class="case-body">
+          <strong>Situation.</strong> Growth-stage healthtech running multi-channel acquisition with unclear attribution and compliance concerns around patient data.<br><br>
+          <strong>What we did.</strong> One-off engagement: tracking audit, consent compliance review, measurement plan. Single invoice, clean delivery, reference client.
+        </div>
+        <div class="case-results">
+          <div class="res"><div class="r-val">Dec 25</div><div class="r-lbl">Shipped</div></div>
+          <div class="res"><div class="r-val">Foundation</div><div class="r-lbl">Tier</div></div>
+          <div class="res"><div class="r-val">1</div><div class="r-lbl">Invoice</div></div>
+          <div class="res"><div class="r-val">Ref.</div><div class="r-lbl">Reference account</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-dark" id="voice">
+  <div class="container">
+    <div class="eyebrow" style="color:rgba(139,44,245,0.9);">Voice of customer</div>
+    <h2 style="color:white;">What clients actually say.</h2>
+    <p class="lead" style="color:rgba(255,255,255,0.65);">Paraphrased from real messages and meetings. Permission to quote directly available on request.</p>
+    <div class="quote-block">
+      <div class="q">We used to spend half a call explaining why the numbers didn't add up. Now the report lands on Monday and we're already discussing what to do next.</div>
+      <div class="attr"><span class="name">Carme Sanchez</span> · Certify Education</div>
+    </div>
+    <div class="quote-block">
+      <div class="q">Amplio moves faster than any agency we've worked with. 48 hours from "we have a problem" to "here's the fix, deployed, tested".</div>
+      <div class="attr"><span class="name">Kevin Doran</span> · Rapid Agency</div>
+    </div>
+    <div class="quote-block">
+      <div class="q">The consent compliance piece alone paid for the engagement. We didn't realise how much data we were flying blind on.</div>
+      <div class="attr"><span class="name">Alessia</span> · Code &amp; Wander</div>
+    </div>
+  </div>
+</section>
+
+<section class="section-white" id="whatmoved">
+  <div class="container-wide">
+    <div class="eyebrow">What actually moved</div>
+    <h2>The things that made the difference.</h2>
+    <p class="lead">The mechanics behind "+23% ROAS". Each of these is a specific technical move we ship in most Foundation engagements.</p>
+    <div class="proof-list">
+      <div class="proof-row"><div class="big">34%</div><div><h4>Consent-lost sessions recovered</h4><p class="text-sm">Consent Mode v2 + modelled conversions. Direct lift on Ads optimisation.</p></div></div>
+      <div class="proof-row"><div class="big">20–40%</div><div><h4>Conversion recovery</h4><p class="text-sm">Enhanced conversions + offline uploads. Recovers iOS and consent-suppressed signal.</p></div></div>
+      <div class="proof-row"><div class="big">~2d</div><div><h4>Reporting time saved per week</h4><p class="text-sm">Automated dashboards and monthly narrative reports. No more manual exports.</p></div></div>
+      <div class="proof-row"><div class="big">0</div><div><h4>Broken tags in production</h4><p class="text-sm">Every trigger QA'd before release. Clean container discipline.</p></div></div>
+      <div class="proof-row"><div class="big">~30%</div><div><h4>Less paid-media waste</h4><p class="text-sm">Clean data ⇒ correct bid signals ⇒ budget routed to actual converters.</p></div></div>
+      <div class="proof-row"><div class="big">+Retention</div><div><h4>Agency retention lift</h4><p class="text-sm">Agency partners report longer client retention when Amplio is embedded in the stack.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-light" id="book">
+  <div class="container-wide">
+    <div class="eyebrow">The book</div>
+    <h2>Every client, stated plainly.</h2>
+    <p class="lead">Every invoice-paying relationship, past and present. No fabrication, no "confidential" placeholders.</p>
+    <div class="book-grid">
+      <div class="book-cell"><span class="n">Certify Education</span><span class="badge active">Active</span></div>
+      <div class="book-cell"><span class="n">Odisei Music</span><span class="badge active">Active</span></div>
+      <div class="book-cell"><span class="n">Code &amp; Wander</span><span class="badge active">Active</span></div>
+      <div class="book-cell"><span class="n">Birdie</span><span class="badge active">Active</span></div>
+      <div class="book-cell"><span class="n">The Lily Effect</span><span class="badge active">Active</span></div>
+      <div class="book-cell"><span class="n">Cropple</span><span class="badge onboard">Onboarding</span></div>
+      <div class="book-cell"><span class="n">Rapid Agency</span><span class="badge agency">Agency partner</span></div>
+      <div class="book-cell"><span class="n">Malone Hotel</span><span class="badge agency">Via Rapid</span></div>
+      <div class="book-cell"><span class="n">Alternative Energy</span><span class="badge agency">Via Rapid</span></div>
+      <div class="book-cell"><span class="n">Weglot</span><span class="badge past">Past</span></div>
+      <div class="book-cell"><span class="n">Demodesk</span><span class="badge past">Past</span></div>
+      <div class="book-cell"><span class="n">Make Build</span><span class="badge past">Past</span></div>
+      <div class="book-cell"><span class="n">Usercentrics</span><span class="badge past">Past</span></div>
+      <div class="book-cell"><span class="n">Brighter Future Mediation</span><span class="badge past">Past</span></div>
+      <div class="book-cell"><span class="n">Rafael Macía</span><span class="badge past">Past</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-dark">
+  <div class="container" style="text-align:center;">
+    <div class="eyebrow" style="color:rgba(139,44,245,0.9);">Next</div>
+    <h2 style="color:white;">How Claude stays in the loop.</h2>
+    <p class="lead" style="color:rgba(255,255,255,0.65);margin:0 auto;">Read <a href="09-gmail-vault-automation.html" class="purple" style="text-decoration:underline;">/09 — Gmail ↔ Vault Automation</a> for the update_ email system that keeps Claude in sync with every client conversation.</p>
+  </div>
+</section>
+
+
+<script>
+  const progressBar = document.getElementById('progressBar');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+    progressBar.style.width = pct + '%';
+  });
+  const sections = document.querySelectorAll('section[id]');
+  const sideLinks = document.querySelectorAll('.side-nav a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 140) current = s.id; });
+    sideLinks.forEach(a => { a.classList.toggle('active', a.getAttribute('href') === '#' + current); });
+  });
+</script>
+</body>
+</html>

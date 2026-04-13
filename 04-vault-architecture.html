@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amplio Data — The Vault Architecture</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* AMPLIO PRESENTATION SYSTEM — shared stylesheet for onboarding suite */
+:root {
+  --charcoal: #131313; --off-black: #0C0C0C;
+  --white: #FFFFFF; --off-white: #F5F5F5; --warm-white: #FAFAFA;
+  --purple: #8B2CF5; --purple-dark: #6B22C4;
+  --purple-light: rgba(139,44,245,0.08); --purple-15: rgba(139,44,245,0.15); --purple-30: rgba(139,44,245,0.3);
+  --dark-gray: #3A3A3A; --mid-gray: #6B6B6B; --light-gray: #D3D3D3; --pale-gray: #E8E8E8;
+  --border: rgba(0,0,0,0.08); --border-dark: rgba(255,255,255,0.08);
+  --red: #DE362A; --orange: #FF9500; --green: #34C759;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-purple: 0 4px 20px rgba(139,44,245,0.3);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body { font-family: 'Satoshi', -apple-system, sans-serif; font-size: 16px; font-weight: 400; letter-spacing: -0.2px; line-height: 1.6; color: var(--charcoal); background: var(--white); -webkit-font-smoothing: antialiased; }
+
+.progress-bar { position: fixed; top: 0; left: 0; height: 2px; background: var(--purple); z-index: 200; width: 0%; transition: width 0.1s linear; }
+
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(255,255,255,0.92); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 14px 0; }
+.nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 40px; display: flex; align-items: center; justify-content: space-between; }
+.nav-logo { height: 24px; width: auto; }
+.nav-badge { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); text-transform: uppercase; letter-spacing: 1px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px; }
+
+.side-nav { position: fixed; left: 40px; top: 50%; transform: translateY(-50%); z-index: 50; display: flex; flex-direction: column; gap: 6px; }
+.side-nav a { display: flex; align-items: center; gap: 12px; font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); text-decoration: none; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; transition: all 0.2s; padding: 6px 0; }
+.side-nav a::before { content: ''; display: inline-block; width: 20px; height: 1px; background: var(--mid-gray); transition: all 0.2s; }
+.side-nav a:hover, .side-nav a.active { color: var(--purple); opacity: 1; }
+.side-nav a.active::before, .side-nav a:hover::before { width: 40px; background: var(--purple); }
+.side-nav a .label { white-space: nowrap; }
+
+.container { max-width: 1080px; margin: 0 auto; padding: 0 40px; }
+.container-wide { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+
+.section-white { background: var(--white); color: var(--charcoal); padding: 120px 0; }
+.section-light { background: var(--off-white); color: var(--charcoal); padding: 120px 0; }
+.section-dark { background: #1C1C1E; color: var(--white); padding: 140px 0; }
+.section-dark h2, .section-dark h3, .section-dark h4 { color: var(--white); }
+.section-dark .lead { color: rgba(255,255,255,0.6); }
+.section-dark .text-sm { color: rgba(255,255,255,0.5); }
+.section-dark .eyebrow { color: rgba(139,44,245,0.9); }
+
+h1 { font-size: 88px; font-weight: 700; letter-spacing: -4px; line-height: 0.95; margin-bottom: 32px; }
+h2 { font-size: 48px; font-weight: 700; letter-spacing: -2px; line-height: 1.05; margin-bottom: 24px; }
+h3 { font-size: 24px; font-weight: 700; letter-spacing: -0.8px; line-height: 1.25; margin-bottom: 14px; }
+h4 { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; line-height: 1.35; margin-bottom: 8px; }
+.lead { font-size: 22px; font-weight: 400; line-height: 1.55; color: var(--mid-gray); max-width: 720px; letter-spacing: -0.3px; }
+.text-sm { font-size: 14px; line-height: 1.6; color: var(--mid-gray); }
+.text-xs { font-size: 11px; line-height: 1.4; }
+.eyebrow { font-family: 'Roboto Mono', monospace; font-size: 12px; font-weight: 500; color: var(--purple); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 24px; display: inline-block; }
+.number-label { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); letter-spacing: 1px; text-transform: uppercase; }
+.purple { color: var(--purple); }
+.bold { font-weight: 700; }
+.italic { font-style: italic; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.grid-2-asym { display: grid; grid-template-columns: 1fr 1.4fr; gap: 60px; align-items: start; }
+
+.card { background: var(--white); border-radius: 6px; padding: 28px; border: 1px solid var(--border); transition: all 0.25s ease; }
+.card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.card-flat { background: var(--white); border-radius: 6px; padding: 28px; border: 1px solid var(--border); }
+.card-light { background: var(--off-white); border-radius: 6px; padding: 24px; border: 1px solid var(--border); }
+.card-dark { background: #2A2A2D; border-radius: 8px; padding: 40px; border: 1px solid rgba(255,255,255,0.08); }
+.card-dark h3, .card-dark h4 { color: var(--white); }
+.card-dark p, .card-dark .text-sm { color: rgba(255,255,255,0.65); }
+.card-dark code { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); padding: 2px 6px; border-radius: 3px; font-family: 'Roboto Mono', monospace; font-size: 12px; }
+.card-purple { background: var(--purple); border-radius: 6px; padding: 28px; color: var(--white); box-shadow: var(--shadow-purple); }
+.card-purple h3, .card-purple h4 { color: var(--white); }
+.card-outlined { background: transparent; border: 1px solid var(--border); border-radius: 6px; padding: 28px; }
+
+.badge { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 26px; border-radius: 4px; background: var(--purple); color: var(--white); font-family: 'Roboto Mono', monospace; font-size: 11px; font-weight: 500; padding: 0 8px; letter-spacing: 0.5px; }
+.badge-ghost { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 26px; border-radius: 4px; background: var(--purple-light); color: var(--purple); font-family: 'Roboto Mono', monospace; font-size: 11px; font-weight: 500; padding: 0 10px; letter-spacing: 0.5px; border: 1px solid var(--purple-15); }
+.pill { display: inline-flex; align-items: center; background: var(--purple-light); border: 1px solid var(--purple-15); border-radius: 999px; padding: 5px 14px; font-size: 12px; font-weight: 500; color: var(--purple); letter-spacing: 0; }
+.pill-dark { display: inline-flex; align-items: center; background: rgba(139,44,245,0.15); border: 1px solid rgba(139,44,245,0.25); border-radius: 999px; padding: 5px 14px; font-size: 12px; font-weight: 500; color: #C898FD; }
+
+.kpi-num { font-size: 56px; font-weight: 900; letter-spacing: -3px; line-height: 1; color: var(--purple); margin-bottom: 8px; }
+.kpi-label { font-size: 13px; font-weight: 500; color: var(--mid-gray); }
+.section-dark .kpi-label { color: rgba(255,255,255,0.5); }
+
+.timeline { border-left: 2px solid var(--purple); margin-left: 16px; padding-left: 32px; position: relative; }
+.tl-item { position: relative; padding-bottom: 32px; }
+.tl-item:last-child { padding-bottom: 0; }
+.tl-item::before { content: ''; position: absolute; left: -39px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--purple); box-shadow: 0 0 0 4px var(--white); }
+.section-dark .tl-item::before { box-shadow: 0 0 0 4px #1C1C1E; }
+.tl-item h4 { margin-bottom: 6px; }
+.tl-day { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--purple); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font-family: 'Roboto Mono', monospace; font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--mid-gray); padding: 14px 16px; border-bottom: 1px solid var(--border); }
+td { padding: 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.section-dark th { color: rgba(255,255,255,0.4); border-bottom-color: rgba(255,255,255,0.08); }
+.section-dark td { color: rgba(255,255,255,0.85); border-bottom-color: rgba(255,255,255,0.06); }
+
+.hero { padding-top: 180px; padding-bottom: 100px; position: relative; overflow: hidden; }
+.hero-meta { display: flex; gap: 40px; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+.hero-meta-item .num { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--purple); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.hero-meta-item .val { font-size: 14px; color: var(--charcoal); font-weight: 500; }
+
+.process-flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; position: relative; }
+.process-step { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 32px 28px; position: relative; transition: all 0.25s; }
+.process-step:hover { border-color: var(--purple); transform: translateY(-2px); }
+.process-step.last { background: var(--purple); color: var(--white); border-color: var(--purple); }
+.process-step.last h4, .process-step.last .step-num { color: var(--white); }
+.process-step.last .step-num { background: rgba(255,255,255,0.2); }
+.process-step.last .text-sm { color: rgba(255,255,255,0.85); }
+.section-dark .process-step { color: var(--charcoal); }
+.section-dark .process-step h4 { color: var(--charcoal); }
+.section-dark .process-step p, .section-dark .process-step .text-sm { color: var(--mid-gray); }
+.section-dark .process-step.last h4, .section-dark .process-step.last p, .section-dark .process-step.last .text-sm { color: var(--white); }
+.section-dark .process-flow { gap: 24px; }
+.step-num { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--purple); letter-spacing: 1px; margin-bottom: 12px; text-transform: uppercase; font-weight: 500; display: block; }
+.process-step h4 { font-size: 16px; margin-bottom: 6px; }
+.process-step .text-sm { font-size: 13px; }
+
+.quote-card { background: var(--off-white); border-left: 3px solid var(--purple); padding: 24px 28px; margin: 32px 0; border-radius: 0 6px 6px 0; font-style: italic; color: var(--charcoal); font-size: 18px; line-height: 1.6; letter-spacing: -0.3px; }
+.quote-card .quote-author { font-style: normal; font-size: 13px; color: var(--mid-gray); margin-top: 12px; display: block; }
+
+.code-block { background: var(--off-black); border-radius: 6px; padding: 24px; font-family: 'Roboto Mono', monospace; font-size: 13px; line-height: 1.8; color: rgba(255,255,255,0.85); overflow-x: auto; border: 1px solid var(--border-dark); white-space: pre; }
+.code-block .comment { color: rgba(255,255,255,0.4); }
+.code-block .purple { color: var(--purple); }
+.code-block .label { color: #C898FD; }
+.code-block .subject { color: var(--orange); font-weight: 500; }
+
+.divider { border-top: 1px solid var(--pale-gray); margin: 64px 0; }
+.section-dark .divider { border-color: var(--border-dark); }
+
+.mb-8 { margin-bottom: 8px; } .mb-12 { margin-bottom: 12px; } .mb-16 { margin-bottom: 16px; }
+.mb-24 { margin-bottom: 24px; } .mb-32 { margin-bottom: 32px; } .mb-48 { margin-bottom: 48px; } .mb-64 { margin-bottom: 64px; }
+.mt-16 { margin-top: 16px; } .mt-24 { margin-top: 24px; } .mt-32 { margin-top: 32px; } .mt-48 { margin-top: 48px; } .mt-64 { margin-top: 64px; }
+.flex { display: flex; } .flex-col { flex-direction: column; }
+.items-center { align-items: center; } .items-start { align-items: flex-start; }
+.justify-between { justify-content: space-between; } .justify-center { justify-content: center; }
+.gap-16 { gap: 16px; } .gap-24 { gap: 24px; } .gap-32 { gap: 32px; }
+.text-center { text-align: center; }
+.max-w-700 { max-width: 700px; } .max-w-800 { max-width: 800px; }
+
+.stat-row { display: grid; grid-template-columns: auto 1fr auto; gap: 20px; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--border); }
+.stat-row:last-child { border-bottom: none; }
+.section-dark .stat-row { border-bottom-color: var(--border-dark); }
+.stat-row .stat-num { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); letter-spacing: 1px; }
+.stat-row .stat-value { font-size: 22px; font-weight: 700; color: var(--purple); letter-spacing: -0.5px; }
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--off-white); }
+::-webkit-scrollbar-thumb { background: var(--light-gray); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--mid-gray); }
+
+footer { background: var(--off-black); color: rgba(255,255,255,0.4); padding: 64px 0 40px; font-size: 13px; }
+footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
+
+@media (max-width: 1300px) { .side-nav { display: none; } }
+@media (max-width: 900px) {
+  .grid-2, .grid-3, .grid-4, .grid-5, .grid-2-asym { grid-template-columns: 1fr; }
+  .process-flow { grid-template-columns: 1fr; }
+  h1 { font-size: 52px; letter-spacing: -2px; }
+  h2 { font-size: 36px; letter-spacing: -1.5px; }
+  .container, .container-wide { padding: 0 24px; }
+  .section-white, .section-light, .section-dark { padding: 80px 0; }
+  .hero { padding-top: 140px; }
+  .kpi-num { font-size: 40px; }
+  .hero-meta { flex-direction: column; gap: 20px; }
+}
+
+/* ------- PAGE-SPECIFIC ADDITIONS ------- */
+/* Three-layer stack */
+.layer-stack { display: flex; flex-direction: column; gap: 20px; margin-top: 32px; position: relative; }
+.layer { display: grid; grid-template-columns: 140px 1fr auto; gap: 32px; align-items: center; border-radius: 8px; padding: 28px 32px; position: relative; transition: all .25s; }
+.layer:hover { transform: translateX(4px); }
+.layer .ln { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); letter-spacing: 2px; text-transform: uppercase; }
+.layer .ln .big { display: block; font-size: 48px; font-weight: 900; color: var(--charcoal); letter-spacing: -2px; line-height: 1; margin-top: 6px; }
+.layer .info h3 { margin-bottom: 4px; }
+.layer .info .path { font-family: 'Roboto Mono', monospace; font-size: 12px; color: var(--purple); background: var(--purple-light); padding: 3px 8px; border-radius: 4px; display: inline-block; margin-top: 6px; }
+.layer .info p { font-size: 14px; color: var(--mid-gray); margin-top: 10px; max-width: 560px; }
+.layer .quality { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); letter-spacing: 1px; text-transform: uppercase; text-align: right; }
+.layer .quality .q { color: var(--charcoal); font-weight: 700; display: block; font-size: 13px; margin-top: 4px; }
+.layer.l1 { background: var(--off-white); border: 1px solid var(--border); }
+.layer.l2 { background: var(--warm-white); border: 1px solid var(--purple-15); }
+.layer.l2 .ln .big { color: var(--purple); }
+.layer.l3 { background: var(--charcoal); color: var(--white); }
+.layer.l3 .ln, .layer.l3 .quality { color: rgba(255,255,255,0.5); }
+.layer.l3 .ln .big, .layer.l3 .quality .q { color: var(--white); }
+.layer.l3 .info h3 { color: var(--white); }
+.layer.l3 .info p { color: rgba(255,255,255,0.65); }
+.layer.l3 .info .path { background: rgba(139,44,245,0.2); color: #C898FD; }
+.layer-arrow { height: 40px; display: flex; align-items: center; justify-content: center; color: var(--purple); font-size: 24px; }
+
+/* Folder tree */
+.tree { font-family: 'Roboto Mono', monospace; font-size: 13px; line-height: 2; }
+.tree .row { display: grid; grid-template-columns: 340px 1fr; gap: 32px; padding: 8px 16px; border-radius: 4px; align-items: center; transition: background .15s; }
+.tree .row:hover { background: var(--purple-light); }
+.tree .row .name { color: var(--charcoal); }
+.tree .row .dim { color: var(--mid-gray); }
+.tree .row .note { font-family: 'Satoshi', sans-serif; font-size: 13px; color: var(--mid-gray); letter-spacing: -0.1px; }
+.tree .row .tag { display: inline-block; font-family: 'Roboto Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; padding: 2px 8px; border-radius: 3px; margin-left: 8px; font-weight: 500; }
+.tree .row .tag-l1 { background: rgba(222,54,42,0.08); color: var(--red); }
+.tree .row .tag-l2 { background: var(--purple-light); color: var(--purple); }
+.tree .row .tag-l3 { background: rgba(52,199,89,0.12); color: var(--green); }
+
+/* Routing visual */
+.route-grid { display: grid; grid-template-columns: 1.2fr 100px 1fr; gap: 24px; align-items: center; }
+.route-col h4 { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; font-weight: 500; }
+.route-item { background: var(--white); border: 1px solid var(--border); border-radius: 6px; padding: 14px 18px; margin-bottom: 10px; font-size: 14px; }
+.route-item .label { font-family: 'Roboto Mono', monospace; font-size: 10px; color: var(--mid-gray); letter-spacing: 1px; text-transform: uppercase; display: block; margin-bottom: 4px; }
+.route-dest { background: var(--off-white); border: 1px solid var(--purple-15); border-radius: 6px; padding: 14px 18px; margin-bottom: 10px; font-family: 'Roboto Mono', monospace; font-size: 13px; color: var(--purple); }
+.route-arrows { display: flex; flex-direction: column; gap: 20px; font-size: 18px; color: var(--purple); align-items: center; }
+
+/* Note anatomy */
+.note-doc { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 48px; box-shadow: var(--shadow-md); font-family: 'Satoshi', sans-serif; max-width: 700px; margin: 0 auto; position: relative; }
+.note-doc .frontmatter { background: var(--off-white); border-left: 3px solid var(--purple); padding: 16px 20px; font-family: 'Roboto Mono', monospace; font-size: 12px; color: var(--dark-gray); line-height: 1.8; margin-bottom: 24px; border-radius: 0 4px 4px 0; }
+.note-doc .frontmatter .k { color: var(--purple); }
+.note-doc .summary { font-style: italic; color: var(--mid-gray); font-size: 15px; padding: 8px 0 20px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+.note-doc h2.note-title { font-size: 32px; letter-spacing: -1px; margin-bottom: 4px; }
+.note-doc p { font-size: 15px; line-height: 1.7; margin-bottom: 16px; color: var(--dark-gray); }
+.note-doc .wiki { color: var(--purple); font-weight: 500; border-bottom: 1px dashed var(--purple-30); }
+.note-doc h3.related { font-size: 14px; font-family: 'Roboto Mono', monospace; letter-spacing: 1px; text-transform: uppercase; color: var(--mid-gray); margin-top: 28px; margin-bottom: 12px; font-weight: 500; }
+.note-doc ul.related-list { list-style: none; padding: 0; }
+.note-doc ul.related-list li { font-size: 14px; line-height: 1.9; }
+
+.callout { position: absolute; font-family: 'Roboto Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--purple); background: var(--white); padding: 4px 10px; border: 1px solid var(--purple); border-radius: 999px; white-space: nowrap; }
+.callout::before { content: ''; position: absolute; top: 50%; transform: translateY(-50%); width: 24px; height: 1px; background: var(--purple); }
+.callout.left { right: calc(100% + 24px); }
+.callout.left::before { left: 100%; }
+.callout.right { left: calc(100% + 24px); }
+.callout.right::before { right: 100%; }
+
+/* Hubs graph */
+.hubs-svg { width: 100%; height: auto; max-width: 900px; margin: 0 auto; display: block; }
+.hubs-svg text { font-family: 'Satoshi', sans-serif; font-size: 13px; font-weight: 600; fill: var(--charcoal); }
+.hubs-svg .hub-center text { fill: var(--white); font-size: 14px; font-weight: 700; }
+.hubs-svg .hub-center circle { fill: var(--purple); }
+.hubs-svg .hub circle { fill: var(--white); stroke: var(--purple); stroke-width: 2; }
+.hubs-svg line { stroke: var(--purple); stroke-width: 1; opacity: 0.3; }
+.hubs-svg .mono { font-family: 'Roboto Mono', monospace; font-size: 10px; fill: var(--mid-gray); letter-spacing: 1px; text-transform: uppercase; }
+
+/* Rules */
+.rules-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.rules-grid .rule { background: var(--dark-gray); border: 1px solid var(--border-dark); border-radius: 6px; padding: 18px 20px; }
+.rules-grid .rule .num { font-family: 'Roboto Mono', monospace; font-size: 10px; color: var(--purple); letter-spacing: 2px; margin-bottom: 6px; }
+.rules-grid .rule h4 { font-size: 14px; color: var(--white); margin-bottom: 6px; }
+.rules-grid .rule p { font-size: 12px; color: rgba(255,255,255,0.55); line-height: 1.5; }
+
+/* Provenance */
+.provenance { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.prov-card { border: 1px solid var(--border); border-radius: 6px; padding: 22px; }
+.prov-card.human { border-left: 3px solid var(--charcoal); background: var(--white); }
+.prov-card.ai { border-left: 3px solid var(--purple); background: var(--purple-light); }
+.prov-card .tag { font-family: 'Roboto Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; font-weight: 500; }
+.prov-card.human .tag { color: var(--charcoal); }
+.prov-card.ai .tag { color: var(--purple); }
+.prov-card code { font-family: 'Roboto Mono', monospace; font-size: 12px; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 3px; color: var(--charcoal); }
+.prov-card.ai code { background: rgba(255,255,255,0.5); }
+
+/* CMD table styling */
+.cmd-table td:first-child { width: 36%; }
+.cmd-table td code { font-family: 'Roboto Mono', monospace; font-size: 13px; color: var(--purple); font-weight: 500; }
+
+@media (max-width: 900px) {
+  .rules-grid, .provenance { grid-template-columns: 1fr; }
+  .layer { grid-template-columns: 1fr; gap: 16px; padding: 24px; }
+  .layer .quality { text-align: left; }
+  .tree .row { grid-template-columns: 1fr; gap: 4px; }
+  .route-grid { grid-template-columns: 1fr; }
+  .route-arrows { flex-direction: row; justify-content: center; margin: 12px 0; }
+  .note-doc { padding: 28px; }
+  .callout { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="flex items-center gap-16">
+      <a href="index.html" style="display:inline-flex;align-items:center;text-decoration:none;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 387 98" fill="none" class="nav-logo">
+          <path fill="#0C0C0C" d="m106.441 79.658 23.8-65.164h15.704l23.622 65.164H155.81l-5.264-15.007h-25.392l-5.264 15.007h-13.449Zm22.561-26.03h17.651l-8.847-25.19-8.804 25.19Zm41.881 26.03V30.874h11.768v6.419c1.444-2.302 3.45-4.132 6.016-5.49 2.595-1.357 5.397-2.021 8.405-1.992 3.303.03 6.193.767 8.67 2.214 2.507 1.416 4.365 3.364 5.574 5.843 1.415-2.42 3.48-4.368 6.193-5.843 2.713-1.505 5.736-2.243 9.068-2.214 5.191.03 9.364 1.653 12.52 4.87 3.155 3.217 4.733 7.467 4.733 12.75v32.227h-12.121V49.644c0-2.804-.826-5.047-2.477-6.73-1.652-1.681-3.849-2.537-6.592-2.567-2.654-.03-4.866.9-6.635 2.79-1.74 1.858-2.61 4.22-2.61 7.082v29.44h-12.121V49.156c0-2.656-.811-4.781-2.433-6.375-1.622-1.594-3.745-2.405-6.37-2.435-2.713-.03-4.969.96-6.768 2.966-1.799 2.007-2.698 4.56-2.698 7.659v28.686h-12.122Zm105.096-49.714c6.812 0 12.386 2.39 16.721 7.172 4.336 4.751 6.488 10.846 6.459 18.283-.029 7.467-2.241 13.56-6.636 18.283-4.394 4.722-10.026 7.068-16.898 7.038a20.316 20.316 0 0 1-8.67-1.814c-2.743-1.27-4.969-2.981-6.68-5.136v23.862h-12.121V30.874h12.032l-.044 6.463c1.829-2.273 4.173-4.073 7.034-5.4 2.861-1.329 5.795-1.993 8.803-1.993Zm-16.102 25.499c-.03 4.161 1.283 7.614 3.937 10.359 2.654 2.715 5.913 4.058 9.776 4.028 3.864.03 6.989-1.284 9.378-3.94 2.419-2.655 3.628-6.138 3.628-10.447 0-4.309-1.209-7.791-3.628-10.447-2.389-2.686-5.514-4.029-9.378-4.029-3.834 0-7.078 1.372-9.732 4.117-2.654 2.745-3.981 6.198-3.981 10.359ZM314.056 12.9v66.758h-12.077V12.9h12.077Zm5.165 66.758V30.874h12.12v48.784h-12.12Zm-.133-53.92v-12.35h12.651v12.35h-12.651Zm40.687 54.983c-7.462.03-13.596-2.332-18.403-7.083-4.778-4.752-7.181-10.861-7.211-18.328 0-4.928 1.092-9.34 3.274-13.236 2.183-3.896 5.22-6.906 9.113-9.031 3.892-2.155 8.301-3.232 13.227-3.232 3.716 0 7.166.635 10.351 1.904 3.214 1.24 5.942 2.98 8.184 5.223 2.241 2.214 3.996 4.914 5.264 8.102 1.297 3.158 1.946 6.581 1.946 10.27 0 3.69-.649 7.113-1.946 10.27-1.268 3.158-3.023 5.844-5.264 8.058-2.242 2.213-4.97 3.954-8.184 5.223-3.185 1.24-6.635 1.86-10.351 1.86Zm-13.05-25.41c0 4.249 1.194 7.702 3.583 10.358 2.418 2.627 5.573 3.94 9.467 3.94 3.922 0 7.092-1.313 9.511-3.94 2.447-2.656 3.671-6.11 3.671-10.359 0-4.309-1.224-7.776-3.671-10.403-2.419-2.656-5.589-3.984-9.511-3.984-3.923 0-7.093 1.328-9.512 3.984-2.388 2.656-3.568 6.124-3.538 10.403ZM87.455 40.877H5.76A5.763 5.763 0 0 0 0 46.642a5.763 5.763 0 0 0 5.76 5.764h81.695a5.763 5.763 0 0 0 5.76-5.764 5.763 5.763 0 0 0-5.76-5.765Z"/>
+          <path fill="#8B2CF5" d="M40.848 5.764V87.52a5.761 5.761 0 1 0 11.52 0V5.764A5.763 5.763 0 0 0 46.609 0a5.763 5.763 0 0 0-5.76 5.764Z"/>
+          <path fill="#8B2CF5" d="M71.418 13.662 13.65 71.47a5.768 5.768 0 0 0 0 8.152 5.757 5.757 0 0 0 8.147 0l57.766-57.809a5.768 5.768 0 0 0 0-8.152 5.757 5.757 0 0 0-8.146 0Z"/>
+        </svg>
+      </a>
+      <span class="nav-badge">The Vault Architecture</span>
+    </div>
+    <span class="text-sm" style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;">Internal · 04</span>
+  </div>
+</nav>
+
+<div class="side-nav" id="sideNav">
+  <a href="#hero" class="active"><span class="label">Intro</span></a>
+  <a href="#layers"><span class="label">3 Layers</span></a>
+  <a href="#tree"><span class="label">Folder tree</span></a>
+  <a href="#routing"><span class="label">Routing</span></a>
+  <a href="#anatomy"><span class="label">Note anatomy</span></a>
+  <a href="#loop"><span class="label">Autoresearch</span></a>
+  <a href="#hubs"><span class="label">Hub graph</span></a>
+  <a href="#provenance"><span class="label">Provenance</span></a>
+  <a href="#commands"><span class="label">Commands</span></a>
+  <a href="#rules"><span class="label">Rules</span></a>
+</div>
+
+<!-- HERO -->
+<section class="section-white hero" id="hero">
+  <div class="container">
+    <div class="eyebrow">/04 — VAULT ARCHITECTURE</div>
+    <h1>The <span class="purple">Vault</span>.<br/>One brain. Three layers.</h1>
+    <p class="lead">A version-controlled Second Brain for the whole company. Built on the Karpathy LLM-wiki pattern — raw sources compile into a structured wiki, governed by a schema. Claude reads it, writes to it, and keeps it alive.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><div class="num">Pattern</div><div class="val">Karpathy three-layer LLM wiki</div></div>
+      <div class="hero-meta-item"><div class="num">Structure</div><div class="val">IPARAG + Client Spaces</div></div>
+      <div class="hero-meta-item"><div class="num">Schema</div><div class="val">CLAUDE.md &amp; program.md</div></div>
+      <div class="hero-meta-item"><div class="num">Agent</div><div class="val">Claude, bidirectional commands</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- THREE LAYERS -->
+<section class="section-light" id="layers">
+  <div class="container">
+    <div class="grid-2-asym mb-48">
+      <div>
+        <div class="eyebrow">/01 — THE STACK</div>
+        <h2>Raw &rarr; Wiki &rarr; <span class="purple">Schema</span>.</h2>
+      </div>
+      <div>
+        <p class="lead">Three layers, each with a distinct job. Raw is immutable ground truth. The Wiki is compiled, structured, interlinked. The Schema is the rule-book that governs how both behave — which is what you're reading right now.</p>
+      </div>
+    </div>
+
+    <div class="layer-stack">
+      <div class="layer l1">
+        <div class="ln">Layer<span class="big">01</span></div>
+        <div class="info">
+          <h3>Raw Sources</h3>
+          <span class="path">00-Inbox/raw/</span>
+          <p>Articles, PDFs, transcripts, web clips, brain-dumps. Immutable after capture — never edited. The ground truth every compiled note is traceable back to.</p>
+        </div>
+        <div class="quality">Quality<span class="q">Immutable · Cited</span></div>
+      </div>
+      <div class="layer-arrow">↓</div>
+
+      <div class="layer l2">
+        <div class="ln">Layer<span class="big">02</span></div>
+        <div class="info">
+          <h3>The Wiki</h3>
+          <span class="path">05-Galaxy/ · 03-Resources/</span>
+          <p>Atomic Galaxy notes — one idea, ≤300 words, one-line summary, ≥1 wikilink. Plus Resources: playbooks, templates, brand, skills. This is where work gets done.</p>
+        </div>
+        <div class="quality">Quality<span class="q">Compiled · Interlinked</span></div>
+      </div>
+      <div class="layer-arrow">↓</div>
+
+      <div class="layer l3">
+        <div class="ln">Layer<span class="big">03</span></div>
+        <div class="info">
+          <h3>The Schema</h3>
+          <span class="path">CLAUDE.md · program.md</span>
+          <p>The rules. Routing, behaviour, priorities, commands, priorities for the autoresearch loop. Every session reads this first, so the Vault behaves consistently.</p>
+        </div>
+        <div class="quality">Quality<span class="q">Authoritative · Versioned</span></div>
+      </div>
+    </div>
+
+    <div class="quote-card mt-48">
+      Raw sources get <em>compiled</em> into structured Galaxy notes and Resources. The Schema governs how the compile happens. Claude is the runtime.
+      <span class="quote-author">— The operating model in one sentence</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOLDER TREE -->
+<section class="section-white" id="tree">
+  <div class="container-wide">
+    <div class="grid-2-asym mb-48">
+      <div>
+        <div class="eyebrow">/02 — FOLDER TREE</div>
+        <h2>IPARAG + Client Spaces.</h2>
+      </div>
+      <div>
+        <p class="lead">Inbox, Projects, Areas, Resources, Archives, Galaxy — plus Client Spaces. Every top-level folder has a single clear purpose. Every file lives in exactly one place.</p>
+      </div>
+    </div>
+
+    <div class="card-flat">
+      <div class="tree">
+        <div class="row"><div><span class="name bold">Amplio-Brain/</span></div><div class="note">The root. A git-tracked Obsidian vault.</div></div>
+        <div class="row"><div><span class="dim">├──</span> <span class="name">00-Inbox/</span> <span class="tag tag-l1">L1</span></div><div class="note">Everything lands here first. Then gets routed out.</div></div>
+        <div class="row" style="padding-left:24px;"><div><span class="dim">│&nbsp;&nbsp;├──</span> <span class="name">Brain-Dump.md</span></div><div class="note">Unsorted capture — processed regularly.</div></div>
+        <div class="row" style="padding-left:24px;"><div><span class="dim">│&nbsp;&nbsp;└──</span> <span class="name">raw/</span> <span class="tag tag-l1">L1</span></div><div class="note">Immutable source material. Never edited.</div></div>
+        <div class="row"><div><span class="dim">├──</span> <span class="name">01-Projects/Active/</span> <span class="tag tag-l2">L2</span></div><div class="note">Time-bound work with a finish line.</div></div>
+        <div class="row"><div><span class="dim">├──</span> <span class="name">02-Areas/</span> <span class="tag tag-l2">L2</span></div><div class="note">Ongoing responsibilities — Google-Ads, Analytics, Sales, Amplio-Internal.</div></div>
+        <div class="row"><div><span class="dim">├──</span> <span class="name">03-Resources/</span> <span class="tag tag-l2">L2</span></div><div class="note">Brand/ · Playbooks/ · Templates/ · Research/ · Skills/</div></div>
+        <div class="row" style="padding-left:24px;"><div><span class="dim">│&nbsp;&nbsp;└──</span> <span class="name">program.md</span></div><div class="note">Autoresearch config — priorities &amp; compile/lint rules.</div></div>
+        <div class="row"><div><span class="dim">├──</span> <span class="name">04-Archives/</span> <span class="tag tag-l2">L2</span></div><div class="note">Completed projects, retired notes.</div></div>
+        <div class="row"><div><span class="dim">├──</span> <span class="name">05-Galaxy/</span> <span class="tag tag-l2">L2</span></div><div class="note">Zettelkasten — atomic linked concept notes.</div></div>
+        <div class="row"><div><span class="dim">├──</span> <span class="name">06-Clients/</span> <span class="tag tag-l2">L2</span></div><div class="note">Client spaces + _Prospects/ pipeline.</div></div>
+        <div class="row" style="padding-left:24px;"><div><span class="dim">│&nbsp;&nbsp;├──</span> <span class="name">[client]/_overview.md</span></div><div class="note">Per-client hub — status, contacts, signals, health score.</div></div>
+        <div class="row" style="padding-left:24px;"><div><span class="dim">│&nbsp;&nbsp;└──</span> <span class="name">_Prospects/</span></div><div class="note">Pipeline dashboard — scored leads, stages, next actions.</div></div>
+        <div class="row"><div><span class="dim">├──</span> <span class="name bold purple">CLAUDE.md</span> <span class="tag tag-l3">L3</span></div><div class="note">The schema. Routing rules, commands, behaviour, identity.</div></div>
+        <div class="row"><div><span class="dim">└──</span> <span class="name bold purple">memory.md</span></div><div class="note">Session continuity — CURRENT STATE + rolling log.</div></div>
+      </div>
+    </div>
+
+    <div class="flex gap-24 mt-32" style="flex-wrap:wrap;">
+      <div class="flex items-center gap-16"><span class="tag tag-l1" style="display:inline-block;font-family:'Roboto Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:3px;background:rgba(222,54,42,0.08);color:var(--red);font-weight:500;">L1</span><span class="text-sm">Raw &middot; immutable ground truth</span></div>
+      <div class="flex items-center gap-16"><span class="tag tag-l2" style="display:inline-block;font-family:'Roboto Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:3px;background:var(--purple-light);color:var(--purple);font-weight:500;">L2</span><span class="text-sm">Wiki &middot; compiled &amp; interlinked</span></div>
+      <div class="flex items-center gap-16"><span class="tag tag-l3" style="display:inline-block;font-family:'Roboto Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:3px;background:rgba(52,199,89,0.12);color:var(--green);font-weight:500;">L3</span><span class="text-sm">Schema &middot; rules &amp; config</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ROUTING -->
+<section class="section-light" id="routing">
+  <div class="container">
+    <div class="grid-2-asym mb-48">
+      <div>
+        <div class="eyebrow">/03 — ROUTING</div>
+        <h2>Every input has one home.</h2>
+      </div>
+      <div>
+        <p class="lead">The routing table is unambiguous. If it's a raw source, it's immutable. If it's a client thing, it lives in their space. If it's a deadline, it's a project. If it's a concept, it's Galaxy.</p>
+      </div>
+    </div>
+
+    <div class="route-grid">
+      <div class="route-col">
+        <h4>Input</h4>
+        <div class="route-item"><span class="label">Unsorted thought</span>Brain-dump, random idea, link to read later</div>
+        <div class="route-item"><span class="label">Article / PDF / transcript</span>Anything you didn't write — raw source material</div>
+        <div class="route-item"><span class="label">Work with a deadline</span>Project, campaign, 1-time deliverable</div>
+        <div class="route-item"><span class="label">Ongoing responsibility</span>A channel, a practice, an area you own</div>
+        <div class="route-item"><span class="label">Playbook / template / SOP</span>Reusable reference material</div>
+        <div class="route-item"><span class="label">Atomic concept / idea</span>One idea, ≤300 words, interlinked</div>
+        <div class="route-item"><span class="label">Client work</span>Meetings, reports, context, signals</div>
+        <div class="route-item"><span class="label">Amplio-own work</span>Our website, our hiring, our ads</div>
+      </div>
+      <div class="route-arrows">
+        <span>→</span><span>→</span><span>→</span><span>→</span><span>→</span><span>→</span><span>→</span><span>→</span>
+      </div>
+      <div class="route-col">
+        <h4>Destination</h4>
+        <div class="route-dest">00-Inbox/Brain-Dump.md</div>
+        <div class="route-dest">00-Inbox/raw/&nbsp;<span style="color:var(--mid-gray);font-size:11px;">[never edit]</span></div>
+        <div class="route-dest">01-Projects/Active/</div>
+        <div class="route-dest">02-Areas/</div>
+        <div class="route-dest">03-Resources/</div>
+        <div class="route-dest">05-Galaxy/</div>
+        <div class="route-dest">06-Clients/[name]/</div>
+        <div class="route-dest">02-Areas/Amplio-Internal/</div>
+      </div>
+    </div>
+
+    <div class="quote-card mt-48">
+      Amplio is <em>never</em> saved under 06-Clients/. Amplio is not a client.
+      <span class="quote-author">— Routing rule, non-negotiable</span>
+    </div>
+  </div>
+</section>
+
+<!-- NOTE ANATOMY -->
+<section class="section-white" id="anatomy">
+  <div class="container">
+    <div class="grid-2-asym mb-48">
+      <div>
+        <div class="eyebrow">/04 — NOTE ANATOMY</div>
+        <h2>A Galaxy note, annotated.</h2>
+      </div>
+      <div>
+        <p class="lead">One idea per note. A one-line summary before anything else. Wikilinks everywhere. A Related section at the bottom. No orphans allowed.</p>
+      </div>
+    </div>
+
+    <div style="position:relative;padding:60px 0;">
+      <div class="note-doc">
+
+        <div class="frontmatter" style="position:relative;">
+          <span class="callout left">Frontmatter</span>
+---<br/>
+<span class="k">title:</span> Consent-hidden sessions<br/>
+<span class="k">created:</span> 2026-03-18<br/>
+<span class="k">updated:</span> 2026-04-11<br/>
+<span class="k">tags:</span> [analytics, consent, gdpr, ai-enriched]<br/>
+<span class="k">status:</span> stable<br/>
+<span class="k">type:</span> galaxy-note<br/>
+<span class="k">compiled_from:</span> [[raw/usercentrics-2026-q1]]<br/>
+---
+        </div>
+
+        <div class="summary" style="position:relative;">
+          <span class="callout left">Summary line</span>
+          Consent banners hide an average of 34% of EU sessions from GA4 — recoverable via proper consent-mode v2 and server-side relay.
+        </div>
+
+        <h2 class="note-title">Consent-hidden sessions</h2>
+        <p style="position:relative;">
+          <span class="callout right">Wikilinks</span>
+          When a visitor clicks "reject" on a consent banner, analytics events are suppressed. Our internal benchmark across <span class="wiki">[[100-clients-served]]</span> shows 34% median session loss — with DTC brands trending higher than B2B SaaS.
+        </p>
+        <p>
+          Mitigation is straightforward: implement <span class="wiki">[[consent-mode-v2]]</span> correctly, add <span class="wiki">[[server-side-gtm]]</span> for modelled conversions, and audit the CMP script load order.
+        </p>
+
+        <h3 class="related" style="position:relative;">
+          <span class="callout left">Required section</span>
+          ## Related
+        </h3>
+        <ul class="related-list">
+          <li>→ <span class="wiki">[[_Galaxy-Index]]</span></li>
+          <li>→ <span class="wiki">[[_Playbooks-Index]]</span></li>
+          <li>→ <span class="wiki">[[consent-mode-v2]]</span></li>
+          <li>→ <span class="wiki">[[server-side-gtm]]</span></li>
+          <li>→ <span class="wiki">[[client:Odisei]]</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="grid-3 mt-64">
+      <div class="card-light">
+        <div class="number-label mb-8">/ RULE</div>
+        <h4>One idea per note</h4>
+        <p class="text-sm mt-8">If a note covers two concepts, split it. Max 300 words.</p>
+      </div>
+      <div class="card-light">
+        <div class="number-label mb-8">/ RULE</div>
+        <h4>One-line summary first</h4>
+        <p class="text-sm mt-8">Straight after the frontmatter, before any heading. Parseable at a glance.</p>
+      </div>
+      <div class="card-light">
+        <div class="number-label mb-8">/ RULE</div>
+        <h4>Related section required</h4>
+        <p class="text-sm mt-8">At least one wikilink to a hub index. No orphans.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AUTORESEARCH LOOP -->
+<section class="section-dark" id="loop">
+  <div class="container-wide">
+    <div class="grid-2-asym mb-48">
+      <div>
+        <div class="eyebrow">/05 — AUTORESEARCH</div>
+        <h2>Compile. Lint. Enrich.<br/>On repeat.</h2>
+      </div>
+      <div>
+        <p class="lead">The Vault is a live system. Raw sources get compiled into Galaxy notes. Broken links and stale content get linted. Thin notes get enriched with fresh research. A health score decides when the loop needs to run again.</p>
+      </div>
+    </div>
+
+    <div class="process-flow">
+      <div class="process-step">
+        <span class="step-num">/ Step 01</span>
+        <h4>Capture</h4>
+        <p class="text-sm">Anything of value lands in 00-Inbox/raw/. Frontmatter gets <code>processed: false</code>.</p>
+      </div>
+      <div class="process-step">
+        <span class="step-num">/ Step 02</span>
+        <h4>Compile</h4>
+        <p class="text-sm">Extract concepts, create/update Galaxy notes, cross-link to related. Mark raw as <code>processed: true</code>.</p>
+      </div>
+      <div class="process-step">
+        <span class="step-num">/ Step 03</span>
+        <h4>Lint</h4>
+        <p class="text-sm">Broken wikilinks, 404 external URLs, missing summaries, stale <code>updated:</code> dates.</p>
+      </div>
+      <div class="process-step">
+        <span class="step-num">/ Step 04</span>
+        <h4>Enrich</h4>
+        <p class="text-sm">Thin notes get research passes. Fresh facts. Evidence added. Tagged <code>ai-enriched</code>.</p>
+      </div>
+      <div class="process-step last">
+        <span class="step-num">/ Step 05</span>
+        <h4>Score</h4>
+        <p class="text-sm">Vault health score. Below threshold → the improvement loop schedules another pass.</p>
+      </div>
+    </div>
+
+    <div class="mt-64">
+      <h3 class="mb-24" style="color:white;">Schedule</h3>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-day">Daily · Background</div>
+          <h4 style="color:white;">Inbox sweep</h4>
+          <p class="text-sm">Light routing pass. Brain-Dump items get homed. No writing to Galaxy yet.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-day">Weekly · Compile</div>
+          <h4 style="color:white;">Raw → Galaxy</h4>
+          <p class="text-sm">Every unprocessed raw source gets compiled. New atomic notes, new wikilinks, cross-references.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-day">Weekly · Lint</div>
+          <h4 style="color:white;">Broken-link sweep</h4>
+          <p class="text-sm">Checks wikilink integrity, validates external URLs, flags notes without summaries or Related sections.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-day">Monthly · Enrich</div>
+          <h4 style="color:white;">Research pass</h4>
+          <p class="text-sm">Thin notes and notes near a priority topic (see <code>program.md</code>) get fresh research.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-day">Per session · Score</div>
+          <h4 style="color:white;">Health score</h4>
+          <p class="text-sm">Quality metric. Below threshold triggers the improvement loop the next run.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HUB GRAPH -->
+<section class="section-white" id="hubs">
+  <div class="container">
+    <div class="grid-2-asym mb-48">
+      <div>
+        <div class="eyebrow">/06 — HUB GRAPH</div>
+        <h2>Seven hubs.<br/>No orphans.</h2>
+      </div>
+      <div>
+        <p class="lead">Every note in the Vault links to at least one hub. Hubs are the spine — indexes of indexes. This is what makes the wikilink graph navigable instead of a pile of files.</p>
+      </div>
+    </div>
+
+    <svg class="hubs-svg" viewBox="0 0 900 560" xmlns="http://www.w3.org/2000/svg">
+      <!-- edges -->
+      <g>
+        <line x1="450" y1="280" x2="220" y2="120"/>
+        <line x1="450" y1="280" x2="680" y2="120"/>
+        <line x1="450" y1="280" x2="120" y2="280"/>
+        <line x1="450" y1="280" x2="780" y2="280"/>
+        <line x1="450" y1="280" x2="220" y2="440"/>
+        <line x1="450" y1="280" x2="450" y2="480"/>
+        <line x1="450" y1="280" x2="680" y2="440"/>
+        <!-- secondary cross-links -->
+        <line x1="220" y1="120" x2="120" y2="280" stroke-dasharray="4,4"/>
+        <line x1="680" y1="120" x2="780" y2="280" stroke-dasharray="4,4"/>
+        <line x1="680" y1="440" x2="450" y2="480" stroke-dasharray="4,4"/>
+        <line x1="220" y1="440" x2="450" y2="480" stroke-dasharray="4,4"/>
+        <line x1="120" y1="280" x2="220" y2="440" stroke-dasharray="4,4"/>
+      </g>
+
+      <!-- center hub -->
+      <g class="hub-center">
+        <circle cx="450" cy="280" r="56"/>
+        <text x="450" y="276" text-anchor="middle">[[memory]]</text>
+        <text x="450" y="294" text-anchor="middle" style="fill:rgba(255,255,255,0.7);font-size:10px;font-weight:500;">session continuity</text>
+      </g>
+
+      <!-- hub nodes -->
+      <g class="hub">
+        <circle cx="220" cy="120" r="42"/>
+        <text x="220" y="116" text-anchor="middle">[[_Galaxy-Index]]</text>
+        <text x="220" y="134" text-anchor="middle" class="mono">CONCEPTS</text>
+      </g>
+      <g class="hub">
+        <circle cx="680" cy="120" r="42"/>
+        <text x="680" y="116" text-anchor="middle">[[_Skills-Index]]</text>
+        <text x="680" y="134" text-anchor="middle" class="mono">SKILLS</text>
+      </g>
+      <g class="hub">
+        <circle cx="120" cy="280" r="42"/>
+        <text x="120" y="276" text-anchor="middle">[[_Playbooks]]</text>
+        <text x="120" y="294" text-anchor="middle" class="mono">SOPs</text>
+      </g>
+      <g class="hub">
+        <circle cx="780" cy="280" r="42"/>
+        <text x="780" y="276" text-anchor="middle">[[_Client-Index]]</text>
+        <text x="780" y="294" text-anchor="middle" class="mono">CLIENTS</text>
+      </g>
+      <g class="hub">
+        <circle cx="220" cy="440" r="42"/>
+        <text x="220" y="436" text-anchor="middle">[[_Pipeline]]</text>
+        <text x="220" y="454" text-anchor="middle" class="mono">PROSPECTS</text>
+      </g>
+      <g class="hub">
+        <circle cx="680" cy="440" r="42"/>
+        <text x="680" y="436" text-anchor="middle">[[_Archives]]</text>
+        <text x="680" y="454" text-anchor="middle" class="mono">RETIRED</text>
+      </g>
+      <g class="hub">
+        <circle cx="450" cy="480" r="42"/>
+        <text x="450" y="476" text-anchor="middle">CLAUDE.md</text>
+        <text x="450" y="494" text-anchor="middle" class="mono">SCHEMA</text>
+      </g>
+
+      <!-- small satellite nodes (leaf notes) -->
+      <g>
+        <circle cx="60" cy="80" r="6" fill="#8B2CF5" opacity="0.35"/>
+        <circle cx="330" cy="50" r="6" fill="#8B2CF5" opacity="0.35"/>
+        <circle cx="580" cy="45" r="6" fill="#8B2CF5" opacity="0.35"/>
+        <circle cx="850" cy="80" r="6" fill="#8B2CF5" opacity="0.35"/>
+        <circle cx="40" cy="360" r="6" fill="#8B2CF5" opacity="0.35"/>
+        <circle cx="870" cy="360" r="6" fill="#8B2CF5" opacity="0.35"/>
+        <circle cx="100" cy="510" r="6" fill="#8B2CF5" opacity="0.35"/>
+        <circle cx="340" cy="540" r="6" fill="#8B2CF5" opacity="0.35"/>
+        <circle cx="570" cy="540" r="6" fill="#8B2CF5" opacity="0.35"/>
+        <circle cx="820" cy="510" r="6" fill="#8B2CF5" opacity="0.35"/>
+        <line x1="60" y1="80" x2="180" y2="120" stroke="#8B2CF5" stroke-width="1" opacity="0.2"/>
+        <line x1="330" y1="50" x2="220" y2="90" stroke="#8B2CF5" stroke-width="1" opacity="0.2"/>
+        <line x1="580" y1="45" x2="680" y2="90" stroke="#8B2CF5" stroke-width="1" opacity="0.2"/>
+        <line x1="850" y1="80" x2="710" y2="120" stroke="#8B2CF5" stroke-width="1" opacity="0.2"/>
+        <line x1="40" y1="360" x2="100" y2="310" stroke="#8B2CF5" stroke-width="1" opacity="0.2"/>
+        <line x1="870" y1="360" x2="800" y2="310" stroke="#8B2CF5" stroke-width="1" opacity="0.2"/>
+        <line x1="100" y1="510" x2="190" y2="450" stroke="#8B2CF5" stroke-width="1" opacity="0.2"/>
+        <line x1="340" y1="540" x2="430" y2="490" stroke="#8B2CF5" stroke-width="1" opacity="0.2"/>
+        <line x1="570" y1="540" x2="470" y2="490" stroke="#8B2CF5" stroke-width="1" opacity="0.2"/>
+        <line x1="820" y1="510" x2="710" y2="450" stroke="#8B2CF5" stroke-width="1" opacity="0.2"/>
+      </g>
+    </svg>
+
+    <div class="grid-3 mt-48">
+      <div><h4>Solid lines</h4><p class="text-sm">Every hub links back to [[memory]] — session continuity first.</p></div>
+      <div><h4>Dashed lines</h4><p class="text-sm">Cross-hub links. Galaxy ↔ Skills, Clients ↔ Pipeline, etc.</p></div>
+      <div><h4>Satellite dots</h4><p class="text-sm">Leaf notes — every one links to at least one hub via its Related section.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROVENANCE -->
+<section class="section-light" id="provenance">
+  <div class="container">
+    <div class="grid-2-asym mb-48">
+      <div>
+        <div class="eyebrow">/07 — PROVENANCE</div>
+        <h2>Know where it came from.</h2>
+      </div>
+      <div>
+        <p class="lead">Every note carries its origin. Human-authored content and AI-enriched content are clearly distinguishable in the frontmatter — so we can weight trust, audit sources, and measure the autoresearch loop over time.</p>
+      </div>
+    </div>
+
+    <div class="provenance">
+      <div class="prov-card human">
+        <div class="tag">/ Human-authored</div>
+        <h4>tags: [sales, positioning]</h4>
+        <p class="text-sm mt-8">No <code>ai-enriched</code> tag. No <code>compiled_from:</code> frontmatter key. Voice is yours. Claim-level decisions are yours.</p>
+      </div>
+      <div class="prov-card ai">
+        <div class="tag">/ AI-enriched</div>
+        <h4>tags: [analytics, consent, <span class="purple bold">ai-enriched</span>]</h4>
+        <p class="text-sm mt-8"><code>ai-enriched</code> in tags. If compiled from a raw source, also <code>compiled_from: [[raw/filename]]</code>. Traceable end-to-end.</p>
+      </div>
+    </div>
+
+    <div class="quote-card mt-48">
+      If we can't trace it back to a human or a cited raw source, we don't claim it.
+      <span class="quote-author">— Verified metrics only · Rule 03</span>
+    </div>
+  </div>
+</section>
+
+<!-- COMMANDS -->
+<section class="section-white" id="commands">
+  <div class="container">
+    <div class="grid-2-asym mb-48">
+      <div>
+        <div class="eyebrow">/08 — BIDIRECTIONAL COMMANDS</div>
+        <h2>Say it.<br/>Claude does it.</h2>
+      </div>
+      <div>
+        <p class="lead">Fixed phrases that trigger defined behaviour — creating folders, routing files, updating indexes, scoring leads, surfacing signals. The Vault is driven by commands, not ad-hoc requests.</p>
+      </div>
+    </div>
+
+    <table class="cmd-table">
+      <thead>
+        <tr><th>Command</th><th>What happens</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>"New client: [name]"</code></td><td>Creates <code>06-Clients/[name]/</code> from template. Updates <code>_Client-Index.md</code>. Runs onboarding intelligence pre-loader.</td></tr>
+        <tr><td><code>"New prospect: [name]"</code></td><td>Creates record in <code>06-Clients/_Prospects/</code>. Updates Pipeline Dashboard.</td></tr>
+        <tr><td><code>"Graduate [prospect]"</code></td><td>Moves prospect to client space, expands to full template.</td></tr>
+        <tr><td><code>"Process inbox"</code></td><td>Reads Brain-Dump, routes each item to its home, clears processed entries.</td></tr>
+        <tr><td><code>"Compile the vault"</code></td><td>Full compile pass. Reads unprocessed raw, extracts concepts, creates/updates Galaxy notes.</td></tr>
+        <tr><td><code>"Lint the vault"</code></td><td>Deep lint. Broken links, stale content, missing summaries, orphan notes.</td></tr>
+        <tr><td><code>"Client brief: [name]"</code></td><td>Reads <code>_overview.md</code> + recent notes. Returns status summary.</td></tr>
+        <tr><td><code>"Meeting notes: [client]"</code></td><td>Creates dated note in client's <code>meeting-notes/</code> folder.</td></tr>
+        <tr><td><code>"Score this lead: [company]"</code></td><td>Reads ICP file, returns score + tier + rationale.</td></tr>
+        <tr><td><code>"Track recommendation: [client]"</code></td><td>Adds row to client's <code>recommendations-tracker.md</code>.</td></tr>
+        <tr><td><code>"Client health"</code></td><td>Runs health scoring across active clients. Table with scores, trends, alerts.</td></tr>
+        <tr><td><code>"Test patterns"</code></td><td>Contradiction-testing pass. Confirms or downgrades pattern confidence.</td></tr>
+        <tr><td><code>"Learning report"</code></td><td>Summarises actioned recommendations, pattern movements, signal themes, health changes.</td></tr>
+        <tr><td><code>"Update memory"</code></td><td>Overwrites CURRENT STATE in <code>memory.md</code>. Appends to rolling log.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- RULES -->
+<section class="section-dark" id="rules">
+  <div class="container-wide">
+    <div class="grid-2-asym mb-48">
+      <div>
+        <div class="eyebrow">/09 — THE THIRTEEN</div>
+        <h2>The thirteen<br/>non-negotiables.</h2>
+      </div>
+      <div>
+        <p class="lead">Governance on one page. Every behaviour rule is codified in CLAUDE.md. Claude reads them before every session. Contributors commit to them.</p>
+      </div>
+    </div>
+
+    <div class="rules-grid">
+      <div class="rule"><div class="num">/ 01</div><h4>Load on demand</h4><p>Don't recite brand voice or ICP from memory. Read the file.</p></div>
+      <div class="rule"><div class="num">/ 02</div><h4>Vault-first</h4><p>Search the Vault before giving advice. Knowledge may already exist.</p></div>
+      <div class="rule"><div class="num">/ 03</div><h4>Verified metrics only</h4><p>Only the proof points from CLAUDE.md. Never fabricate.</p></div>
+      <div class="rule"><div class="num">/ 04</div><h4>Cross-link always</h4><p>Client notes link to Galaxy. Galaxy links back.</p></div>
+      <div class="rule"><div class="num">/ 05</div><h4>Keep the Vault alive</h4><p>Every session should leave it richer than it started.</p></div>
+      <div class="rule"><div class="num">/ 06</div><h4>Ask before assuming</h4><p>If a command is ambiguous, clarify before moving files.</p></div>
+      <div class="rule"><div class="num">/ 07</div><h4>No orphans</h4><p>Every new note has a Related section with ≥1 hub wikilink.</p></div>
+      <div class="rule"><div class="num">/ 08</div><h4>update_ emails → sync</h4><p>Amplio Updates emails update client <code>_overview.md</code>, pipeline, index.</p></div>
+      <div class="rule"><div class="num">/ 09</div><h4>Close the loop</h4><p>Every recommendation to a client goes in their <code>recommendations-tracker.md</code>.</p></div>
+      <div class="rule"><div class="num">/ 10</div><h4>Extract signals</h4><p>Every client comms: feature requests, objections, churn indicators → overview.</p></div>
+      <div class="rule"><div class="num">/ 11</div><h4>Test patterns</h4><p>Actively look for contradictions. Three in 30 days downgrades confidence.</p></div>
+      <div class="rule"><div class="num">/ 12</div><h4>Every client gets a health score</h4><p>Below 70 triggers alerts. No active client is unmeasured.</p></div>
+      <div class="rule"><div class="num">/ 13</div><h4>No data-context gaps</h4><p>Every active client has an API or manual <code>data-context.md</code>.</p></div>
+    </div>
+
+    <div class="quote-card mt-64" style="background:rgba(255,255,255,0.04);color:white;">
+      The Vault is the operating system. The thirteen rules are the kernel. Claude is the shell.
+      <span class="quote-author" style="color:rgba(255,255,255,0.5);">— Architecture, distilled</span>
+    </div>
+  </div>
+</section>
+
+<!-- OUTRO -->
+<section class="section-white">
+  <div class="container text-center">
+    <div class="eyebrow">/ KEEP IT ALIVE</div>
+    <h2 style="font-size:36px;max-width:720px;margin:0 auto 16px;">Every session should leave the Vault<br/>richer than it started.</h2>
+    <p class="lead" style="margin:0 auto 40px;">Back to the Suite, or straight into your role deck.</p>
+    <div class="flex justify-center gap-16" style="flex-wrap:wrap;">
+      <a href="index.html" class="pill" style="padding:10px 22px;font-size:13px;text-decoration:none;">← Onboarding Suite</a>
+      <a href="01-amplio-way-of-work.html" class="pill" style="padding:10px 22px;font-size:13px;text-decoration:none;">01 · The Amplio Way of Work</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container flex justify-between items-center" style="flex-wrap:wrap;gap:16px;">
+    <div>Amplio Data® · Deck 04 · The Vault Architecture</div>
+    <div><a href="index.html">← Back to Suite</a></div>
+  </div>
+</footer>
+
+<script>
+  const progressBar = document.getElementById('progressBar');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+    progressBar.style.width = pct + '%';
+  });
+  const sections = document.querySelectorAll('section[id]');
+  const sideLinks = document.querySelectorAll('.side-nav a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 140) current = s.id; });
+    sideLinks.forEach(a => { a.classList.toggle('active', a.getAttribute('href') === '#' + current); });
+  });
+</script>
+</body>
+</html>

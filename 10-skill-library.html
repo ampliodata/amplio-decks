@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amplio Data — The Vault Architecture</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* AMPLIO PRESENTATION SYSTEM — shared stylesheet for onboarding suite */
+:root {
+  --charcoal: #131313; --off-black: #0C0C0C;
+  --white: #FFFFFF; --off-white: #F5F5F5; --warm-white: #FAFAFA;
+  --purple: #8B2CF5; --purple-dark: #6B22C4;
+  --purple-light: rgba(139,44,245,0.08); --purple-15: rgba(139,44,245,0.15); --purple-30: rgba(139,44,245,0.3);
+  --dark-gray: #3A3A3A; --mid-gray: #6B6B6B; --light-gray: #D3D3D3; --pale-gray: #E8E8E8;
+  --border: rgba(0,0,0,0.08); --border-dark: rgba(255,255,255,0.08);
+  --red: #DE362A; --orange: #FF9500; --green: #34C759;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-purple: 0 4px 20px rgba(139,44,245,0.3);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body { font-family: 'Satoshi', -apple-system, sans-serif; font-size: 16px; font-weight: 400; letter-spacing: -0.2px; line-height: 1.6; color: var(--charcoal); background: var(--white); -webkit-font-smoothing: antialiased; }
+
+.progress-bar { position: fixed; top: 0; left: 0; height: 2px; background: var(--purple); z-index: 200; width: 0%; transition: width 0.1s linear; }
+
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(255,255,255,0.92); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 14px 0; }
+.nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 40px; display: flex; align-items: center; justify-content: space-between; }
+.nav-logo { height: 24px; width: auto; }
+.nav-badge { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); text-transform: uppercase; letter-spacing: 1px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px; }
+
+.side-nav { position: fixed; left: 40px; top: 50%; transform: translateY(-50%); z-index: 50; display: flex; flex-direction: column; gap: 6px; }
+.side-nav a { display: flex; align-items: center; gap: 12px; font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); text-decoration: none; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; transition: all 0.2s; padding: 6px 0; }
+.side-nav a::before { content: ''; display: inline-block; width: 20px; height: 1px; background: var(--mid-gray); transition: all 0.2s; }
+.side-nav a:hover, .side-nav a.active { color: var(--purple); opacity: 1; }
+.side-nav a.active::before, .side-nav a:hover::before { width: 40px; background: var(--purple); }
+.side-nav a .label { white-space: nowrap; }
+
+.container { max-width: 1080px; margin: 0 auto; padding: 0 40px; }
+.container-wide { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+
+.section-white { background: var(--white); color: var(--charcoal); padding: 120px 0; }
+.section-light { background: var(--off-white); color: var(--charcoal); padding: 120px 0; }
+.section-dark { background: #1C1C1E; color: var(--white); padding: 140px 0; }
+.section-dark h2, .section-dark h3, .section-dark h4 { color: var(--white); }
+.section-dark .lead { color: rgba(255,255,255,0.6); }
+.section-dark .text-sm { color: rgba(255,255,255,0.5); }
+.section-dark .eyebrow { color: rgba(139,44,245,0.9); }
+
+h1 { font-size: 88px; font-weight: 700; letter-spacing: -4px; line-height: 0.95; margin-bottom: 32px; }
+h2 { font-size: 48px; font-weight: 700; letter-spacing: -2px; line-height: 1.05; margin-bottom: 24px; }
+h3 { font-size: 24px; font-weight: 700; letter-spacing: -0.8px; line-height: 1.25; margin-bottom: 14px; }
+h4 { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; line-height: 1.35; margin-bottom: 8px; }
+.lead { font-size: 22px; font-weight: 400; line-height: 1.55; color: var(--mid-gray); max-width: 720px; letter-spacing: -0.3px; }
+.text-sm { font-size: 14px; line-height: 1.6; color: var(--mid-gray); }
+.text-xs { font-size: 11px; line-height: 1.4; }
+.eyebrow { font-family: 'Roboto Mono', monospace; font-size: 12px; font-weight: 500; color: var(--purple); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 24px; display: inline-block; }
+.number-label { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); letter-spacing: 1px; text-transform: uppercase; }
+.purple { color: var(--purple); }
+.bold { font-weight: 700; }
+.italic { font-style: italic; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.grid-2-asym { display: grid; grid-template-columns: 1fr 1.4fr; gap: 60px; align-items: start; }
+
+.card { background: var(--white); border-radius: 6px; padding: 28px; border: 1px solid var(--border); transition: all 0.25s ease; }
+.card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.card-flat { background: var(--white); border-radius: 6px; padding: 28px; border: 1px solid var(--border); }
+.card-light { background: var(--off-white); border-radius: 6px; padding: 24px; border: 1px solid var(--border); }
+.card-dark { background: #2A2A2D; border-radius: 8px; padding: 40px; border: 1px solid rgba(255,255,255,0.08); }
+.card-dark h3, .card-dark h4 { color: var(--white); }
+.card-dark p, .card-dark .text-sm { color: rgba(255,255,255,0.65); }
+.card-dark code { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); padding: 2px 6px; border-radius: 3px; font-family: 'Roboto Mono', monospace; font-size: 12px; }
+.card-purple { background: var(--purple); border-radius: 6px; padding: 28px; color: var(--white); box-shadow: var(--shadow-purple); }
+.card-purple h3, .card-purple h4 { color: var(--white); }
+.card-outlined { background: transparent; border: 1px solid var(--border); border-radius: 6px; padding: 28px; }
+
+.badge { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 26px; border-radius: 4px; background: var(--purple); color: var(--white); font-family: 'Roboto Mono', monospace; font-size: 11px; font-weight: 500; padding: 0 8px; letter-spacing: 0.5px; }
+.badge-ghost { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 26px; border-radius: 4px; background: var(--purple-light); color: var(--purple); font-family: 'Roboto Mono', monospace; font-size: 11px; font-weight: 500; padding: 0 10px; letter-spacing: 0.5px; border: 1px solid var(--purple-15); }
+.pill { display: inline-flex; align-items: center; background: var(--purple-light); border: 1px solid var(--purple-15); border-radius: 999px; padding: 5px 14px; font-size: 12px; font-weight: 500; color: var(--purple); letter-spacing: 0; }
+.pill-dark { display: inline-flex; align-items: center; background: rgba(139,44,245,0.15); border: 1px solid rgba(139,44,245,0.25); border-radius: 999px; padding: 5px 14px; font-size: 12px; font-weight: 500; color: #C898FD; }
+
+.kpi-num { font-size: 56px; font-weight: 900; letter-spacing: -3px; line-height: 1; color: var(--purple); margin-bottom: 8px; }
+.kpi-label { font-size: 13px; font-weight: 500; color: var(--mid-gray); }
+.section-dark .kpi-label { color: rgba(255,255,255,0.5); }
+
+.timeline { border-left: 2px solid var(--purple); margin-left: 16px; padding-left: 32px; position: relative; }
+.tl-item { position: relative; padding-bottom: 32px; }
+.tl-item:last-child { padding-bottom: 0; }
+.tl-item::before { content: ''; position: absolute; left: -39px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--purple); box-shadow: 0 0 0 4px var(--white); }
+.section-dark .tl-item::before { box-shadow: 0 0 0 4px #1C1C1E; }
+.tl-item h4 { margin-bottom: 6px; }
+.tl-day { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--purple); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font-family: 'Roboto Mono', monospace; font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--mid-gray); padding: 14px 16px; border-bottom: 1px solid var(--border); }
+td { padding: 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.section-dark th { color: rgba(255,255,255,0.4); border-bottom-color: rgba(255,255,255,0.08); }
+.section-dark td { color: rgba(255,255,255,0.85); border-bottom-color: rgba(255,255,255,0.06); }
+
+.hero { padding-top: 180px; padding-bottom: 100px; position: relative; overflow: hidden; }
+.hero-meta { display: flex; gap: 40px; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+.hero-meta-item .num { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--purple); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.hero-meta-item .val { font-size: 14px; color: var(--charcoal); font-weight: 500; }
+
+.process-flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; position: relative; }
+.process-step { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 32px 28px; position: relative; transition: all 0.25s; }
+.process-step:hover { border-color: var(--purple); transform: translateY(-2px); }
+.process-step.last { background: var(--purple); color: var(--white); border-color: var(--purple); }
+.process-step.last h4, .process-step.last .step-num { color: var(--white); }
+.process-step.last .step-num { background: rgba(255,255,255,0.2); }
+.process-step.last .text-sm { color: rgba(255,255,255,0.85); }
+.section-dark .process-step { color: var(--charcoal); }
+.section-dark .process-step h4 { color: var(--charcoal); }
+.section-dark .process-step p, .section-dark .process-step .text-sm { color: var(--mid-gray); }
+.section-dark .process-step.last h4, .section-dark .process-step.last p, .section-dark .process-step.last .text-sm { color: var(--white); }
+.section-dark .process-flow { gap: 24px; }
+.step-num { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--purple); letter-spacing: 1px; margin-bottom: 12px; text-transform: uppercase; font-weight: 500; display: block; }
+.process-step h4 { font-size: 16px; margin-bottom: 6px; }
+.process-step .text-sm { font-size: 13px; }
+
+.quote-card { background: var(--off-white); border-left: 3px solid var(--purple); padding: 24px 28px; margin: 32px 0; border-radius: 0 6px 6px 0; font-style: italic; color: var(--charcoal); font-size: 18px; line-height: 1.6; letter-spacing: -0.3px; }
+.quote-card .quote-author { font-style: normal; font-size: 13px; color: var(--mid-gray); margin-top: 12px; display: block; }
+
+.code-block { background: var(--off-black); border-radius: 6px; padding: 24px; font-family: 'Roboto Mono', monospace; font-size: 13px; line-height: 1.8; color: rgba(255,255,255,0.85); overflow-x: auto; border: 1px solid var(--border-dark); white-space: pre; }
+.code-block .comment { color: rgba(255,255,255,0.4); }
+.code-block .purple { color: var(--purple); }
+.code-block .label { color: #C898FD; }
+.code-block .subject { color: var(--orange); font-weight: 500; }
+
+.divider { border-top: 1px solid var(--pale-gray); margin: 64px 0; }
+.section-dark .divider { border-color: var(--border-dark); }
+
+.mb-8 { margin-bottom: 8px; } .mb-12 { margin-bottom: 12px; } .mb-16 { margin-bottom: 16px; }
+.mb-24 { margin-bottom: 24px; } .mb-32 { margin-bottom: 32px; } .mb-48 { margin-bottom: 48px; } .mb-64 { margin-bottom: 64px; }
+.mt-16 { margin-top: 16px; } .mt-24 { margin-top: 24px; } .mt-32 { margin-top: 32px; } .mt-48 { margin-top: 48px; } .mt-64 { margin-top: 64px; }
+.flex { display: flex; } .flex-col { flex-direction: column; }
+.items-center { align-items: center; } .items-start { align-items: flex-start; }
+.justify-between { justify-content: space-between; } .justify-center { justify-content: center; }
+.gap-16 { gap: 16px; } .gap-24 { gap: 24px; } .gap-32 { gap: 32px; }
+.text-center { text-align: center; }
+.max-w-700 { max-width: 700px; } .max-w-800 { max-width: 800px; }
+
+.stat-row { display: grid; grid-template-columns: auto 1fr auto; gap: 20px; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--border); }
+.stat-row:last-child { border-bottom: none; }
+.section-dark .stat-row { border-bottom-color: var(--border-dark); }
+.stat-row .stat-num { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); letter-spacing: 1px; }
+.stat-row .stat-value { font-size: 22px; font-weight: 700; color: var(--purple); letter-spacing: -0.5px; }
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--off-white); }
+::-webkit-scrollbar-thumb { background: var(--light-gray); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--mid-gray); }
+
+footer { background: var(--off-black); color: rgba(255,255,255,0.4); padding: 64px 0 40px; font-size: 13px; }
+footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
+
+@media (max-width: 1300px) { .side-nav { display: none; } }
+@media (max-width: 900px) {
+  .grid-2, .grid-3, .grid-4, .grid-5, .grid-2-asym { grid-template-columns: 1fr; }
+  .process-flow { grid-template-columns: 1fr; }
+  h1 { font-size: 52px; letter-spacing: -2px; }
+  h2 { font-size: 36px; letter-spacing: -1.5px; }
+  .container, .container-wide { padding: 0 24px; }
+  .section-white, .section-light, .section-dark { padding: 80px 0; }
+  .hero { padding-top: 140px; }
+  .kpi-num { font-size: 40px; }
+  .hero-meta { flex-direction: column; gap: 20px; }
+}
+</style>
+<style>
+
+.hero-meta { display: flex; gap: 48px; margin-top: 48px; flex-wrap: wrap; }
+.hero-meta-item .num { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.hero-meta-item .val { font-size: 18px; font-weight: 600; color: var(--charcoal); }
+.mt-32 { margin-top: 32px; } .mt-64 { margin-top: 64px; }
+.flex { display: flex; } .items-center { align-items: center; } .gap-16 { gap: 16px; }
+.cat-block { margin-bottom: 72px; }
+.cat-head { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 24px; }
+.cat-head h3 { font-size: 22px; margin: 0; }
+.cat-head .count { font-family: 'Roboto Mono', monospace; font-size: 12px; color: var(--purple); letter-spacing: 1px; text-transform: uppercase; }
+.skill-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.skill-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 22px 24px; transition: all .2s; display: flex; flex-direction: column; gap: 10px; }
+.skill-card:hover { border-color: var(--purple); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.skill-card .sk-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.skill-card .sk-name { font-family: 'Roboto Mono', monospace; font-size: 13px; font-weight: 600; color: var(--charcoal); letter-spacing: 0; }
+.skill-card .sk-plugin { font-family: 'Roboto Mono', monospace; font-size: 10px; color: var(--purple); background: var(--purple-light); border: 1px solid var(--purple-15); padding: 2px 8px; border-radius: 999px; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap; }
+.skill-card .sk-plugin.core { background: rgba(52,199,89,0.1); border-color: rgba(52,199,89,0.2); color: var(--green); }
+.skill-card .sk-desc { font-size: 13px; color: var(--mid-gray); line-height: 1.55; }
+.skill-card .sk-foot { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px dashed var(--border); margin-top: 4px; }
+.skill-card .sk-trigger { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--dark-gray); font-style: italic; }
+.skill-card .sk-feedback { font-family: 'Roboto Mono', monospace; font-size: 10px; color: var(--purple); text-decoration: none; padding: 4px 10px; border: 1px solid var(--purple-15); border-radius: 4px; letter-spacing: 1px; text-transform: uppercase; background: var(--white); transition: all .15s; white-space: nowrap; }
+.skill-card .sk-feedback:hover { background: var(--purple); color: white; border-color: var(--purple); }
+.fb-flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 32px; position: relative; }
+.fb-step { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 24px 20px; position: relative; }
+.fb-step.active { background: var(--purple); color: white; border-color: var(--purple); }
+.fb-step .fbn { font-family: 'Roboto Mono', monospace; font-size: 10px; color: var(--purple); letter-spacing: 2px; margin-bottom: 8px; text-transform: uppercase; }
+.fb-step.active .fbn { color: white; }
+.fb-step h4 { font-size: 15px; margin-bottom: 6px; }
+.fb-step.active h4 { color: white; }
+.fb-step .text-sm { font-size: 12px; color: var(--mid-gray); }
+.fb-step.active .text-sm { color: rgba(255,255,255,0.85); }
+.form-demo { background: #2A2A2D; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 40px; margin-top: 32px; }
+.form-demo h3 { color: white; margin-bottom: 8px; font-size: 20px; }
+.form-demo .text-sm { color: rgba(255,255,255,0.6); margin-bottom: 24px; font-size: 13px; }
+.form-row { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+.form-row label { font-family: 'Roboto Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.6); letter-spacing: 1px; text-transform: uppercase; }
+.form-row select, .form-row input, .form-row textarea { background: #1C1C1E; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 12px 14px; color: white; font-family: 'Satoshi', sans-serif; font-size: 14px; }
+.form-row select:focus, .form-row input:focus, .form-row textarea:focus { outline: none; border-color: var(--purple); }
+.form-row textarea { min-height: 90px; resize: vertical; font-family: 'Satoshi', sans-serif; line-height: 1.5; }
+.form-row .rating { display: flex; gap: 8px; }
+.form-row .rating button { background: #1C1C1E; border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); padding: 10px 0; flex: 1; border-radius: 6px; cursor: pointer; font-family: 'Roboto Mono', monospace; font-size: 13px; font-weight: 600; transition: all .15s; }
+.form-row .rating button:hover, .form-row .rating button.selected { background: var(--purple); color: white; border-color: var(--purple); }
+.form-submit { display: flex; gap: 12px; align-items: center; margin-top: 24px; }
+.btn-primary { background: var(--purple); color: white; border: none; padding: 14px 24px; border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-family: 'Satoshi', sans-serif; transition: all .15s; }
+.btn-primary:hover { background: var(--purple-dark); }
+.btn-ghost { background: transparent; color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.15); padding: 14px 20px; border-radius: 6px; font-weight: 500; font-size: 13px; cursor: pointer; font-family: 'Roboto Mono', monospace; letter-spacing: 1px; text-transform: uppercase; }
+.btn-ghost:hover { color: white; border-color: rgba(255,255,255,0.3); }
+.email-preview { background: #1C1C1E; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 20px 24px; margin-top: 20px; font-family: 'Roboto Mono', monospace; font-size: 12px; color: rgba(255,255,255,0.75); line-height: 1.7; }
+.email-preview .k { color: rgba(255,255,255,0.4); display: inline-block; min-width: 80px; }
+.email-preview .v { color: white; }
+.email-preview .label { background: var(--purple); color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; letter-spacing: 1px; }
+.rule-explainer { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 32px; }
+.rule-cell { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 28px; }
+.rule-cell .num { font-family: 'Roboto Mono', monospace; font-size: 24px; font-weight: 700; color: var(--purple); line-height: 1; margin-bottom: 12px; }
+.rule-cell h4 { margin-bottom: 6px; font-size: 16px; }
+.rule-cell p { font-size: 13px; color: var(--mid-gray); line-height: 1.6; }
+.legend { display: flex; gap: 20px; font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); letter-spacing: 1px; text-transform: uppercase; margin-top: 16px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend .dot { width: 10px; height: 10px; border-radius: 50%; }
+.legend .dot.core { background: var(--green); }
+.legend .dot.plugin { background: var(--purple); }
+
+</style>
+<title>Amplio — Skill Library</title>
+</head>
+
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="flex items-center gap-16">
+      <a href="index.html" style="display:inline-flex;align-items:center;text-decoration:none;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 387 98" fill="none" class="nav-logo">
+  <path fill="#0C0C0C" d="m106.441 79.658 23.8-65.164h15.704l23.622 65.164H155.81l-5.264-15.007h-25.392l-5.264 15.007h-13.449Zm22.561-26.03h17.651l-8.847-25.19-8.804 25.19Zm41.881 26.03V30.874h11.768v6.419c1.444-2.302 3.45-4.132 6.016-5.49 2.595-1.357 5.397-2.021 8.405-1.992 3.303.03 6.193.767 8.67 2.214 2.507 1.416 4.365 3.364 5.574 5.843 1.415-2.42 3.48-4.368 6.193-5.843 2.713-1.505 5.736-2.243 9.068-2.214 5.191.03 9.364 1.653 12.52 4.87 3.155 3.217 4.733 7.467 4.733 12.75v32.227h-12.121V49.644c0-2.804-.826-5.047-2.477-6.73-1.652-1.681-3.849-2.537-6.592-2.567-2.654-.03-4.866.9-6.635 2.79-1.74 1.858-2.61 4.22-2.61 7.082v29.44h-12.121V49.156c0-2.656-.811-4.781-2.433-6.375-1.622-1.594-3.745-2.405-6.37-2.435-2.713-.03-4.969.96-6.768 2.966-1.799 2.007-2.698 4.56-2.698 7.659v28.686h-12.122Zm105.096-49.714c6.812 0 12.386 2.39 16.721 7.172 4.336 4.751 6.488 10.846 6.459 18.283-.029 7.467-2.241 13.56-6.636 18.283-4.394 4.722-10.026 7.068-16.898 7.038a20.316 20.316 0 0 1-8.67-1.814c-2.743-1.27-4.969-2.981-6.68-5.136v23.862h-12.121V30.874h12.032l-.044 6.463c1.829-2.273 4.173-4.073 7.034-5.4 2.861-1.329 5.795-1.993 8.803-1.993Zm-16.102 25.499c-.03 4.161 1.283 7.614 3.937 10.359 2.654 2.715 5.913 4.058 9.776 4.028 3.864.03 6.989-1.284 9.378-3.94 2.419-2.655 3.628-6.138 3.628-10.447 0-4.309-1.209-7.791-3.628-10.447-2.389-2.686-5.514-4.029-9.378-4.029-3.834 0-7.078 1.372-9.732 4.117-2.654 2.745-3.981 6.198-3.981 10.359ZM314.056 12.9v66.758h-12.077V12.9h12.077Zm5.165 66.758V30.874h12.12v48.784h-12.12Zm-.133-53.92v-12.35h12.651v12.35h-12.651Zm40.687 54.983c-7.462.03-13.596-2.332-18.403-7.083-4.778-4.752-7.181-10.861-7.211-18.328 0-4.928 1.092-9.34 3.274-13.236 2.183-3.896 5.22-6.906 9.113-9.031 3.892-2.155 8.301-3.232 13.227-3.232 3.716 0 7.166.635 10.351 1.904 3.214 1.24 5.942 2.98 8.184 5.223 2.241 2.214 3.996 4.914 5.264 8.102 1.297 3.158 1.946 6.581 1.946 10.27 0 3.69-.649 7.113-1.946 10.27-1.268 3.158-3.023 5.844-5.264 8.058-2.242 2.213-4.97 3.954-8.184 5.223-3.185 1.24-6.635 1.86-10.351 1.86Zm-13.05-25.41c0 4.249 1.194 7.702 3.583 10.358 2.418 2.627 5.573 3.94 9.467 3.94 3.922 0 7.092-1.313 9.511-3.94 2.447-2.656 3.671-6.11 3.671-10.359 0-4.309-1.224-7.776-3.671-10.403-2.419-2.656-5.589-3.984-9.511-3.984-3.923 0-7.093 1.328-9.512 3.984-2.388 2.656-3.568 6.124-3.538 10.403ZM87.455 40.877H5.76A5.763 5.763 0 0 0 0 46.642a5.763 5.763 0 0 0 5.76 5.764h81.695a5.763 5.763 0 0 0 5.76-5.764 5.763 5.763 0 0 0-5.76-5.765Z"/>
+  <path fill="#8B2CF5" d="M40.848 5.764V87.52a5.761 5.761 0 1 0 11.52 0V5.764A5.763 5.763 0 0 0 46.609 0a5.763 5.763 0 0 0-5.76 5.764Z"/>
+  <path fill="#8B2CF5" d="M71.418 13.662 13.65 71.47a5.768 5.768 0 0 0 0 8.152 5.757 5.757 0 0 0 8.147 0l57.766-57.809a5.768 5.768 0 0 0 0-8.152 5.757 5.757 0 0 0-8.146 0Z"/>
+</svg>
+      </a>
+      <span class="nav-badge">The Skill Library</span>
+    </div>
+    <span class="text-sm" style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;">Internal · 10</span>
+  </div>
+</nav>
+
+<div class="side-nav" id="sideNav">
+  <a href="#hero" class="active"><span class="label">Intro</span></a>
+  <a href="#feedback-flow"><span class="label">Feedback system</span></a>
+  <a href="#library"><span class="label">Library</span></a>
+  <a href="#owners"><span class="label">Ownership</span></a>
+</div>
+
+
+<section class="section-white hero" id="hero">
+  <div class="container">
+    <div class="eyebrow">/10 — SKILL LIBRARY</div>
+    <h1>Every <span class="purple">skill</span>.<br/>On the shelf.</h1>
+    <p class="lead">This is Amplio's working library. 56 skills across 8 domains — core skills we built, plus Cowork plugins we've adopted. Every card below triggers a real Claude capability. Every card has a feedback button that routes straight into the vault through the Gmail automation.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><div class="num">Total skills</div><div class="val">56</div></div>
+      <div class="hero-meta-item"><div class="num">Domains</div><div class="val">8</div></div>
+      <div class="hero-meta-item"><div class="num">Feedback loop</div><div class="val">Gmail → Vault → Skill file</div></div>
+      <div class="hero-meta-item"><div class="num">Owner</div><div class="val">Daragh maintains the library</div></div>
+    </div>
+    <div class="legend">
+      <span><span class="dot core"></span>Core — built in-house</span>
+      <span><span class="dot plugin"></span>Plugin — Cowork marketplace</span>
+    </div>
+  </div>
+</section>
+
+<section class="section-dark" id="feedback-flow">
+  <div class="container-wide">
+    <div class="eyebrow" style="color:rgba(139,44,245,0.9);">The feedback system — for Daragh</div>
+    <h2 style="color:white;">Click feedback. Skill gets better.</h2>
+    <p class="lead" style="color:rgba(255,255,255,0.65);">Every skill card has a <strong>Feedback →</strong> button. Clicking it opens a pre-filled email that flows through the <a href="09-gmail-vault-automation.html" style="color:var(--purple);text-decoration:underline;">Gmail ↔ Vault automation</a>. Claude appends the feedback to the skill's <code style="background:rgba(255,255,255,0.08);padding:2px 6px;border-radius:3px;color:white;">feedback.md</code>, adjusts the skill's SKILL.md when patterns emerge, and logs the change.</p>
+    <div class="fb-flow">
+      <div class="fb-step"><div class="fbn">/ Step 01</div><h4>Click "Feedback"</h4><p class="text-sm">Opens a mailto: with subject <code>update_skill_[name]</code> and a structured body. Label auto-applies.</p></div>
+      <div class="fb-step"><div class="fbn">/ Step 02</div><h4>Daragh fills it in</h4><p class="text-sm">Rating 1–5, what worked, what didn't, the change they want. Sends it from @ampliodata.io.</p></div>
+      <div class="fb-step"><div class="fbn">/ Step 03</div><h4>Claude fetches</h4><p class="text-sm">Gmail MCP picks up the labelled email. Parses the <code>update_skill_</code> prefix. Routes to the skill folder.</p></div>
+      <div class="fb-step active"><div class="fbn">/ Step 04</div><h4>Vault updates</h4><p class="text-sm">Feedback appended to <code>feedback.md</code>. If rating ≤2 across 3 inputs, Claude flags the skill for rewrite.</p></div>
+    </div>
+
+    <div class="form-demo">
+      <h3>What the feedback form produces</h3>
+      <p class="text-sm">Clicking any Feedback button generates an email that looks like this. Nothing more, nothing less.</p>
+      <div class="email-preview">
+        <div><span class="k">To:</span><span class="v">hello@ampliodata.io</span></div>
+        <div><span class="k">Subject:</span><span class="v">update_skill_icp-buyer-personas: feedback</span></div>
+        <div><span class="k">Label:</span><span class="label">Amplio Updates</span></div>
+        <div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06);">
+          <div>Skill: icp-buyer-personas</div>
+          <div>Rating: 4 — good, small improvements needed</div>
+          <div style="margin-top:8px;">What worked: the 5-persona model maps cleanly to our Attio data.</div>
+          <div>What didn't: the agency-owner outreach sample is too formal for Irish shops.</div>
+          <div>Change I want: add a second, shorter template variant tuned for small UK/IE agencies.</div>
+          <div style="margin-top:8px;color:rgba(255,255,255,0.5);">Route to: 03-Resources/Skills/icp-buyer-personas/feedback.md (append)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule-explainer">
+      <div class="rule-cell" style="background:#2A2A2D;border-color:rgba(255,255,255,0.08);"><div class="num">01</div><h4 style="color:white;">Feedback never overwrites</h4><p style="color:rgba(255,255,255,0.65);">Every submission is appended with a timestamp and the sender. The skill's history stays intact.</p></div>
+      <div class="rule-cell" style="background:#2A2A2D;border-color:rgba(255,255,255,0.08);"><div class="num">02</div><h4 style="color:white;">Three signals trigger a rewrite</h4><p style="color:rgba(255,255,255,0.65);">If a skill gets 3× rating ≤2 in a 30-day window, Claude flags it for rewrite and files a task.</p></div>
+      <div class="rule-cell" style="background:#2A2A2D;border-color:rgba(255,255,255,0.08);"><div class="num">03</div><h4 style="color:white;">Skill-creator handles updates</h4><p style="color:rgba(255,255,255,0.65);">When a rewrite is needed, the <code style="background:rgba(255,255,255,0.08);padding:2px 6px;border-radius:3px;color:white;">skill-creator</code> skill picks up the feedback and proposes the new SKILL.md.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-white" id="library">
+  <div class="container-wide">
+    <div class="eyebrow">The library · 56 skills</div>
+    <h2>Every skill on the shelf.</h2>
+    <p class="lead">Organised by domain. Click any name to see the trigger phrase, click "Feedback →" to submit a change request straight into the vault.</p>
+    
+    <div class="cat-block">
+      <div class="cat-head"><h3>Sales · ICP · Outreach</h3><span class="count">6 skills</span></div>
+      <div class="skill-grid">
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">website-scraping-scorer</span><span class="sk-plugin core">Core</span></div>
+          <div class="sk-desc">Score website prospects based on tracking, consent &amp; analytics infrastructure</div>
+          <div class="sk-foot"><span class="sk-trigger">"score these domains"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_website-scraping-scorer%3A%20feedback&body=Skill%3A%20website-scraping-scorer%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/website-scraping-scorer/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">icp-buyer-personas</span><span class="sk-plugin core">Core</span></div>
+          <div class="sk-desc">Amplio's ICP and buyer persona intelligence — target segments, qualification, outreach</div>
+          <div class="sk-foot"><span class="sk-trigger">"who should we sell to"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_icp-buyer-personas%3A%20feedback&body=Skill%3A%20icp-buyer-personas%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/icp-buyer-personas/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">vibe-persona-outreach</span><span class="sk-plugin core">Core</span></div>
+          <div class="sk-desc">Turn scraped ICP data into personalised outreach with contacts + tailored messages</div>
+          <div class="sk-foot"><span class="sk-trigger">"write the outreach"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_vibe-persona-outreach%3A%20feedback&body=Skill%3A%20vibe-persona-outreach%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/vibe-persona-outreach/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">attio-crm-enrichment</span><span class="sk-plugin core">Core</span></div>
+          <div class="sk-desc">Add, update &amp; enrich records in Attio CRM — People / Companies / Deals</div>
+          <div class="sk-foot"><span class="sk-trigger">"add this to Attio"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_attio-crm-enrichment%3A%20feedback&body=Skill%3A%20attio-crm-enrichment%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/attio-crm-enrichment/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">competitive-analysis</span><span class="sk-plugin core">Core</span></div>
+          <div class="sk-desc">Research competitors, compare positioning, messaging, content strategy</div>
+          <div class="sk-foot"><span class="sk-trigger">"research [competitor]"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_competitive-analysis%3A%20feedback&body=Skill%3A%20competitive-analysis%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/competitive-analysis/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">marketing:competitive-brief</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Build sales battlecards with positioning gaps and messaging angles</div>
+          <div class="sk-foot"><span class="sk-trigger">"competitive brief"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_marketing%3Acompetitive-brief%3A%20feedback&body=Skill%3A%20marketing%3Acompetitive-brief%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/marketing-competitive-brief/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-block">
+      <div class="cat-head"><h3>Marketing · Content · Brand</h3><span class="count">8 skills</span></div>
+      <div class="skill-grid">
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">marketing:content-creation</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Draft marketing content across channels — blog, social, email, landing pages, case studies</div>
+          <div class="sk-foot"><span class="sk-trigger">"write a blog post"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_marketing%3Acontent-creation%3A%20feedback&body=Skill%3A%20marketing%3Acontent-creation%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/marketing-content-creation/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">marketing:draft-content</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Channel-specific drafts with SEO recommendations + headline / subject-line options</div>
+          <div class="sk-foot"><span class="sk-trigger">"draft a landing page"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_marketing%3Adraft-content%3A%20feedback&body=Skill%3A%20marketing%3Adraft-content%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/marketing-draft-content/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">marketing:email-sequence</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Multi-email sequences with copy, timing, branching &amp; A/B test suggestions</div>
+          <div class="sk-foot"><span class="sk-trigger">"build a nurture sequence"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_marketing%3Aemail-sequence%3A%20feedback&body=Skill%3A%20marketing%3Aemail-sequence%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/marketing-email-sequence/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">marketing:campaign-plan</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Full campaign brief: objectives, audience, messaging, channel strategy, calendar</div>
+          <div class="sk-foot"><span class="sk-trigger">"plan a launch"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_marketing%3Acampaign-plan%3A%20feedback&body=Skill%3A%20marketing%3Acampaign-plan%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/marketing-campaign-plan/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">marketing:seo-audit</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Keyword research, on-page analysis, content gaps, technical checks, competitor compare</div>
+          <div class="sk-foot"><span class="sk-trigger">"SEO audit"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_marketing%3Aseo-audit%3A%20feedback&body=Skill%3A%20marketing%3Aseo-audit%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/marketing-seo-audit/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">marketing:brand-review</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Review content against brand voice + flag deviations with before/after fixes</div>
+          <div class="sk-foot"><span class="sk-trigger">"check this is on brand"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_marketing%3Abrand-review%3A%20feedback&body=Skill%3A%20marketing%3Abrand-review%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/marketing-brand-review/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">brand-guidelines-git</span><span class="sk-plugin core">Core</span></div>
+          <div class="sk-desc">Apply Amplio brand guidelines to any visual output — colors, type, layout patterns</div>
+          <div class="sk-foot"><span class="sk-trigger">"make it on brand"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_brand-guidelines-git%3A%20feedback&body=Skill%3A%20brand-guidelines-git%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/brand-guidelines-git/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">marketing:performance-report</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Marketing performance report with KPIs, trends, wins/misses + prioritised next steps</div>
+          <div class="sk-foot"><span class="sk-trigger">"monthly report"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_marketing%3Aperformance-report%3A%20feedback&body=Skill%3A%20marketing%3Aperformance-report%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/marketing-performance-report/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-block">
+      <div class="cat-head"><h3>Advertising · Performance</h3><span class="count">3 skills</span></div>
+      <div class="skill-grid">
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">performance-analytics</span><span class="sk-plugin core">Core</span></div>
+          <div class="sk-desc">Analyse marketing performance with key metrics, trend analysis &amp; optimisation recs</div>
+          <div class="sk-foot"><span class="sk-trigger">"review campaign results"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_performance-analytics%3A%20feedback&body=Skill%3A%20performance-analytics%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/performance-analytics/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">audience-overlap-analyzer</span><span class="sk-plugin core">Core</span></div>
+          <div class="sk-desc">Identify audience overlap &amp; cannibalisation across campaigns + platforms</div>
+          <div class="sk-foot"><span class="sk-trigger">"are my audiences competing"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_audience-overlap-analyzer%3A%20feedback&body=Skill%3A%20audience-overlap-analyzer%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/audience-overlap-analyzer/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">cross-platform-budget-allocator</span><span class="sk-plugin core">Core</span></div>
+          <div class="sk-desc">Optimise budget allocation across Google / Meta / TikTok / LinkedIn / Microsoft</div>
+          <div class="sk-foot"><span class="sk-trigger">"how should I split €X"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_cross-platform-budget-allocator%3A%20feedback&body=Skill%3A%20cross-platform-budget-allocator%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/cross-platform-budget-allocator/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-block">
+      <div class="cat-head"><h3>Analytics · Tracking · Data</h3><span class="count">14 skills</span></div>
+      <div class="skill-grid">
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">analytics-tracking</span><span class="sk-plugin core">Core</span></div>
+          <div class="sk-desc">Set up, audit &amp; improve GA4, GTM, event tracking, conversion tracking, UTMs</div>
+          <div class="sk-foot"><span class="sk-trigger">"audit my tracking"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_analytics-tracking%3A%20feedback&body=Skill%3A%20analytics-tracking%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/analytics-tracking/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">sql-queries</span><span class="sk-plugin core">Core</span></div>
+          <div class="sk-desc">Correct, performant SQL across Snowflake, BigQuery, Databricks, Postgres + more</div>
+          <div class="sk-foot"><span class="sk-trigger">"write a SQL query"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_sql-queries%3A%20feedback&body=Skill%3A%20sql-queries%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/sql-queries/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">data-visualization</span><span class="sk-plugin core">Core</span></div>
+          <div class="sk-desc">Effective charts with matplotlib, seaborn, plotly + publication-quality figures</div>
+          <div class="sk-foot"><span class="sk-trigger">"chart this data"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_data-visualization%3A%20feedback&body=Skill%3A%20data-visualization%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/data-visualization/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">statistical-analysis</span><span class="sk-plugin core">Core</span></div>
+          <div class="sk-desc">Descriptive stats, trend analysis, outlier detection, hypothesis testing</div>
+          <div class="sk-foot"><span class="sk-trigger">"is this significant"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_statistical-analysis%3A%20feedback&body=Skill%3A%20statistical-analysis%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/statistical-analysis/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">data:analyze</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">End-to-end data questions — from single metric lookup to full analysis</div>
+          <div class="sk-foot"><span class="sk-trigger">"analyse last quarter"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_data%3Aanalyze%3A%20feedback&body=Skill%3A%20data%3Aanalyze%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/data-analyze/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">data:write-query</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Optimised SQL for your dialect with best practices baked in</div>
+          <div class="sk-foot"><span class="sk-trigger">"get me all orders where..."</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_data%3Awrite-query%3A%20feedback&body=Skill%3A%20data%3Awrite-query%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/data-write-query/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">data:explore-data</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Profile a dataset — shape, quality, distributions, null rates, duplicates</div>
+          <div class="sk-foot"><span class="sk-trigger">"profile this table"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_data%3Aexplore-data%3A%20feedback&body=Skill%3A%20data%3Aexplore-data%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/data-explore-data/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">data:validate-data</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">QA an analysis before sharing — methodology, accuracy, bias checks</div>
+          <div class="sk-foot"><span class="sk-trigger">"validate this before I send"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_data%3Avalidate-data%3A%20feedback&body=Skill%3A%20data%3Avalidate-data%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/data-validate-data/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">data:build-dashboard</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Interactive HTML dashboard with KPI cards, charts, filters &amp; tables — self-contained</div>
+          <div class="sk-foot"><span class="sk-trigger">"build a dashboard"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_data%3Abuild-dashboard%3A%20feedback&body=Skill%3A%20data%3Abuild-dashboard%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/data-build-dashboard/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">data:create-viz</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Publication-quality visualisations with Python — charts for reports or decks</div>
+          <div class="sk-foot"><span class="sk-trigger">"make a chart"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_data%3Acreate-viz%3A%20feedback&body=Skill%3A%20data%3Acreate-viz%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/data-create-viz/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">data:sql-queries</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Dialect-aware SQL best practices — same engine as the core skill</div>
+          <div class="sk-foot"><span class="sk-trigger">"SQL for BigQuery"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_data%3Asql-queries%3A%20feedback&body=Skill%3A%20data%3Asql-queries%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/data-sql-queries/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">data:data-visualization</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Python charts — matplotlib, seaborn, plotly (data plugin variant)</div>
+          <div class="sk-foot"><span class="sk-trigger">"visualise this dataframe"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_data%3Adata-visualization%3A%20feedback&body=Skill%3A%20data%3Adata-visualization%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/data-data-visualization/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">data:statistical-analysis</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Statistical methods in the data plugin context — distributions, testing, correlation</div>
+          <div class="sk-foot"><span class="sk-trigger">"run a t-test"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_data%3Astatistical-analysis%3A%20feedback&body=Skill%3A%20data%3Astatistical-analysis%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/data-statistical-analysis/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">data:data-context-extractor</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Bootstrap or improve a company-specific data skill from analyst knowledge</div>
+          <div class="sk-foot"><span class="sk-trigger">"set up data context"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_data%3Adata-context-extractor%3A%20feedback&body=Skill%3A%20data%3Adata-context-extractor%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/data-data-context-extractor/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-block">
+      <div class="cat-head"><h3>Vault · Autoresearch · Second Brain</h3><span class="count">6 skills</span></div>
+      <div class="skill-grid">
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">vault-autoresearch:vault-improve</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Iterative autonomous improvement loop for the vault — inspired by Karpathy autoresearch</div>
+          <div class="sk-foot"><span class="sk-trigger">"improve the vault"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_vault-autoresearch%3Avault-improve%3A%20feedback&body=Skill%3A%20vault-autoresearch%3Avault-improve%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/vault-autoresearch-vault-improve/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">vault-autoresearch:vault-health-score</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Quantitative health score for the vault — links, freshness, coverage, provenance</div>
+          <div class="sk-foot"><span class="sk-trigger">"score the vault"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_vault-autoresearch%3Avault-health-score%3A%20feedback&body=Skill%3A%20vault-autoresearch%3Avault-health-score%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/vault-autoresearch-vault-health-score/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">vault-autoresearch:research-enrich</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Autonomously research and enrich vault notes with fresh findings</div>
+          <div class="sk-foot"><span class="sk-trigger">"enrich the vault"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_vault-autoresearch%3Aresearch-enrich%3A%20feedback&body=Skill%3A%20vault-autoresearch%3Aresearch-enrich%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/vault-autoresearch-research-enrich/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">vault-autoresearch:client-data-context</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Build &amp; maintain per-client data context files from IP Amplio</div>
+          <div class="sk-foot"><span class="sk-trigger">"build data context for [client]"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_vault-autoresearch%3Aclient-data-context%3A%20feedback&body=Skill%3A%20vault-autoresearch%3Aclient-data-context%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/vault-autoresearch-client-data-context/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">vault-autoresearch:client-insights</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Client reports, business patterns, improvement opportunities from vault data</div>
+          <div class="sk-foot"><span class="sk-trigger">"pull a client report"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_vault-autoresearch%3Aclient-insights%3A%20feedback&body=Skill%3A%20vault-autoresearch%3Aclient-insights%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/vault-autoresearch-client-insights/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">vault-autoresearch:cross-client-learner</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Cross-client pattern analysis — generate playbooks from repeated insights</div>
+          <div class="sk-foot"><span class="sk-trigger">"what patterns across clients"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_vault-autoresearch%3Across-client-learner%3A%20feedback&body=Skill%3A%20vault-autoresearch%3Across-client-learner%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/vault-autoresearch-cross-client-learner/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-block">
+      <div class="cat-head"><h3>Operations · Process · Compliance</h3><span class="count">9 skills</span></div>
+      <div class="skill-grid">
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">operations:process-doc</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Document a process — flowcharts, RACI matrices, SOPs with edge cases</div>
+          <div class="sk-foot"><span class="sk-trigger">"document this process"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_operations%3Aprocess-doc%3A%20feedback&body=Skill%3A%20operations%3Aprocess-doc%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/operations-process-doc/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">operations:status-report</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Weekly / monthly status report with KPIs, risks, action items for leadership</div>
+          <div class="sk-foot"><span class="sk-trigger">"draft the status report"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_operations%3Astatus-report%3A%20feedback&body=Skill%3A%20operations%3Astatus-report%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/operations-status-report/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">operations:runbook</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Operational runbook for recurring tasks — step-by-step + troubleshooting + rollback</div>
+          <div class="sk-foot"><span class="sk-trigger">"write a runbook"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_operations%3Arunbook%3A%20feedback&body=Skill%3A%20operations%3Arunbook%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/operations-runbook/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">operations:risk-assessment</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Identify, assess &amp; mitigate operational risks — project, vendor, process</div>
+          <div class="sk-foot"><span class="sk-trigger">"what are the risks"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_operations%3Arisk-assessment%3A%20feedback&body=Skill%3A%20operations%3Arisk-assessment%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/operations-risk-assessment/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">operations:compliance-tracking</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Track compliance requirements + audit readiness (SOC 2, GDPR, ISO 27001)</div>
+          <div class="sk-foot"><span class="sk-trigger">"compliance audit prep"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_operations%3Acompliance-tracking%3A%20feedback&body=Skill%3A%20operations%3Acompliance-tracking%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/operations-compliance-tracking/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">operations:change-request</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Change management request with impact analysis + rollback plan</div>
+          <div class="sk-foot"><span class="sk-trigger">"CAB request for..."</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_operations%3Achange-request%3A%20feedback&body=Skill%3A%20operations%3Achange-request%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/operations-change-request/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">operations:capacity-plan</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Resource capacity planning — workload analysis, utilisation forecasting</div>
+          <div class="sk-foot"><span class="sk-trigger">"do we have capacity for..."</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_operations%3Acapacity-plan%3A%20feedback&body=Skill%3A%20operations%3Acapacity-plan%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/operations-capacity-plan/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">operations:process-optimization</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Analyse &amp; improve slow / inefficient processes — find bottlenecks</div>
+          <div class="sk-foot"><span class="sk-trigger">"this workflow is slow"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_operations%3Aprocess-optimization%3A%20feedback&body=Skill%3A%20operations%3Aprocess-optimization%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/operations-process-optimization/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">operations:vendor-review</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Evaluate a vendor — TCO, risk assessment, side-by-side comparison, recommendation</div>
+          <div class="sk-foot"><span class="sk-trigger">"review this vendor"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_operations%3Avendor-review%3A%20feedback&body=Skill%3A%20operations%3Avendor-review%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/operations-vendor-review/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-block">
+      <div class="cat-head"><h3>Documents · Deliverables</h3><span class="count">4 skills</span></div>
+      <div class="skill-grid">
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">xlsx</span><span class="sk-plugin core">Core</span></div>
+          <div class="sk-desc">Excel spreadsheets — formulas, formatting, pivot tables, data analysis, charts</div>
+          <div class="sk-foot"><span class="sk-trigger">"make a spreadsheet"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_xlsx%3A%20feedback&body=Skill%3A%20xlsx%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/xlsx/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">pptx</span><span class="sk-plugin core">Core</span></div>
+          <div class="sk-desc">PowerPoint presentations — create, edit, parse, combine. Any .pptx work</div>
+          <div class="sk-foot"><span class="sk-trigger">"build a deck"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_pptx%3A%20feedback&body=Skill%3A%20pptx%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/pptx/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">docx</span><span class="sk-plugin core">Core</span></div>
+          <div class="sk-desc">Word documents — reports, memos, letters, templates. Any .docx work</div>
+          <div class="sk-foot"><span class="sk-trigger">"write a report"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_docx%3A%20feedback&body=Skill%3A%20docx%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/docx/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">pdf</span><span class="sk-plugin core">Core</span></div>
+          <div class="sk-desc">PDF processing — extract text/tables, create new PDFs, merge, split, forms</div>
+          <div class="sk-foot"><span class="sk-trigger">"parse this PDF"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_pdf%3A%20feedback&body=Skill%3A%20pdf%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/pdf/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-block">
+      <div class="cat-head"><h3>Meta · System · Cowork</h3><span class="count">6 skills</span></div>
+      <div class="skill-grid">
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">find-skills</span><span class="sk-plugin core">Core</span></div>
+          <div class="sk-desc">Discover and install new skills when a capability is missing</div>
+          <div class="sk-foot"><span class="sk-trigger">"is there a skill for..."</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_find-skills%3A%20feedback&body=Skill%3A%20find-skills%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/find-skills/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">skill-creator</span><span class="sk-plugin core">Core</span></div>
+          <div class="sk-desc">Create, edit, benchmark &amp; optimise skills themselves</div>
+          <div class="sk-foot"><span class="sk-trigger">"build me a skill that..."</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_skill-creator%3A%20feedback&body=Skill%3A%20skill-creator%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/skill-creator/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">setup-cowork</span><span class="sk-plugin core">Core</span></div>
+          <div class="sk-desc">Guided Cowork setup — install a plugin, try a skill, connect tools</div>
+          <div class="sk-foot"><span class="sk-trigger">"set up Cowork"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_setup-cowork%3A%20feedback&body=Skill%3A%20setup-cowork%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/setup-cowork/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">schedule</span><span class="sk-plugin core">Core</span></div>
+          <div class="sk-desc">Create a scheduled task that runs on demand or on an interval</div>
+          <div class="sk-foot"><span class="sk-trigger">"run this every Monday"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_schedule%3A%20feedback&body=Skill%3A%20schedule%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/schedule/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">cowork-plugin-management:cowork-plugin-customizer</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Customise an existing Cowork plugin for a specific organisation's tools &amp; workflows</div>
+          <div class="sk-foot"><span class="sk-trigger">"customise this plugin"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_cowork-plugin-management%3Acowork-plugin-customizer%3A%20feedback&body=Skill%3A%20cowork-plugin-management%3Acowork-plugin-customizer%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/cowork-plugin-management-cowork-plugin-customizer/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+        <div class="skill-card">
+          <div class="sk-top"><span class="sk-name">cowork-plugin-management:create-cowork-plugin</span><span class="sk-plugin plugin">Plugin</span></div>
+          <div class="sk-desc">Build a new Cowork plugin from scratch — scaffold, package, deliver</div>
+          <div class="sk-foot"><span class="sk-trigger">"create a plugin"</span><a class="sk-feedback" href="mailto:hello@ampliodata.io?subject=update_skill_cowork-plugin-management%3Acreate-cowork-plugin%3A%20feedback&body=Skill%3A%20cowork-plugin-management%3Acreate-cowork-plugin%0ARating%20%281-5%2C%20keep%20or%20delete%20the%20line%29%3A%0A%20%201%20-%20remove%20it%2C%20hurts%20more%20than%20helps%0A%20%202%20-%20rarely%20useful%0A%20%203%20-%20OK%2C%20could%20be%20better%0A%20%204%20-%20good%2C%20small%20improvements%20needed%0A%20%205%20-%20essential%2C%20keep%20as-is%0A%0AWhat%20worked%3A%0A%0AWhat%20didn%27t%3A%0A%0AChange%20I%20want%3A%0A%0ARoute%20to%3A%2003-Resources/Skills/cowork-plugin-management-create-cowork-plugin/feedback.md%20%28append%29">Feedback →</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-light" id="owners">
+  <div class="container">
+    <div class="eyebrow">Who owns what</div>
+    <h2>Ownership of the library.</h2>
+    <p class="lead">Every skill has an owner. The owner decides when to rewrite, when to retire, and when to graduate a plugin skill into a core skill.</p>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:32px;">
+      <div class="card-flat" style="background:var(--white);border-radius:10px;padding:28px;border:1px solid var(--border);"><span class="pill">Daragh</span><h3 style="margin-top:16px;font-size:20px;">Library curator</h3><p class="text-sm">Maintains the full skill list. Reviews inbound feedback weekly. Proposes rewrites, deprecations, and new additions. First reviewer on skill-creator outputs.</p></div>
+      <div class="card-flat" style="background:var(--white);border-radius:10px;padding:28px;border:1px solid var(--border);"><span class="pill">Walter</span><h3 style="margin-top:16px;font-size:20px;">Core skills owner</h3><p class="text-sm">Ships core skills (analytics-tracking, icp-buyer-personas, brand-guidelines-git, attio-crm-enrichment). Reviews the "what changed" diffs.</p></div>
+      <div class="card-flat" style="background:var(--white);border-radius:10px;padding:28px;border:1px solid var(--border);"><span class="pill">Plugin authors</span><h3 style="margin-top:16px;font-size:20px;">Plugin skills</h3><p class="text-sm">Marketing, Operations, Data, Vault-autoresearch — authored externally. We submit upstream feedback, we don't edit in place.</p></div>
+      <div class="card-flat" style="background:var(--white);border-radius:10px;padding:28px;border:1px solid var(--border);"><span class="pill">Claude</span><h3 style="margin-top:16px;font-size:20px;">Execution + logging</h3><p class="text-sm">Appends feedback. Flags patterns. Drafts proposed SKILL.md updates when thresholds hit. Never deletes without confirmation.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-dark">
+  <div class="container" style="text-align:center;">
+    <div class="eyebrow" style="color:rgba(139,44,245,0.9);">That's the suite.</div>
+    <h2 style="color:white;">One identity. Ten decks.</h2>
+    <p class="lead" style="color:rgba(255,255,255,0.65);margin:0 auto;">Return to the <a href="index.html" class="purple" style="text-decoration:underline;">suite index</a> — or read <a href="09-gmail-vault-automation.html" class="purple" style="text-decoration:underline;">/09 — Gmail ↔ Vault Automation</a> to see the full pipeline these feedback emails flow through.</p>
+  </div>
+</section>
+
+
+<script>
+  const progressBar = document.getElementById('progressBar');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+    progressBar.style.width = pct + '%';
+  });
+  const sections = document.querySelectorAll('section[id]');
+  const sideLinks = document.querySelectorAll('.side-nav a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 140) current = s.id; });
+    sideLinks.forEach(a => { a.classList.toggle('active', a.getAttribute('href') === '#' + current); });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amplio Data — The Vault Architecture</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* AMPLIO PRESENTATION SYSTEM — shared stylesheet for onboarding suite */
+:root {
+  --charcoal: #131313; --off-black: #0C0C0C;
+  --white: #FFFFFF; --off-white: #F5F5F5; --warm-white: #FAFAFA;
+  --purple: #8B2CF5; --purple-dark: #6B22C4;
+  --purple-light: rgba(139,44,245,0.08); --purple-15: rgba(139,44,245,0.15); --purple-30: rgba(139,44,245,0.3);
+  --dark-gray: #3A3A3A; --mid-gray: #6B6B6B; --light-gray: #D3D3D3; --pale-gray: #E8E8E8;
+  --border: rgba(0,0,0,0.08); --border-dark: rgba(255,255,255,0.08);
+  --red: #DE362A; --orange: #FF9500; --green: #34C759;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-purple: 0 4px 20px rgba(139,44,245,0.3);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body { font-family: 'Satoshi', -apple-system, sans-serif; font-size: 16px; font-weight: 400; letter-spacing: -0.2px; line-height: 1.6; color: var(--charcoal); background: var(--white); -webkit-font-smoothing: antialiased; }
+
+.progress-bar { position: fixed; top: 0; left: 0; height: 2px; background: var(--purple); z-index: 200; width: 0%; transition: width 0.1s linear; }
+
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(255,255,255,0.92); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 14px 0; }
+.nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 40px; display: flex; align-items: center; justify-content: space-between; }
+.nav-logo { height: 24px; width: auto; }
+.nav-badge { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); text-transform: uppercase; letter-spacing: 1px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px; }
+
+.side-nav { position: fixed; left: 40px; top: 50%; transform: translateY(-50%); z-index: 50; display: flex; flex-direction: column; gap: 6px; }
+.side-nav a { display: flex; align-items: center; gap: 12px; font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); text-decoration: none; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; transition: all 0.2s; padding: 6px 0; }
+.side-nav a::before { content: ''; display: inline-block; width: 20px; height: 1px; background: var(--mid-gray); transition: all 0.2s; }
+.side-nav a:hover, .side-nav a.active { color: var(--purple); opacity: 1; }
+.side-nav a.active::before, .side-nav a:hover::before { width: 40px; background: var(--purple); }
+.side-nav a .label { white-space: nowrap; }
+
+.container { max-width: 1080px; margin: 0 auto; padding: 0 40px; }
+.container-wide { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+
+.section-white { background: var(--white); color: var(--charcoal); padding: 120px 0; }
+.section-light { background: var(--off-white); color: var(--charcoal); padding: 120px 0; }
+.section-dark { background: #1C1C1E; color: var(--white); padding: 140px 0; }
+.section-dark h2, .section-dark h3, .section-dark h4 { color: var(--white); }
+.section-dark .lead { color: rgba(255,255,255,0.6); }
+.section-dark .text-sm { color: rgba(255,255,255,0.5); }
+.section-dark .eyebrow { color: rgba(139,44,245,0.9); }
+
+h1 { font-size: 88px; font-weight: 700; letter-spacing: -4px; line-height: 0.95; margin-bottom: 32px; }
+h2 { font-size: 48px; font-weight: 700; letter-spacing: -2px; line-height: 1.05; margin-bottom: 24px; }
+h3 { font-size: 24px; font-weight: 700; letter-spacing: -0.8px; line-height: 1.25; margin-bottom: 14px; }
+h4 { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; line-height: 1.35; margin-bottom: 8px; }
+.lead { font-size: 22px; font-weight: 400; line-height: 1.55; color: var(--mid-gray); max-width: 720px; letter-spacing: -0.3px; }
+.text-sm { font-size: 14px; line-height: 1.6; color: var(--mid-gray); }
+.text-xs { font-size: 11px; line-height: 1.4; }
+.eyebrow { font-family: 'Roboto Mono', monospace; font-size: 12px; font-weight: 500; color: var(--purple); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 24px; display: inline-block; }
+.number-label { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); letter-spacing: 1px; text-transform: uppercase; }
+.purple { color: var(--purple); }
+.bold { font-weight: 700; }
+.italic { font-style: italic; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.grid-2-asym { display: grid; grid-template-columns: 1fr 1.4fr; gap: 60px; align-items: start; }
+
+.card { background: var(--white); border-radius: 6px; padding: 28px; border: 1px solid var(--border); transition: all 0.25s ease; }
+.card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.card-flat { background: var(--white); border-radius: 6px; padding: 28px; border: 1px solid var(--border); }
+.card-light { background: var(--off-white); border-radius: 6px; padding: 24px; border: 1px solid var(--border); }
+.card-dark { background: #2A2A2D; border-radius: 8px; padding: 40px; border: 1px solid rgba(255,255,255,0.08); }
+.card-dark h3, .card-dark h4 { color: var(--white); }
+.card-dark p, .card-dark .text-sm { color: rgba(255,255,255,0.65); }
+.card-dark code { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); padding: 2px 6px; border-radius: 3px; font-family: 'Roboto Mono', monospace; font-size: 12px; }
+.card-purple { background: var(--purple); border-radius: 6px; padding: 28px; color: var(--white); box-shadow: var(--shadow-purple); }
+.card-purple h3, .card-purple h4 { color: var(--white); }
+.card-outlined { background: transparent; border: 1px solid var(--border); border-radius: 6px; padding: 28px; }
+
+.badge { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 26px; border-radius: 4px; background: var(--purple); color: var(--white); font-family: 'Roboto Mono', monospace; font-size: 11px; font-weight: 500; padding: 0 8px; letter-spacing: 0.5px; }
+.badge-ghost { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 26px; border-radius: 4px; background: var(--purple-light); color: var(--purple); font-family: 'Roboto Mono', monospace; font-size: 11px; font-weight: 500; padding: 0 10px; letter-spacing: 0.5px; border: 1px solid var(--purple-15); }
+.pill { display: inline-flex; align-items: center; background: var(--purple-light); border: 1px solid var(--purple-15); border-radius: 999px; padding: 5px 14px; font-size: 12px; font-weight: 500; color: var(--purple); letter-spacing: 0; }
+.pill-dark { display: inline-flex; align-items: center; background: rgba(139,44,245,0.15); border: 1px solid rgba(139,44,245,0.25); border-radius: 999px; padding: 5px 14px; font-size: 12px; font-weight: 500; color: #C898FD; }
+
+.kpi-num { font-size: 56px; font-weight: 900; letter-spacing: -3px; line-height: 1; color: var(--purple); margin-bottom: 8px; }
+.kpi-label { font-size: 13px; font-weight: 500; color: var(--mid-gray); }
+.section-dark .kpi-label { color: rgba(255,255,255,0.5); }
+
+.timeline { border-left: 2px solid var(--purple); margin-left: 16px; padding-left: 32px; position: relative; }
+.tl-item { position: relative; padding-bottom: 32px; }
+.tl-item:last-child { padding-bottom: 0; }
+.tl-item::before { content: ''; position: absolute; left: -39px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--purple); box-shadow: 0 0 0 4px var(--white); }
+.section-dark .tl-item::before { box-shadow: 0 0 0 4px #1C1C1E; }
+.tl-item h4 { margin-bottom: 6px; }
+.tl-day { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--purple); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font-family: 'Roboto Mono', monospace; font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--mid-gray); padding: 14px 16px; border-bottom: 1px solid var(--border); }
+td { padding: 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.section-dark th { color: rgba(255,255,255,0.4); border-bottom-color: rgba(255,255,255,0.08); }
+.section-dark td { color: rgba(255,255,255,0.85); border-bottom-color: rgba(255,255,255,0.06); }
+
+.hero { padding-top: 180px; padding-bottom: 100px; position: relative; overflow: hidden; }
+.hero-meta { display: flex; gap: 40px; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+.hero-meta-item .num { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--purple); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.hero-meta-item .val { font-size: 14px; color: var(--charcoal); font-weight: 500; }
+
+.process-flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; position: relative; }
+.process-step { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 32px 28px; position: relative; transition: all 0.25s; }
+.process-step:hover { border-color: var(--purple); transform: translateY(-2px); }
+.process-step.last { background: var(--purple); color: var(--white); border-color: var(--purple); }
+.process-step.last h4, .process-step.last .step-num { color: var(--white); }
+.process-step.last .step-num { background: rgba(255,255,255,0.2); }
+.process-step.last .text-sm { color: rgba(255,255,255,0.85); }
+.section-dark .process-step { color: var(--charcoal); }
+.section-dark .process-step h4 { color: var(--charcoal); }
+.section-dark .process-step p, .section-dark .process-step .text-sm { color: var(--mid-gray); }
+.section-dark .process-step.last h4, .section-dark .process-step.last p, .section-dark .process-step.last .text-sm { color: var(--white); }
+.section-dark .process-flow { gap: 24px; }
+.step-num { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--purple); letter-spacing: 1px; margin-bottom: 12px; text-transform: uppercase; font-weight: 500; display: block; }
+.process-step h4 { font-size: 16px; margin-bottom: 6px; }
+.process-step .text-sm { font-size: 13px; }
+
+.quote-card { background: var(--off-white); border-left: 3px solid var(--purple); padding: 24px 28px; margin: 32px 0; border-radius: 0 6px 6px 0; font-style: italic; color: var(--charcoal); font-size: 18px; line-height: 1.6; letter-spacing: -0.3px; }
+.quote-card .quote-author { font-style: normal; font-size: 13px; color: var(--mid-gray); margin-top: 12px; display: block; }
+
+.code-block { background: var(--off-black); border-radius: 6px; padding: 24px; font-family: 'Roboto Mono', monospace; font-size: 13px; line-height: 1.8; color: rgba(255,255,255,0.85); overflow-x: auto; border: 1px solid var(--border-dark); white-space: pre; }
+.code-block .comment { color: rgba(255,255,255,0.4); }
+.code-block .purple { color: var(--purple); }
+.code-block .label { color: #C898FD; }
+.code-block .subject { color: var(--orange); font-weight: 500; }
+
+.divider { border-top: 1px solid var(--pale-gray); margin: 64px 0; }
+.section-dark .divider { border-color: var(--border-dark); }
+
+.mb-8 { margin-bottom: 8px; } .mb-12 { margin-bottom: 12px; } .mb-16 { margin-bottom: 16px; }
+.mb-24 { margin-bottom: 24px; } .mb-32 { margin-bottom: 32px; } .mb-48 { margin-bottom: 48px; } .mb-64 { margin-bottom: 64px; }
+.mt-16 { margin-top: 16px; } .mt-24 { margin-top: 24px; } .mt-32 { margin-top: 32px; } .mt-48 { margin-top: 48px; } .mt-64 { margin-top: 64px; }
+.flex { display: flex; } .flex-col { flex-direction: column; }
+.items-center { align-items: center; } .items-start { align-items: flex-start; }
+.justify-between { justify-content: space-between; } .justify-center { justify-content: center; }
+.gap-16 { gap: 16px; } .gap-24 { gap: 24px; } .gap-32 { gap: 32px; }
+.text-center { text-align: center; }
+.max-w-700 { max-width: 700px; } .max-w-800 { max-width: 800px; }
+
+.stat-row { display: grid; grid-template-columns: auto 1fr auto; gap: 20px; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--border); }
+.stat-row:last-child { border-bottom: none; }
+.section-dark .stat-row { border-bottom-color: var(--border-dark); }
+.stat-row .stat-num { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); letter-spacing: 1px; }
+.stat-row .stat-value { font-size: 22px; font-weight: 700; color: var(--purple); letter-spacing: -0.5px; }
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--off-white); }
+::-webkit-scrollbar-thumb { background: var(--light-gray); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--mid-gray); }
+
+footer { background: var(--off-black); color: rgba(255,255,255,0.4); padding: 64px 0 40px; font-size: 13px; }
+footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
+
+@media (max-width: 1300px) { .side-nav { display: none; } }
+@media (max-width: 900px) {
+  .grid-2, .grid-3, .grid-4, .grid-5, .grid-2-asym { grid-template-columns: 1fr; }
+  .process-flow { grid-template-columns: 1fr; }
+  h1 { font-size: 52px; letter-spacing: -2px; }
+  h2 { font-size: 36px; letter-spacing: -1.5px; }
+  .container, .container-wide { padding: 0 24px; }
+  .section-white, .section-light, .section-dark { padding: 80px 0; }
+  .hero { padding-top: 140px; }
+  .kpi-num { font-size: 40px; }
+  .hero-meta { flex-direction: column; gap: 20px; }
+}
+</style>
+<style>
+
+.hero-meta { display: flex; gap: 48px; margin-top: 48px; flex-wrap: wrap; }
+.hero-meta-item .num { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.hero-meta-item .val { font-size: 18px; font-weight: 600; color: var(--charcoal); }
+.mt-32 { margin-top: 32px; } .mt-64 { margin-top: 64px; }
+.flex { display: flex; } .items-center { align-items: center; } .gap-16 { gap: 16px; }
+.flow-svg { width: 100%; max-width: 960px; margin: 48px auto 0; display: block; }
+.email-mock { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 0; margin-top: 32px; font-family: 'Satoshi', sans-serif; box-shadow: var(--shadow-md); overflow: hidden; max-width: 720px; margin-left: auto; margin-right: auto; }
+.email-mock .email-head { padding: 20px 28px; border-bottom: 1px solid var(--border); background: var(--off-white); }
+.email-mock .email-head .subj { font-size: 17px; font-weight: 700; margin-bottom: 10px; color: var(--charcoal); }
+.email-mock .email-head .meta { font-family: 'Roboto Mono', monospace; font-size: 12px; color: var(--mid-gray); }
+.email-mock .email-head .meta span { margin-right: 16px; }
+.email-mock .email-head .label { display: inline-block; background: var(--purple); color: white; font-family: 'Roboto Mono', monospace; font-size: 10px; padding: 3px 10px; border-radius: 4px; letter-spacing: 1px; text-transform: uppercase; margin-top: 8px; }
+.email-mock .email-body { padding: 24px 28px; font-size: 14px; line-height: 1.7; color: var(--dark-gray); }
+.email-mock .email-body code { background: var(--purple-light); color: var(--purple); padding: 2px 6px; border-radius: 3px; font-family: 'Roboto Mono', monospace; font-size: 12px; }
+.workflow-steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 32px; position: relative; }
+.wf-step { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 24px 20px; position: relative; }
+.wf-step.active { background: var(--purple); color: white; border-color: var(--purple); }
+.wf-step .wfn { font-family: 'Roboto Mono', monospace; font-size: 10px; color: var(--purple); letter-spacing: 2px; margin-bottom: 8px; text-transform: uppercase; }
+.wf-step.active .wfn { color: white; }
+.wf-step h4 { font-size: 15px; margin-bottom: 6px; }
+.wf-step.active h4 { color: white; }
+.wf-step .text-sm { font-size: 12px; color: var(--mid-gray); }
+.wf-step.active .text-sm { color: rgba(255,255,255,0.85); }
+.filter-card { background: #2A2A2D; border-radius: 10px; padding: 32px 36px; margin-top: 32px; font-family: 'Roboto Mono', monospace; }
+.filter-card .fl-row { display: grid; grid-template-columns: 120px 1fr; gap: 24px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.filter-card .fl-row:last-child { border: 0; }
+.filter-card .fl-row .k { color: rgba(255,255,255,0.45); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+.filter-card .fl-row .v { color: white; font-size: 13px; }
+.filter-card .fl-row .v code { background: rgba(139,44,245,0.2); color: #C898FD; padding: 2px 8px; border-radius: 3px; }
+.sync-grid { display: grid; grid-template-columns: 1fr 80px 1fr; gap: 24px; margin-top: 40px; align-items: stretch; }
+.sync-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 32px; display: flex; flex-direction: column; }
+.sync-card h4 { margin-bottom: 12px; font-size: 18px; }
+.sync-card .text-sm { color: var(--mid-gray); font-size: 13px; margin-bottom: 16px; }
+.sync-card ul { list-style: none; padding: 0; margin-top: auto; }
+.sync-card ul li { font-family: 'Roboto Mono', monospace; font-size: 12px; padding: 6px 0; color: var(--dark-gray); border-bottom: 1px dashed var(--border); }
+.sync-card ul li:last-child { border: 0; }
+.sync-arrow { display: flex; align-items: center; justify-content: center; font-size: 40px; color: var(--purple); font-weight: 300; }
+.triggers { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 32px; }
+.trigger { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 24px 28px; display: grid; grid-template-columns: 120px 1fr; gap: 24px; align-items: start; }
+.trigger .phrase { font-family: 'Roboto Mono', monospace; font-size: 12px; color: var(--purple); background: var(--purple-light); border: 1px solid var(--purple-15); padding: 8px 12px; border-radius: 4px; text-align: center; }
+.trigger .action { font-size: 13px; color: var(--dark-gray); line-height: 1.6; }
+.pipeline { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 40px; position: relative; }
+.pipe-cell { background: var(--white); border: 1px solid var(--border); padding: 18px 10px; text-align: center; position: relative; }
+.pipe-cell:first-child { border-radius: 8px 0 0 8px; }
+.pipe-cell:last-child { border-radius: 0 8px 8px 0; }
+.pipe-cell .pn { font-family: 'Roboto Mono', monospace; font-size: 9px; color: var(--mid-gray); letter-spacing: 1px; margin-bottom: 4px; }
+.pipe-cell .pname { font-size: 12px; font-weight: 600; }
+.pipe-cell.done { background: var(--purple); color: white; border-color: var(--purple); }
+.pipe-cell.done .pn { color: rgba(255,255,255,0.7); }
+.rules-list { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 32px; }
+.rule-card { background: #2A2A2D; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 28px; display: flex; gap: 20px; }
+.rule-card .num { font-family: 'Roboto Mono', monospace; font-size: 28px; font-weight: 700; color: var(--purple); line-height: 1; flex-shrink: 0; }
+.rule-card h4 { color: white; margin-bottom: 6px; font-size: 16px; }
+.rule-card p { color: rgba(255,255,255,0.65); font-size: 13px; line-height: 1.6; }
+
+</style>
+<title>Amplio — Gmail & Vault Automation</title>
+</head>
+
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="flex items-center gap-16">
+      <a href="index.html" style="display:inline-flex;align-items:center;text-decoration:none;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 387 98" fill="none" class="nav-logo">
+  <path fill="#0C0C0C" d="m106.441 79.658 23.8-65.164h15.704l23.622 65.164H155.81l-5.264-15.007h-25.392l-5.264 15.007h-13.449Zm22.561-26.03h17.651l-8.847-25.19-8.804 25.19Zm41.881 26.03V30.874h11.768v6.419c1.444-2.302 3.45-4.132 6.016-5.49 2.595-1.357 5.397-2.021 8.405-1.992 3.303.03 6.193.767 8.67 2.214 2.507 1.416 4.365 3.364 5.574 5.843 1.415-2.42 3.48-4.368 6.193-5.843 2.713-1.505 5.736-2.243 9.068-2.214 5.191.03 9.364 1.653 12.52 4.87 3.155 3.217 4.733 7.467 4.733 12.75v32.227h-12.121V49.644c0-2.804-.826-5.047-2.477-6.73-1.652-1.681-3.849-2.537-6.592-2.567-2.654-.03-4.866.9-6.635 2.79-1.74 1.858-2.61 4.22-2.61 7.082v29.44h-12.121V49.156c0-2.656-.811-4.781-2.433-6.375-1.622-1.594-3.745-2.405-6.37-2.435-2.713-.03-4.969.96-6.768 2.966-1.799 2.007-2.698 4.56-2.698 7.659v28.686h-12.122Zm105.096-49.714c6.812 0 12.386 2.39 16.721 7.172 4.336 4.751 6.488 10.846 6.459 18.283-.029 7.467-2.241 13.56-6.636 18.283-4.394 4.722-10.026 7.068-16.898 7.038a20.316 20.316 0 0 1-8.67-1.814c-2.743-1.27-4.969-2.981-6.68-5.136v23.862h-12.121V30.874h12.032l-.044 6.463c1.829-2.273 4.173-4.073 7.034-5.4 2.861-1.329 5.795-1.993 8.803-1.993Zm-16.102 25.499c-.03 4.161 1.283 7.614 3.937 10.359 2.654 2.715 5.913 4.058 9.776 4.028 3.864.03 6.989-1.284 9.378-3.94 2.419-2.655 3.628-6.138 3.628-10.447 0-4.309-1.209-7.791-3.628-10.447-2.389-2.686-5.514-4.029-9.378-4.029-3.834 0-7.078 1.372-9.732 4.117-2.654 2.745-3.981 6.198-3.981 10.359ZM314.056 12.9v66.758h-12.077V12.9h12.077Zm5.165 66.758V30.874h12.12v48.784h-12.12Zm-.133-53.92v-12.35h12.651v12.35h-12.651Zm40.687 54.983c-7.462.03-13.596-2.332-18.403-7.083-4.778-4.752-7.181-10.861-7.211-18.328 0-4.928 1.092-9.34 3.274-13.236 2.183-3.896 5.22-6.906 9.113-9.031 3.892-2.155 8.301-3.232 13.227-3.232 3.716 0 7.166.635 10.351 1.904 3.214 1.24 5.942 2.98 8.184 5.223 2.241 2.214 3.996 4.914 5.264 8.102 1.297 3.158 1.946 6.581 1.946 10.27 0 3.69-.649 7.113-1.946 10.27-1.268 3.158-3.023 5.844-5.264 8.058-2.242 2.213-4.97 3.954-8.184 5.223-3.185 1.24-6.635 1.86-10.351 1.86Zm-13.05-25.41c0 4.249 1.194 7.702 3.583 10.358 2.418 2.627 5.573 3.94 9.467 3.94 3.922 0 7.092-1.313 9.511-3.94 2.447-2.656 3.671-6.11 3.671-10.359 0-4.309-1.224-7.776-3.671-10.403-2.419-2.656-5.589-3.984-9.511-3.984-3.923 0-7.093 1.328-9.512 3.984-2.388 2.656-3.568 6.124-3.538 10.403ZM87.455 40.877H5.76A5.763 5.763 0 0 0 0 46.642a5.763 5.763 0 0 0 5.76 5.764h81.695a5.763 5.763 0 0 0 5.76-5.764 5.763 5.763 0 0 0-5.76-5.765Z"/>
+  <path fill="#8B2CF5" d="M40.848 5.764V87.52a5.761 5.761 0 1 0 11.52 0V5.764A5.763 5.763 0 0 0 46.609 0a5.763 5.763 0 0 0-5.76 5.764Z"/>
+  <path fill="#8B2CF5" d="M71.418 13.662 13.65 71.47a5.768 5.768 0 0 0 0 8.152 5.757 5.757 0 0 0 8.147 0l57.766-57.809a5.768 5.768 0 0 0 0-8.152 5.757 5.757 0 0 0-8.146 0Z"/>
+</svg>
+      </a>
+      <span class="nav-badge">Gmail ↔ Vault Automation</span>
+    </div>
+    <span class="text-sm" style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;">Internal · 09</span>
+  </div>
+</nav>
+
+<div class="side-nav" id="sideNav">
+  <a href="#hero" class="active"><span class="label">Intro</span></a>
+  <a href="#concept"><span class="label">Concept</span></a>
+  <a href="#flow"><span class="label">Flow</span></a>
+  <a href="#filters"><span class="label">Gmail setup</span></a>
+  <a href="#sync"><span class="label">Sync</span></a>
+  <a href="#triggers"><span class="label">Triggers</span></a>
+  <a href="#pipeline"><span class="label">Pipeline</span></a>
+  <a href="#rules"><span class="label">Rules</span></a>
+</div>
+
+
+<section class="section-white hero" id="hero">
+  <div class="container">
+    <div class="eyebrow">/09 — GMAIL ↔ VAULT AUTOMATION</div>
+    <h1>Talk to the <span class="purple">vault</span>.<br/>Through your inbox.</h1>
+    <p class="lead">Gmail is the ambient interface to Amplio. Label an email <code style="background:var(--purple-light);padding:2px 8px;border-radius:4px;color:var(--purple);font-family:'Roboto Mono',monospace;font-size:15px;">Amplio Updates</code> and Claude picks it up, syncs the vault, and closes the loop. No new app. No new habit. Just email.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><div class="num">Interface</div><div class="val">Gmail + labels</div></div>
+      <div class="hero-meta-item"><div class="num">Trigger</div><div class="val">Subject prefix update_</div></div>
+      <div class="hero-meta-item"><div class="num">Target</div><div class="val">Client _overview.md + vault sync</div></div>
+      <div class="hero-meta-item"><div class="num">Rule</div><div class="val">Behaviour Rule #8 · vault sync</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-light" id="concept">
+  <div class="container">
+    <div class="eyebrow">The concept</div>
+    <h2>Email is the input. The vault is the memory.</h2>
+    <p class="lead">Most update work happens in email — a client says yes, a contractor sends a doc, a prospect asks a question. Instead of copy-pasting into Notion, we label. Claude reads labelled emails, extracts the signal, and writes to the right place in the vault.</p>
+    <div class="email-mock">
+      <div class="email-head">
+        <div class="subj">update_odisei: Gaby confirmed Q2 dashboard scope</div>
+        <div class="meta"><span>From: walter@ampliodata.io</span><span>To: hello@ampliodata.io</span></div>
+        <span class="label">Amplio Updates</span>
+      </div>
+      <div class="email-body">
+        Quick one so Claude picks it up — Gaby signed off on the Q2 dashboard scope. Adding a <code>repeat_purchase_cohort</code> metric, removing the old store-level split. Starting implementation Monday. Update <code>06-Clients/Odisei/_overview.md</code> — status stays Active, note the scope change, add a recommendation row.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-white" id="flow">
+  <div class="container-wide">
+    <div class="eyebrow">The flow</div>
+    <h2>Five steps, always the same.</h2>
+    <p class="lead">Every update_ email runs through the same pipeline. Deterministic, auditable, reversible.</p>
+    <div class="workflow-steps">
+      <div class="wf-step"><div class="wfn">/ Step 01</div><h4>Send / label</h4><p class="text-sm">Write an email with <code>update_</code> prefix, or apply the <strong>Amplio Updates</strong> label.</p></div>
+      <div class="wf-step"><div class="wfn">/ Step 02</div><h4>Gmail MCP fetch</h4><p class="text-sm">Claude calls gmail_search_messages for label:"Amplio Updates" is:unread.</p></div>
+      <div class="wf-step"><div class="wfn">/ Step 03</div><h4>Parse &amp; route</h4><p class="text-sm">Subject prefix identifies the client / area. Body extracts the signal.</p></div>
+      <div class="wf-step"><div class="wfn">/ Step 04</div><h4>Vault write</h4><p class="text-sm">Edits land in _overview.md, tracker, pipeline, or Galaxy note with provenance.</p></div>
+      <div class="wf-step active"><div class="wfn">/ Step 05</div><h4>Close the loop</h4><p class="text-sm">Claude replies with a diff summary + Attio sync status. Loop closed.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-dark" id="filters">
+  <div class="container">
+    <div class="eyebrow" style="color:rgba(139,44,245,0.9);">Gmail setup</div>
+    <h2 style="color:white;">The filter that makes it work.</h2>
+    <p class="lead" style="color:rgba(255,255,255,0.65);">One Gmail filter, one label. That's the whole setup. Everything downstream is driven by Claude reading labelled messages.</p>
+    <div class="filter-card">
+      <div class="fl-row"><span class="k">Filter name</span><span class="v">Amplio Updates auto-label</span></div>
+      <div class="fl-row"><span class="k">Matches</span><span class="v">subject:<code>update_*</code> OR from:<code>walter@ampliodata.io</code> OR from:<code>hello@ampliodata.io</code></span></div>
+      <div class="fl-row"><span class="k">Does</span><span class="v">Apply label <code>Amplio Updates</code> · skip inbox: off · mark read: off</span></div>
+      <div class="fl-row"><span class="k">Watched by</span><span class="v">Claude (via Gmail MCP) · <code>gmail_search_messages label:"Amplio Updates" is:unread</code></span></div>
+      <div class="fl-row"><span class="k">After processing</span><span class="v">Claude removes the label, optionally replies with a diff summary, marks read</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-white" id="sync">
+  <div class="container-wide">
+    <div class="eyebrow">What gets synced</div>
+    <h2>Email → vault. Always these four places.</h2>
+    <p class="lead">Behaviour rule #8 enforces the sync. When an update_ email is processed, these files are checked and updated as needed.</p>
+    <div class="sync-grid">
+      <div class="sync-card">
+        <h4>The email</h4>
+        <p class="text-sm">The source of truth for this update. Subject line carries the routing key, body carries the signal.</p>
+        <ul>
+          <li>subject: update_[client]:...</li>
+          <li>body: signal + context</li>
+          <li>label: Amplio Updates</li>
+          <li>sender: @ampliodata.io</li>
+        </ul>
+      </div>
+      <div class="sync-arrow">→</div>
+      <div class="sync-card" style="background:var(--purple-light);border-color:var(--purple-15);">
+        <h4>Vault files touched</h4>
+        <p class="text-sm">Claude edits only what the email implies. No speculative writes. Every change is logged with a timestamp + source email.</p>
+        <ul>
+          <li>06-Clients/[name]/_overview.md</li>
+          <li>06-Clients/[name]/recommendations-tracker.md</li>
+          <li>06-Clients/_Prospects/_Pipeline-Dashboard.md</li>
+          <li>06-Clients/_Client-Index.md</li>
+          <li>01-Projects/Active/[project]/*.md</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-light" id="triggers">
+  <div class="container-wide">
+    <div class="eyebrow">Triggers &amp; commands</div>
+    <h2>Subject-line grammar.</h2>
+    <p class="lead">The subject line is a mini-command. Prefixes route the email to the right corner of the vault.</p>
+    <div class="triggers">
+      <div class="trigger"><span class="phrase">update_[client]:</span><span class="action">Updates that client's <code>_overview.md</code>. Adds a signal. Logs recommendation if one is present.</span></div>
+      <div class="trigger"><span class="phrase">newclient_[name]:</span><span class="action">Creates <code>06-Clients/[name]/</code> from the template. Updates Client-Index. Seeds data-context.</span></div>
+      <div class="trigger"><span class="phrase">newprospect_[name]:</span><span class="action">Creates prospect in <code>_Prospects/</code>. Updates Pipeline Dashboard. Scores lead if ICP data attached.</span></div>
+      <div class="trigger"><span class="phrase">meeting_[client]:</span><span class="action">Creates dated file in <code>[client]/meeting-notes/</code>. Extracts signals. Logs recommendations to tracker.</span></div>
+      <div class="trigger"><span class="phrase">graduate_[name]:</span><span class="action">Promotes prospect → client. Moves folder, expands template, archives pipeline entry.</span></div>
+      <div class="trigger"><span class="phrase">update_amplio:</span><span class="action">Internal. Updates <code>02-Areas/Amplio-Internal/</code>. Never routed to 06-Clients/.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-white" id="pipeline">
+  <div class="container-wide">
+    <div class="eyebrow">Full processing pipeline</div>
+    <h2>From inbox to committed edit.</h2>
+    <p class="lead">The detailed path an update_ email takes through the system. Each step is observable, reversible, and logged.</p>
+    <div class="pipeline">
+      <div class="pipe-cell done"><div class="pn">01</div><div class="pname">Inbox</div></div>
+      <div class="pipe-cell done"><div class="pn">02</div><div class="pname">Label</div></div>
+      <div class="pipe-cell done"><div class="pn">03</div><div class="pname">Fetch</div></div>
+      <div class="pipe-cell done"><div class="pn">04</div><div class="pname">Parse</div></div>
+      <div class="pipe-cell done"><div class="pn">05</div><div class="pname">Route</div></div>
+      <div class="pipe-cell done"><div class="pn">06</div><div class="pname">Edit</div></div>
+      <div class="pipe-cell"><div class="pn">07</div><div class="pname">Reply + mark read</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-dark" id="rules">
+  <div class="container-wide">
+    <div class="eyebrow" style="color:rgba(139,44,245,0.9);">Safety rules</div>
+    <h2 style="color:white;">The six rules this system obeys.</h2>
+    <div class="rules-list">
+      <div class="rule-card"><span class="num">01</span><div><h4>No silent writes</h4><p>Every edit is summarised back to the sender in a reply. If you didn't see a reply, nothing happened.</p></div></div>
+      <div class="rule-card"><span class="num">02</span><div><h4>Label scoped to @ampliodata.io</h4><p>Only emails from a verified Amplio address are trusted for vault writes. Client-forwarded emails must be manually labelled by Walter.</p></div></div>
+      <div class="rule-card"><span class="num">03</span><div><h4>Never delete</h4><p>Claude edits and appends. Never deletes vault content from an update_ email. Removal requires an explicit confirmation step.</p></div></div>
+      <div class="rule-card"><span class="num">04</span><div><h4>Provenance everywhere</h4><p>Every auto-edit gets <code>source: email/[gmail-thread-id]</code> + timestamp in the edit commit or inline comment.</p></div></div>
+      <div class="rule-card"><span class="num">05</span><div><h4>Ambiguity stops the loop</h4><p>If routing is unclear, Claude replies asking for clarification instead of guessing. Under-writing beats over-writing.</p></div></div>
+      <div class="rule-card"><span class="num">06</span><div><h4>Label gets removed on success</h4><p>Processed emails lose the "Amplio Updates" label. The inbox becomes a natural work queue. If it's labelled, it's pending.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-white">
+  <div class="container" style="text-align:center;">
+    <div class="eyebrow">Back to the beginning</div>
+    <h2>That's the whole suite.</h2>
+    <p class="lead" style="margin:0 auto;">Return to the <a href="index.html" class="purple" style="text-decoration:underline;">suite index</a> or jump to <a href="04-vault-architecture.html" class="purple" style="text-decoration:underline;">/04 — Vault Architecture</a> to see where all this lands.</p>
+  </div>
+</section>
+
+
+<script>
+  const progressBar = document.getElementById('progressBar');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+    progressBar.style.width = pct + '%';
+  });
+  const sections = document.querySelectorAll('section[id]');
+  const sideLinks = document.querySelectorAll('.side-nav a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 140) current = s.id; });
+    sideLinks.forEach(a => { a.classList.toggle('active', a.getAttribute('href') === '#' + current); });
+  });
+</script>
+</body>
+</html>
