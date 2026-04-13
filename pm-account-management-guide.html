@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PM & Account Management Guide — Amplio Data</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #F5F5F5;
+            color: #6E6E78;
+            line-height: 1.6;
+        }
+
+        .presentation-container {
+            display: flex;
+            height: 100vh;
+            flex-direction: column;
+            background: #F5F5F5;
+        }
+
+        .slide-viewer {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            overflow: hidden;
+        }
+
+        .slide {
+            background: white;
+            border: 1px solid #ECECF0;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            padding: 60px;
+            max-width: 1200px;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 48px;
+            font-weight: 700;
+            color: #1B1B1E;
+            margin-bottom: 24px;
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1B1B1E;
+            margin-bottom: 32px;
+        }
+
+        h3 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #36363B;
+            margin-bottom: 16px;
+        }
+
+        .eyebrow {
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            color: #9B9BA5;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: #36363B;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .body-text {
+            font-size: 16px;
+            color: #6E6E78;
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .caption {
+            font-size: 13px;
+            color: #9B9BA5;
+            margin-top: 8px;
+        }
+
+        /* Title slide */
+        .slide.title-slide {
+            justify-content: center;
+            text-align: center;
+        }
+
+        .slide.title-slide h1 {
+            font-size: 56px;
+            margin-bottom: 16px;
+        }
+
+        .slide.title-slide .subtitle {
+            font-size: 22px;
+            margin-bottom: 32px;
+        }
+
+        .date-stamp {
+            font-size: 13px;
+            color: #9B9BA5;
+            margin-top: 40px;
+        }
+
+        /* Cards & Tables */
+        .card {
+            background: #FFFFFF;
+            border: 1px solid #ECECF0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1B1B1E;
+            margin-bottom: 4px;
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            color: #9B9BA5;
+            margin-bottom: 8px;
+        }
+
+        .card-detail {
+            font-size: 14px;
+            color: #6E6E78;
+            line-height: 1.6;
+        }
+
+        .card-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .status-active {
+            background: #E8F5E9;
+            color: #34C759;
+        }
+
+        .status-onboarding {
+            background: #FFF3E0;
+            color: #FF9500;
+        }
+
+        .status-healthy {
+            background: #E8F5E9;
+            color: #34C759;
+        }
+
+        .status-watch {
+            background: #FFF3E0;
+            color: #FF9500;
+        }
+
+        .status-atrisk {
+            background: #FCE4EC;
+            color: #FF3B30;
+        }
+
+        .status-critical {
+            background: #FCE4EC;
+            color: #FF3B30;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        th {
+            background: #F5F5F5;
+            border: 1px solid #ECECF0;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #1B1B1E;
+            font-size: 13px;
+        }
+
+        td {
+            border: 1px solid #ECECF0;
+            padding: 12px;
+            color: #6E6E78;
+        }
+
+        td strong {
+            color: #1B1B1E;
+            font-weight: 600;
+        }
+
+        /* Flow diagram */
+        .flow-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 40px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .flow-step {
+            flex: 1;
+            min-width: 140px;
+            text-align: center;
+        }
+
+        .flow-step-number {
+            background: #7B56DB;
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .flow-step-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1B1B1E;
+            margin-bottom: 8px;
+        }
+
+        .flow-step-details {
+            font-size: 12px;
+            color: #6E6E78;
+            line-height: 1.4;
+        }
+
+        .flow-arrow {
+            color: #7B56DB;
+            font-size: 24px;
+            margin: 0 -10px;
+        }
+
+        /* Health scores grid */
+        .health-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .health-card {
+            border: 1px solid #ECECF0;
+            border-radius: 12px;
+            padding: 20px;
+            background: #FFFFFF;
+        }
+
+        .health-score-large {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .health-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #9B9BA5;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .health-threshold {
+            font-size: 12px;
+            color: #9B9BA5;
+            margin-top: 12px;
+        }
+
+        /* Color scale for health */
+        .health-86-100 { color: #34C759; }
+        .health-70-84 { color: #FF9500; }
+        .health-50-69 { color: #FF6484; }
+        .health-0-49 { color: #FF3B30; }
+
+        /* Lists */
+        .checklist {
+            list-style: none;
+            margin-bottom: 24px;
+        }
+
+        .checklist li {
+            padding-left: 28px;
+            margin-bottom: 12px;
+            position: relative;
+            color: #6E6E78;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .checklist li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #7B56DB;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* Dimension table */
+        .dimension-row {
+            display: grid;
+            grid-template-columns: 180px 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ECECF0;
+        }
+
+        .dimension-row:last-child {
+            border-bottom: none;
+        }
+
+        .dimension-name {
+            font-weight: 600;
+            color: #1B1B1E;
+            font-size: 14px;
+        }
+
+        .dimension-max {
+            color: #9B9BA5;
+            font-size: 13px;
+        }
+
+        .dimension-desc {
+            color: #6E6E78;
+            font-size: 14px;
+        }
+
+        /* Signal categories */
+        .signal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .signal-item {
+            border: 1px solid #ECECF0;
+            border-radius: 12px;
+            padding: 16px;
+            background: #FAFAFA;
+        }
+
+        .signal-code {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            color: #7B56DB;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .signal-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1B1B1E;
+            margin-bottom: 4px;
+        }
+
+        .signal-example {
+            font-size: 13px;
+            color: #9B9BA5;
+            font-style: italic;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: white;
+            border-top: 1px solid #ECECF0;
+        }
+
+        button {
+            background: #7B56DB;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #6B4AC8;
+        }
+
+        button:disabled {
+            background: #ECECF0;
+            color: #9B9BA5;
+            cursor: not-allowed;
+        }
+
+        .slide-indicator {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .slide-counter {
+            font-size: 14px;
+            color: #6E6E78;
+            font-weight: 500;
+        }
+
+        .toc-button {
+            background: transparent;
+            color: #7B56DB;
+            border: 1px solid #7B56DB;
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        .toc-button:hover {
+            background: #F5F0FF;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 400px;
+            max-height: 600px;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .toc-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1B1B1E;
+            margin-bottom: 24px;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #ECECF0;
+        }
+
+        .toc-list li:last-child {
+            border-bottom: none;
+        }
+
+        .toc-link {
+            color: #7B56DB;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .toc-link:hover {
+            color: #6B4AC8;
+        }
+
+        .toc-link.current {
+            font-weight: 700;
+            color: #1B1B1E;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 28px;
+            color: #9B9BA5;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            width: auto;
+        }
+
+        /* Tier boxes */
+        .tier-box {
+            border: 1px solid #ECECF0;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            background: #FAFAFA;
+        }
+
+        .tier-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1B1B1E;
+            margin-bottom: 8px;
+        }
+
+        .tier-price {
+            font-size: 14px;
+            color: #7B56DB;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .tier-features {
+            font-size: 14px;
+            color: #6E6E78;
+            line-height: 1.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .slide {
+                padding: 40px 30px;
+            }
+
+            h1 {
+                font-size: 36px;
+            }
+
+            h2 {
+                font-size: 28px;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            .slide-viewer {
+                padding: 20px;
+            }
+
+            .health-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .modal-content {
+                max-width: 90%;
+                padding: 30px 20px;
+            }
+        }
+
+        /* Data visualization colors */
+        .color-purple { color: #7B56DB; }
+        .color-coral { color: #FF6484; }
+        .color-teal { color: #4ECDC4; }
+        .color-gold { color: #FFB938; }
+
+        /* Big numbers */
+        .big-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: #7B56DB;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        /* Command display */
+        .command {
+            background: #F5F5F5;
+            border: 1px solid #ECECF0;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #7B56DB;
+            margin-bottom: 12px;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <div class="slide-viewer">
+            <!-- Slide 1: Title -->
+            <div class="slide active title-slide">
+                <h1>PM & Account Management Guide</h1>
+                <p class="subtitle">Amplio Data® — Client Lifecycle, Reporting & Escalation</p>
+                <p class="body-text" style="margin-top: 40px; font-size: 16px;">A comprehensive playbook for managing client relationships, health scoring, and escalation paths.</p>
+                <div class="date-stamp">Last updated: April 13, 2026</div>
+            </div>
+
+            <!-- Slide 2: Active Client Portfolio -->
+            <div class="slide">
+                <h2>Active Client Portfolio</h2>
+                <div style="overflow-y: auto; max-height: 70vh;">
+                    <div class="card">
+                        <div>
+                            <div class="card-title">Certify Education</div>
+                            <div class="card-subtitle">Google Ads Management · IELTS Test Prep</div>
+                            <div class="card-detail">€400/mo recurring · BCN + MAD locations · Contact: Carme Sanchez · 12 invoices since Apr 2025</div>
+                        </div>
+                        <div><span class="card-status status-active">Active</span></div>
+                    </div>
+
+                    <div class="card">
+                        <div>
+                            <div class="card-title">Odisei</div>
+                            <div class="card-subtitle">GA4 + Ads + Meta + Klaviyo Integration</div>
+                            <div class="card-detail">€600/mo · Contacts: Gaby & Kim · Since Sep 2025 · Legal: ODISEI MUSIC S.L.</div>
+                        </div>
+                        <div><span class="card-status status-active">Active</span></div>
+                    </div>
+
+                    <div class="card">
+                        <div>
+                            <div class="card-title">Code & Wander</div>
+                            <div class="card-subtitle">Project-based Digital Strategy</div>
+                            <div class="card-detail">4 invoices (€1,280 total) · London · Contact: Alessia · Last invoice Dec 2025</div>
+                        </div>
+                        <div><span class="card-status status-active">Active</span></div>
+                    </div>
+
+                    <div class="card">
+                        <div>
+                            <div class="card-title">Birdie</div>
+                            <div class="card-subtitle">Care Services Analytics</div>
+                            <div class="card-detail">1 invoice (€3,150) · Contact: Lewis Clayton · London · Dec 2025</div>
+                        </div>
+                        <div><span class="card-status status-active">Active</span></div>
+                    </div>
+
+                    <div class="card">
+                        <div>
+                            <div class="card-title">Cropple</div>
+                            <div class="card-subtitle">Image Guessing Game Platform</div>
+                            <div class="card-detail">Website audit completed · Onboarding in progress</div>
+                        </div>
+                        <div><span class="card-status status-onboarding">Onboarding</span></div>
+                    </div>
+
+                    <div class="card">
+                        <div>
+                            <div class="card-title">The Lily Effect</div>
+                            <div class="card-subtitle">TBD</div>
+                            <div class="card-detail">Active status · Details under development</div>
+                        </div>
+                        <div><span class="card-status status-active">Active</span></div>
+                    </div>
+
+                    <div class="card">
+                        <div>
+                            <div class="card-title">Rapid Agency</div>
+                            <div class="card-subtitle">Agency Partner · Belfast</div>
+                            <div class="card-detail">€2,040 total · POCs: Kevin Doran (Commercial Mgr) & Sean Webb · Referral source</div>
+                        </div>
+                        <div><span class="card-status status-active">Active</span></div>
+                    </div>
+
+                    <div class="card">
+                        <div>
+                            <div class="card-title">Malone Hotel</div>
+                            <div class="card-subtitle">4-Star Hotel · Belfast (via Rapid)</div>
+                            <div class="card-detail">Conversion tracking setup · Billed through Rapid Agency</div>
+                        </div>
+                        <div><span class="card-status status-active">Active</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: Service Tiers -->
+            <div class="slide">
+                <h2>Service Tiers & Pricing</h2>
+                <div class="tier-box">
+                    <div class="tier-name">Foundation</div>
+                    <div class="tier-price">€400 – €1,500 (one-time)</div>
+                    <div class="tier-features">
+                        ✓ GA4 setup & GTM configuration<br>
+                        ✓ E-commerce tracking setup<br>
+                        ✓ Basic dashboard delivery<br>
+                        ✓ Post-launch support (30 days)
+                    </div>
+                </div>
+
+                <div class="tier-box">
+                    <div class="tier-name">Maintained</div>
+                    <div class="tier-price">€700 – €1,200/month</div>
+                    <div class="tier-features">
+                        ✓ Server-side GTM & enhanced conversions<br>
+                        ✓ Monthly platform QA & optimization<br>
+                        ✓ Consent Mode v2 & privacy compliance<br>
+                        ✓ API integrations (CRM, email, etc.)<br>
+                        ✓ Email briefings & support ticket response
+                    </div>
+                </div>
+
+                <div class="tier-box">
+                    <div class="tier-name">Managed</div>
+                    <div class="tier-price">€1,800+/month</div>
+                    <div class="tier-features">
+                        ✓ Everything in Maintained<br>
+                        ✓ Deep CRM integration & sync<br>
+                        ✓ AI-powered insights & recommendations<br>
+                        ✓ Weekly digest emails & alerts<br>
+                        ✓ Consent impact analysis & strategy<br>
+                        ✓ Dedicated account manager<br>
+                        ✓ Quarterly strategy reviews
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 4: Client Lifecycle -->
+            <div class="slide">
+                <h2>Client Lifecycle: Six Stages</h2>
+                <div class="flow-container" style="margin: 40px 0; flex-direction: column; gap: 24px;">
+                    <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; align-items: start;">
+                        <div class="flow-step">
+                            <div class="flow-step-number">1</div>
+                            <div class="flow-step-label">Prospect</div>
+                            <div class="flow-step-details">ICP scoring, outreach, qualification</div>
+                        </div>
+                        <div style="text-align: center; color: #7B56DB; font-size: 20px;">→</div>
+                        <div class="flow-step">
+                            <div class="flow-step-number">2</div>
+                            <div class="flow-step-label">Proposal</div>
+                            <div class="flow-step-details">Audit scope, pricing, contract</div>
+                        </div>
+                        <div style="text-align: center; color: #7B56DB; font-size: 20px;">→</div>
+                        <div class="flow-step">
+                            <div class="flow-step-number">3</div>
+                            <div class="flow-step-label">Onboarding</div>
+                            <div class="flow-step-details">Setup, access, training, launch</div>
+                        </div>
+                        <div style="text-align: center; color: #7B56DB; font-size: 20px;">→</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; align-items: start;">
+                        <div class="flow-step">
+                            <div class="flow-step-number">4</div>
+                            <div class="flow-step-label">Active</div>
+                            <div class="flow-step-details">Reporting, optimization, support</div>
+                        </div>
+                        <div style="text-align: center; color: #7B56DB; font-size: 20px;">→</div>
+                        <div class="flow-step">
+                            <div class="flow-step-number">5</div>
+                            <div class="flow-step-label">Renewal</div>
+                            <div class="flow-step-details">Contract review, expansion, upsell</div>
+                        </div>
+                        <div style="text-align: center; color: #7B56DB; font-size: 20px;">→</div>
+                        <div class="flow-step">
+                            <div class="flow-step-number">6</div>
+                            <div class="flow-step-label">Archived</div>
+                            <div class="flow-step-details">Offboarded, reference only</div>
+                        </div>
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 5: Onboarding Checklist -->
+            <div class="slide">
+                <h2>Onboarding Checklist</h2>
+                <p class="eyebrow">Triggered by: "New client: [name]"</p>
+                <ul class="checklist">
+                    <li>Create client folder at <code style="background: #F5F5F5; padding: 2px 6px; border-radius: 4px;">06-Clients/[name]/</code></li>
+                    <li>Fill <code style="background: #F5F5F5; padding: 2px 6px; border-radius: 4px;">_overview.md</code> with client details, contacts, pricing, timeline</li>
+                    <li>Create subfolders with <code style="background: #F5F5F5; padding: 2px 6px; border-radius: 4px;">_index.md</code> in each: <code style="background: #F5F5F5; padding: 2px 6px; border-radius: 4px;">meeting-notes/</code>, <code style="background: #F5F5F5; padding: 2px 6px; border-radius: 4px;">reports/</code>, <code style="background: #F5F5F5; padding: 2px 6px; border-radius: 4px;">campaigns/</code>, <code style="background: #F5F5F5; padding: 2px 6px; border-radius: 4px;">tracking/</code>, <code style="background: #F5F5F5; padding: 2px 6px; border-radius: 4px;">correspondence/</code></li>
+                    <li>Update <code style="background: #F5F5F5; padding: 2px 6px; border-radius: 4px;">_Client-Index.md</code> with new client record</li>
+                    <li>Build data context (skill: <code style="background: #F5F5F5; padding: 2px 6px; border-radius: 4px;">vault-autoresearch:client-data-context</code>) → auto-creates <code style="background: #F5F5F5; padding: 2px 6px; border-radius: 4px;">data-context.md</code></li>
+                    <li>Create <code style="background: #F5F5F5; padding: 2px 6px; border-radius: 4px;">recommendations-tracker.md</code> from template</li>
+                    <li>Create project in <code style="background: #F5F5F5; padding: 2px 6px; border-radius: 4px;">01-Projects/Active/</code> if time-bound work</li>
+                    <li>Run onboarding intelligence pre-loader (seeds applicable cross-client patterns)</li>
+                    <li>Set up platform access: GA4, GTM, Google Ads, CRM, email (Klaviyo, Braze, etc.)</li>
+                </ul>
+                <p class="caption" style="margin-top: 24px; border-top: 1px solid #ECECF0; padding-top: 20px;">All new clients automatically get health score tracking, signal extraction, and recommendation tracking.</p>
+            </div>
+
+            <!-- Slide 6: Health Scoring Model -->
+            <div class="slide">
+                <h2>Client Health Scoring Model</h2>
+                <p class="body-text">Six weighted dimensions. 100 points total. Triggers: &lt;70 = watch, &lt;50 = critical alert.</p>
+
+                <div class="dimension-row">
+                    <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; padding-bottom: 16px; border-bottom: 1px solid #ECECF0;">
+                        <div>
+                            <div class="dimension-name">Data Quality</div>
+                            <div class="dimension-max">20 points</div>
+                        </div>
+                        <div class="dimension-desc">Clean, complete data from all connected platforms (GA4, Ads, etc.)</div>
+                    </div>
+                </div>
+
+                <div class="dimension-row">
+                    <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; padding-bottom: 16px; border-bottom: 1px solid #ECECF0;">
+                        <div>
+                            <div class="dimension-name">Engagement</div>
+                            <div class="dimension-max">20 points</div>
+                        </div>
+                        <div class="dimension-desc">Recency & frequency of meaningful contact (meetings, email, check-ins)</div>
+                    </div>
+                </div>
+
+                <div class="dimension-row">
+                    <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; padding-bottom: 16px; border-bottom: 1px solid #ECECF0;">
+                        <div>
+                            <div class="dimension-name">Recommendations</div>
+                            <div class="dimension-max">20 points</div>
+                        </div>
+                        <div class="dimension-desc">% of our advice acted on; adoption rate; velocity to action</div>
+                    </div>
+                </div>
+
+                <div class="dimension-row">
+                    <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; padding-bottom: 16px; border-bottom: 1px solid #ECECF0;">
+                        <div>
+                            <div class="dimension-name">Performance Trend</div>
+                            <div class="dimension-max">20 points</div>
+                        </div>
+                        <div class="dimension-desc">Are their key metrics improving? Conversions, ROAS, traffic growth?</div>
+                    </div>
+                </div>
+
+                <div class="dimension-row">
+                    <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; padding-bottom: 16px; border-bottom: 1px solid #ECECF0;">
+                        <div>
+                            <div class="dimension-name">Contract Health</div>
+                            <div class="dimension-max">10 points</div>
+                        </div>
+                        <div class="dimension-desc">Payment status, invoice delays, tier, renewal date proximity</div>
+                    </div>
+                </div>
+
+                <div class="dimension-row">
+                    <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                        <div>
+                            <div class="dimension-name">Vault Completeness</div>
+                            <div class="dimension-max">10 points</div>
+                        </div>
+                        <div class="dimension-desc">Do we have a complete picture? _overview, data-context, signals, recs, notes?</div>
+                    </div>
+                </div>
+
+                <div style="background: #F5F5F5; border-radius: 12px; padding: 20px; margin-top: 24px;">
+                    <div style="font-size: 13px; font-weight: 600; color: #9B9BA5; margin-bottom: 12px;">THRESHOLDS</div>
+                    <div style="font-size: 14px; color: #6E6E78; line-height: 1.8;">
+                        <strong style="color: #34C759;">85–100:</strong> Healthy — proactive engagement<br>
+                        <strong style="color: #FF9500;">70–84:</strong> Watch — light concerns, schedule check-in<br>
+                        <strong style="color: #FF6484;">50–69:</strong> At Risk — escalate, weekly monitoring<br>
+                        <strong style="color: #FF3B30;">0–49:</strong> Critical — immediate action required
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 7: Current Health Scores -->
+            <div class="slide">
+                <h2>Current Health Scores</h2>
+                <p class="eyebrow">As of April 13, 2026</p>
+                <div class="health-grid">
+                    <div class="health-card">
+                        <div class="big-number health-70-84">80</div>
+                        <div class="health-label">Odisei</div>
+                        <div class="card-status status-watch" style="margin-top: 8px; display: inline-block;">Watch</div>
+                        <div class="health-threshold">Vault completeness improving · Strong engagement</div>
+                    </div>
+
+                    <div class="health-card">
+                        <div class="big-number health-50-69">62</div>
+                        <div class="health-label">Certify Education</div>
+                        <div class="card-status status-atrisk" style="margin-top: 8px; display: inline-block;">At Risk</div>
+                        <div class="health-threshold">Overdue invoice CE-012 · Engagement gap</div>
+                    </div>
+
+                    <div class="health-card">
+                        <div class="big-number health-50-69">62</div>
+                        <div class="health-label">Malone Hotel</div>
+                        <div class="card-status status-atrisk" style="margin-top: 8px; display: inline-block;">At Risk</div>
+                        <div class="health-threshold">No GA4 connection · Data quality issue</div>
+                    </div>
+
+                    <div class="health-card">
+                        <div class="big-number health-0-49">42</div>
+                        <div class="health-label">Cropple</div>
+                        <div class="card-status status-critical" style="margin-top: 8px; display: inline-block;">Critical</div>
+                        <div class="health-threshold">Stalled onboarding · 3 recs overdue</div>
+                    </div>
+
+                    <div class="health-card">
+                        <div class="big-number health-0-49">32</div>
+                        <div class="health-label">Birdie</div>
+                        <div class="card-status status-critical" style="margin-top: 8px; display: inline-block;">Critical</div>
+                        <div class="health-threshold">No contact since Dec 2025 · Stale relationship</div>
+                    </div>
+
+                    <div class="health-card">
+                        <div class="big-number health-0-49">32</div>
+                        <div class="health-label">Code & Wander</div>
+                        <div class="card-status status-critical" style="margin-top: 8px; display: inline-block;">Critical</div>
+                        <div class="health-threshold">4-month communication gap · No recent activity</div>
+                    </div>
+
+                    <div class="health-card">
+                        <div class="big-number health-0-49">24</div>
+                        <div class="health-label">The Lily Effect</div>
+                        <div class="card-status status-critical" style="margin-top: 8px; display: inline-block;">Critical</div>
+                        <div class="health-threshold">Incomplete onboarding · Vault incomplete</div>
+                    </div>
+                </div>
+                <div style="background: #FFF3E0; border-radius: 12px; padding: 16px; margin-top: 24px; border-left: 4px solid #FF9500;">
+                    <div style="font-size: 13px; font-weight: 600; color: #1B1B1E;">Immediate actions:</div>
+                    <div style="font-size: 13px; color: #6E6E78; margin-top: 8px;">• Certify Education: Follow up on CE-012 invoice<br>• Malone Hotel: Connect GA4 this week<br>• Birdie/Code & Wander: Re-engagement outreach needed<br>• Cropple: Complete onboarding or escalate</div>
+                </div>
+            </div>
+
+            <!-- Slide 8: Client Signals System -->
+            <div class="slide">
+                <h2>Client Signals: Extraction & Tracking</h2>
+                <p class="body-text">Signals are extracted from all client comms (meetings, emails, updates) and logged in <code style="background: #F5F5F5; padding: 2px 6px; border-radius: 4px;">_overview.md</code> under <code style="background: #F5F5F5; padding: 2px 6px; border-radius: 4px;">## Client Signals</code>.</p>
+                <p class="body-text">Format: <code style="background: #F5F5F5; padding: 2px 6px; border-radius: 4px;">[YYYY-MM-DD] [CODE] — Description (source: email/meeting/update)</code></p>
+
+                <div class="signal-grid">
+                    <div class="signal-item">
+                        <div class="signal-code">FR</div>
+                        <div class="signal-name">Feature Request</div>
+                        <div class="signal-example">"Client asked about TikTok tracking"</div>
+                    </div>
+
+                    <div class="signal-item">
+                        <div class="signal-code">OB</div>
+                        <div class="signal-name">Objection/Pushback</div>
+                        <div class="signal-example">"Disagreed with attribution model"</div>
+                    </div>
+
+                    <div class="signal-item">
+                        <div class="signal-code">SAT+</div>
+                        <div class="signal-name">Satisfaction (Positive)</div>
+                        <div class="signal-example">"Loved the monthly report design"</div>
+                    </div>
+
+                    <div class="signal-item">
+                        <div class="signal-code">SAT-</div>
+                        <div class="signal-name">Satisfaction (Negative)</div>
+                        <div class="signal-example">"Frustrated with onboarding timeline"</div>
+                    </div>
+
+                    <div class="signal-item">
+                        <div class="signal-code">PS</div>
+                        <div class="signal-name">Priority Shift</div>
+                        <div class="signal-example">"Moving budget from Google to Meta"</div>
+                    </div>
+
+                    <div class="signal-item">
+                        <div class="signal-code">EX</div>
+                        <div class="signal-name">Expansion Signal</div>
+                        <div class="signal-example">"Asked about CRM integration"</div>
+                    </div>
+
+                    <div class="signal-item">
+                        <div class="signal-code">CH</div>
+                        <div class="signal-name">Churn Signal</div>
+                        <div class="signal-example">"Mentioned reviewing agency spend"</div>
+                    </div>
+
+                    <div class="signal-item">
+                        <div class="signal-code">DA</div>
+                        <div class="signal-name">Data/Access Signal</div>
+                        <div class="signal-example">"Finally granted GTM access"</div>
+                    </div>
+
+                    <div class="signal-item">
+                        <div class="signal-code">IC</div>
+                        <div class="signal-name">Industry Context</div>
+                        <div class="signal-example">"Peak season starts in June"</div>
+                    </div>
+                </div>
+
+                <p class="caption" style="margin-top: 24px;">Signals feed into pattern library. Three identical signals from different clients = new playbook candidate.</p>
+            </div>
+
+            <!-- Slide 9: Reporting Cadence -->
+            <div class="slide">
+                <h2>Reporting Cadence</h2>
+
+                <div style="margin-bottom: 28px;">
+                    <div class="eyebrow">Daily</div>
+                    <ul class="checklist">
+                        <li>Automated data pulls <strong>(8:00 AM)</strong> — GA4, Ads, Meta, email syncs</li>
+                        <li>Email sync <strong>(4x daily)</strong> — client comms check</li>
+                        <li>Unreplied email alert <strong>(9:20 AM)</strong> — overdue responses flagged</li>
+                    </ul>
+                </div>
+
+                <div style="margin-bottom: 28px;">
+                    <div class="eyebrow">Weekly</div>
+                    <ul class="checklist">
+                        <li>Executive briefing <strong>(Monday 7:30 AM)</strong> — health scores, signals, escalations</li>
+                        <li>Ad experimentation digest <strong>(Wednesday 10:30 AM)</strong> — Certify Education performance review</li>
+                    </ul>
+                </div>
+
+                <div style="margin-bottom: 28px;">
+                    <div class="eyebrow">Monthly</div>
+                    <ul class="checklist">
+                        <li>Client performance reports <strong>(1st of month)</strong> — sent to all active clients</li>
+                        <li>Invoice & payment review <strong>(5th of month)</strong> — finance alignment</li>
+                    </ul>
+                </div>
+
+                <div style="margin-bottom: 28px;">
+                    <div class="eyebrow">Quarterly</div>
+                    <ul class="checklist">
+                        <li>Strategy review meetings <strong>(Managed tier only)</strong> — roadmap, expansion, retention</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Slide 10: Monthly Report Structure -->
+            <div class="slide">
+                <h2>Monthly Report Template</h2>
+                <p class="body-text">Every report is scored 0–100. Refine weakest section until ≥90, then ship.</p>
+
+                <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #ECECF0;">
+                    <div style="font-size: 14px; font-weight: 600; color: #1B1B1E; margin-bottom: 6px;">1. Executive Summary</div>
+                    <div style="font-size: 13px; color: #6E6E78;">2–3 sentences. Headline first. Lead with wins or risks.</div>
+                </div>
+
+                <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #ECECF0;">
+                    <div style="font-size: 14px; font-weight: 600; color: #1B1B1E; margin-bottom: 6px;">2. KPI Dashboard</div>
+                    <div style="font-size: 13px; color: #6E6E78;">Table: Metric | This Month | Last Month | Change % | Target | Status ✓/✗</div>
+                </div>
+
+                <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #ECECF0;">
+                    <div style="font-size: 14px; font-weight: 600; color: #1B1B1E; margin-bottom: 6px;">3. Channel Performance</div>
+                    <div style="font-size: 13px; color: #6E6E78;">Google Ads, Meta, Others (TikTok, email, organic). Mini breakdown tables.</div>
+                </div>
+
+                <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #ECECF0;">
+                    <div style="font-size: 14px; font-weight: 600; color: #1B1B1E; margin-bottom: 6px;">4. Key Wins</div>
+                    <div style="font-size: 13px; color: #6E6E78;">3 specific, quantified achievements this month.</div>
+                </div>
+
+                <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #ECECF0;">
+                    <div style="font-size: 14px; font-weight: 600; color: #1B1B1E; margin-bottom: 6px;">5. Areas for Improvement</div>
+                    <div style="font-size: 13px; color: #6E6E78;">Table: Area | Issue | Root Cause | Recommendation | Timeline</div>
+                </div>
+
+                <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #ECECF0;">
+                    <div style="font-size: 14px; font-weight: 600; color: #1B1B1E; margin-bottom: 6px;">6. Recommendations & Next Steps</div>
+                    <div style="font-size: 13px; color: #6E6E78;">Immediate (this week) + Medium-term (1–3 months). Logged to recommendations-tracker.</div>
+                </div>
+
+                <div>
+                    <div style="font-size: 14px; font-weight: 600; color: #1B1B1E; margin-bottom: 6px;">7. Appendix</div>
+                    <div style="font-size: 13px; color: #6E6E78;">Segment breakdown, audience insights, platform-specific tracking notes.</div>
+                </div>
+
+                <div style="background: #F5F5F5; border-radius: 12px; padding: 16px; margin-top: 20px;">
+                    <div style="font-size: 12px; font-weight: 600; color: #7B56DB; margin-bottom: 8px;">QUALITY LOOP</div>
+                    <div style="font-size: 13px; color: #6E6E78;">Draft → Score (0–100) → Refine weakest section → Re-score → Ship at ≥90</div>
+                </div>
+            </div>
+
+            <!-- Slide 11: Recommendations Tracker -->
+            <div class="slide">
+                <h2>Recommendations Tracker</h2>
+                <p class="body-text">Every recommendation we make is logged to the client's <code style="background: #F5F5F5; padding: 2px 6px; border-radius: 4px;">recommendations-tracker.md</code>. This is how the system learns what works.</p>
+
+                <table style="margin-top: 24px;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Date</th>
+                            <th>Recommendation</th>
+                            <th>Pattern ID</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Outcome</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>REC-001</strong></td>
+                            <td>2026-03-15</td>
+                            <td>Enable server-side GTM for GA4</td>
+                            <td>GTM-001</td>
+                            <td>High</td>
+                            <td>Actioned</td>
+                            <td>Pending measurement</td>
+                        </tr>
+                        <tr>
+                            <td><strong>REC-002</strong></td>
+                            <td>2026-03-22</td>
+                            <td>Add email domain authentication</td>
+                            <td>EMAIL-AUTH-001</td>
+                            <td>Medium</td>
+                            <td>Measured</td>
+                            <td>Email deliverability +12%</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="margin-top: 24px; background: #F5F5F5; border-radius: 12px; padding: 16px;">
+                    <div style="font-size: 13px; font-weight: 600; color: #1B1B1E; margin-bottom: 8px;">Status Workflow</div>
+                    <div style="font-size: 13px; color: #6E6E78; line-height: 1.8;">
+                        <strong>Pending:</strong> Not yet acted on · Follow-up flag at 14+ days<br>
+                        <strong>Actioned:</strong> Client confirmed implementation · Check for outcome at 14+ days<br>
+                        <strong>Measured:</strong> Data collected · Outcome assigned<br>
+                        <strong>Closed:</strong> Outcome logged, pattern updated, learning complete
+                    </div>
+                </div>
+
+                <p class="caption" style="margin-top: 16px;">Outcomes feed into cross-client pattern library. Patterns with 3+ positive outcomes become playbooks.</p>
+            </div>
+
+            <!-- Slide 12: Escalation Paths -->
+            <div class="slide">
+                <h2>Escalation Paths & Triggers</h2>
+
+                <div style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #ECECF0;">
+                    <div style="display: flex; align-items: flex-start; gap: 16px;">
+                        <div style="background: #FF9500; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; white-space: nowrap; margin-top: 2px;">WATCH</div>
+                        <div>
+                            <div style="font-weight: 600; color: #1B1B1E; margin-bottom: 6px;">Health score 70–84</div>
+                            <div style="font-size: 14px; color: #6E6E78;">Flag in weekly briefing. Schedule check-in within 7 days.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #ECECF0;">
+                    <div style="display: flex; align-items: flex-start; gap: 16px;">
+                        <div style="background: #FF6484; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; white-space: nowrap; margin-top: 2px;">ALERT</div>
+                        <div>
+                            <div style="font-weight: 600; color: #1B1B1E; margin-bottom: 6px;">Health score &lt;50</div>
+                            <div style="font-size: 14px; color: #6E6E78;">Immediate alert to Walter. Same-day review + action plan.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #ECECF0;">
+                    <div style="display: flex; align-items: flex-start; gap: 16px;">
+                        <div style="background: #FF3B30; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; white-space: nowrap; margin-top: 2px;">CRITICAL</div>
+                        <div>
+                            <div style="font-weight: 600; color: #1B1B1E; margin-bottom: 6px;">Churn signal detected</div>
+                            <div style="font-size: 14px; color: #6E6E78;">Walter review within 48 hours. Engagement plan + retention call.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #ECECF0;">
+                    <div style="display: flex; align-items: flex-start; gap: 16px;">
+                        <div style="background: #FF3B30; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; white-space: nowrap; margin-top: 2px;">URGENT</div>
+                        <div>
+                            <div style="font-weight: 600; color: #1B1B1E; margin-bottom: 6px;">Tracking broken / data emergency</div>
+                            <div style="font-size: 14px; color: #6E6E78;">Same-day response. Client notification. Root cause analysis.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #ECECF0;">
+                    <div style="display: flex; align-items: flex-start; gap: 16px;">
+                        <div style="background: #FF9500; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; white-space: nowrap; margin-top: 2px;">FOLLOW-UP</div>
+                        <div>
+                            <div style="font-weight: 600; color: #1B1B1E; margin-bottom: 6px;">3+ overdue recommendations</div>
+                            <div style="font-size: 14px; color: #6E6E78;">Proactive outreach to unblock. Direct conversation on obstacles.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 24px; padding-bottom: 0;">
+                    <div style="display: flex; align-items: flex-start; gap: 16px;">
+                        <div style="background: #6E6E78; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; white-space: nowrap; margin-top: 2px;">SEPARATE</div>
+                        <div>
+                            <div style="font-weight: 600; color: #1B1B1E; margin-bottom: 6px;">Overdue invoice</div>
+                            <div style="font-size: 14px; color: #6E6E78;">Never appear in client reports. Finance handles separately. Flag to Walter for collection strategy.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 13: Communication Guidelines -->
+            <div class="slide">
+                <h2>Communication Guidelines</h2>
+                <p class="body-text" style="margin-bottom: 32px;">From Amplio's brand voice guide. Apply to all client-facing and internal comms.</p>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                    <div>
+                        <div style="font-size: 13px; font-weight: 600; color: #7B56DB; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Sound like this</div>
+                        <ul class="checklist" style="margin: 0;">
+                            <li>Smart, experienced colleague</li>
+                            <li>Confident, not arrogant</li>
+                            <li>Lead with proof & specifics</li>
+                            <li>Direct, not blunt</li>
+                            <li>Technical, not intimidating</li>
+                            <li>Warm, not casual</li>
+                            <li>Professional but human</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <div style="font-size: 13px; font-weight: 600; color: #7B56DB; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Use these words</div>
+                        <div style="font-size: 14px; color: #6E6E78; line-height: 1.8; margin-bottom: 20px;">
+                            <strong>Do use:</strong><br>
+                            Fix · Solve · Prove · Embed · Automate · Measure
+                        </div>
+                        <div style="font-size: 14px; color: #6E6E78; line-height: 1.8;">
+                            <strong>Don't use:</strong><br>
+                            Optimize · Enhance · Deploy · Leverage · Synergize · Robust
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #F5F5F5; border-radius: 12px; padding: 16px; margin-top: 32px;">
+                    <div style="font-size: 13px; font-weight: 600; color: #1B1B1E; margin-bottom: 8px;">Golden rule</div>
+                    <div style="font-size: 14px; color: #6E6E78;"><strong>Specific numbers over vague qualifiers always.</strong> Not "increased significantly" but "+23% lift." Not "better results" but "+$4,200 incremental revenue."</div>
+                </div>
+            </div>
+
+            <!-- Slide 14: Key Tools & Systems -->
+            <div class="slide">
+                <h2>Key Tools & Systems</h2>
+
+                <div style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #ECECF0;">
+                    <div style="font-size: 14px; font-weight: 600; color: #1B1B1E; margin-bottom: 8px;">Vault (Obsidian)</div>
+                    <div style="font-size: 14px; color: #6E6E78;">Knowledge base, client spaces, playbooks, templates. 3-layer architecture (raw → wiki → schema).</div>
+                </div>
+
+                <div style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #ECECF0;">
+                    <div style="font-size: 14px; font-weight: 600; color: #1B1B1E; margin-bottom: 8px;">IP Amplio (Insightful Pipe)</div>
+                    <div style="font-size: 14px; color: #6E6E78;">Data platform. Queries across GA4, Google Ads, Meta, Klaviyo, GSC, email. Fuels dashboards & insights.</div>
+                </div>
+
+                <div style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #ECECF0;">
+                    <div style="font-size: 14px; font-weight: 600; color: #1B1B1E; margin-bottom: 8px;">Attio CRM</div>
+                    <div style="font-size: 14px; color: #6E6E78;">Client records, pipeline, deal stages. Syncs with vault via export.</div>
+                </div>
+
+                <div style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #ECECF0;">
+                    <div style="font-size: 14px; font-weight: 600; color: #1B1B1E; margin-bottom: 8px;">Gmail (update_ labels)</div>
+                    <div style="font-size: 14px; color: #6E6E78;">Client communication hub. <code style="background: #F5F5F5; padding: 2px 6px; border-radius: 4px;">update_[clientname]</code> label triggers vault sync.</div>
+                </div>
+
+                <div style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #ECECF0;">
+                    <div style="font-size: 14px; font-weight: 600; color: #1B1B1E; margin-bottom: 8px;">Scheduled Tasks</div>
+                    <div style="font-size: 14px; color: #6E6E78;">11 autonomous tasks running daily. Data pulls, email syncs, unreplied flagging, health score updates.</div>
+                </div>
+
+                <div>
+                    <div style="font-size: 14px; font-weight: 600; color: #1B1B1E; margin-bottom: 8px;">Cross-Client Patterns</div>
+                    <div style="font-size: 14px; color: #6E6E78;">Self-improving playbook library. 10 active patterns. Tested against client data monthly.</div>
+                </div>
+            </div>
+
+            <!-- Slide 15: Quick Reference — Commands -->
+            <div class="slide">
+                <h2>Quick Reference: Commands</h2>
+                <p class="body-text" style="margin-bottom: 28px;">These commands trigger full workflows in the vault system.</p>
+
+                <div class="command">"New client: [name]"</div>
+                <div style="font-size: 13px; color: #6E6E78; margin-bottom: 20px;">Creates folder at 06-Clients/[name]/, fills _overview, subfolders, index, updates _Client-Index.</div>
+
+                <div class="command">"Client brief: [name]"</div>
+                <div style="font-size: 13px; color: #6E6E78; margin-bottom: 20px;">Reads _overview.md + recent notes. Returns 1-paragraph status summary.</div>
+
+                <div class="command">"Meeting notes: [client]"</div>
+                <div style="font-size: 13px; color: #6E6E78; margin-bottom: 20px;">Creates dated note in meeting-notes/ folder. Signals extracted automatically.</div>
+
+                <div class="command">"Pipeline review"</div>
+                <div style="font-size: 13px; color: #6E6E78; margin-bottom: 20px;">Summarizes all prospects. Scores, stages, next actions, win probability.</div>
+
+                <div class="command">"Client health"</div>
+                <div style="font-size: 13px; color: #6E6E78; margin-bottom: 20px;">Runs health scoring for all active clients. Table with scores, trends, alerts.</div>
+
+                <div class="command">"Track recommendation: [client]"</div>
+                <div style="font-size: 13px; color: #6E6E78; margin-bottom: 20px;">Adds row to client's recommendations-tracker.md. Requires: text, pattern ID, priority.</div>
+
+                <div class="command">"Learning report"</div>
+                <div style="font-size: 13px; color: #6E6E78; margin-bottom: 20px;">Summarizes: recs made/actioned/measured, pattern movements, signals extracted, health changes.</div>
+
+                <div class="command">"Client signals: [name]"</div>
+                <div style="font-size: 13px; color: #6E6E78; margin-bottom: 20px;">Reads and summarizes all signals from _overview.md. Trend analysis included.</div>
+
+                <div class="command">"Compile the vault"</div>
+                <div style="font-size: 13px; color: #6E6E78;">Reads all unprocessed raw sources in 00-Inbox/raw/. Extracts concepts, creates Galaxy notes, cross-links.</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div>
+                <button id="prev-btn" onclick="changeSlide(-1)">← Previous</button>
+            </div>
+            <div class="slide-indicator">
+                <button class="toc-button" onclick="toggleTOC()">Table of Contents</button>
+                <span class="slide-counter"><span id="current-slide">1</span> of <span id="total-slides">15</span></span>
+            </div>
+            <div>
+                <button id="next-btn" onclick="changeSlide(1)">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table of Contents Modal -->
+    <div id="toc-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="toggleTOC()">×</button>
+            <div class="toc-title">Table of Contents</div>
+            <ul class="toc-list">
+                <li><a class="toc-link" onclick="goToSlide(0)">Title</a></li>
+                <li><a class="toc-link" onclick="goToSlide(1)">Active Client Portfolio</a></li>
+                <li><a class="toc-link" onclick="goToSlide(2)">Service Tiers & Pricing</a></li>
+                <li><a class="toc-link" onclick="goToSlide(3)">Client Lifecycle</a></li>
+                <li><a class="toc-link" onclick="goToSlide(4)">Onboarding Checklist</a></li>
+                <li><a class="toc-link" onclick="goToSlide(5)">Health Scoring Model</a></li>
+                <li><a class="toc-link" onclick="goToSlide(6)">Current Health Scores</a></li>
+                <li><a class="toc-link" onclick="goToSlide(7)">Client Signals System</a></li>
+                <li><a class="toc-link" onclick="goToSlide(8)">Reporting Cadence</a></li>
+                <li><a class="toc-link" onclick="goToSlide(9)">Monthly Report Structure</a></li>
+                <li><a class="toc-link" onclick="goToSlide(10)">Recommendations Tracker</a></li>
+                <li><a class="toc-link" onclick="goToSlide(11)">Escalation Paths</a></li>
+                <li><a class="toc-link" onclick="goToSlide(12)">Communication Guidelines</a></li>
+                <li><a class="toc-link" onclick="goToSlide(13)">Key Tools & Systems</a></li>
+                <li><a class="toc-link" onclick="goToSlide(14)">Quick Reference: Commands</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            if (n >= totalSlides) {
+                currentSlide = totalSlides - 1;
+            } else if (n < 0) {
+                currentSlide = 0;
+            } else {
+                currentSlide = n;
+            }
+            slides[currentSlide].classList.add('active');
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+
+            // Update button states
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function changeSlide(n) {
+            showSlide(currentSlide + n);
+        }
+
+        function goToSlide(n) {
+            showSlide(n);
+            toggleTOC();
+        }
+
+        function toggleTOC() {
+            const modal = document.getElementById('toc-modal');
+            modal.classList.toggle('active');
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+            if (e.key === 'Escape') {
+                if (document.getElementById('toc-modal').classList.contains('active')) {
+                    toggleTOC();
+                }
+            }
+        });
+
+        // Close modal on outside click
+        document.getElementById('toc-modal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('toc-modal')) {
+                toggleTOC();
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>

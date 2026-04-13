@@ -1,874 +1,1291 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Amplio Data — Operations Architecture</title>
-<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root {
-  --charcoal: #131313;
-  --off-black: #121212;
-  --white: #FFFFFF;
-  --off-white: #F5F5F5;
-  --warm-white: #FAFAFA;
-  --purple: #8B2CF5;
-  --purple-light: rgba(139,44,245,0.08);
-  --dark-gray: #3A3A3A;
-  --mid-gray: #6B6B6B;
-  --light-gray: #D3D3D3;
-  --pale-gray: #E8E8E8;
-  --border: rgba(0,0,0,0.08);
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
-  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
-}
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body {
-  font-family: 'Satoshi', -apple-system, sans-serif;
-  background: var(--white);
-  color: var(--charcoal);
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1.6;
-  letter-spacing: -0.2px;
-}
-.mono { font-family: 'Roboto Mono', monospace; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operations Architecture — Amplio Data</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-/* Sections */
-.section-white { background: var(--white); color: var(--charcoal); padding: 96px 0; }
-.section-light { background: var(--off-white); color: var(--charcoal); padding: 96px 0; }
-.section-dark  { background: var(--charcoal); color: var(--white); padding: 96px 0; }
-.container { max-width: 1080px; margin: 0 auto; padding: 0 40px; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F5F5F5;
+            color: #6E6E78;
+            line-height: 1.6;
+        }
 
-/* Eyebrow */
-.eyebrow {
-  font-family: 'Roboto Mono', monospace;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--purple);
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  margin-bottom: 16px;
-}
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #F5F5F5;
+        }
 
-/* Typography hierarchy */
-h1 {
-  font-size: 56px;
-  font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: -2.5px;
-  color: var(--charcoal);
-}
-h2 {
-  font-size: 36px;
-  font-weight: 700;
-  line-height: 1.15;
-  letter-spacing: -1.5px;
-  margin-bottom: 40px;
-  color: var(--charcoal);
-}
-h3 {
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1.3;
-  letter-spacing: -0.5px;
-  margin-bottom: 12px;
-  color: var(--charcoal);
-}
-h4 {
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.4;
-  letter-spacing: -0.2px;
-  color: var(--charcoal);
-}
-.section-dark h1, .section-dark h2, .section-dark h3, .section-dark h4 { color: var(--white); }
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: 80px;
+            overflow-y: auto;
+            animation: fadeIn 0.3s ease-in;
+        }
 
-.text-purple { color: var(--purple); }
-.text-gray { color: var(--mid-gray); }
-.text-sm { font-size: 13px; line-height: 1.5; }
-.text-xs { font-size: 11px; line-height: 1.4; letter-spacing: 0; }
-.lead {
-  font-size: 20px;
-  font-weight: 400;
-  line-height: 1.6;
-  color: var(--mid-gray);
-  margin-top: 20px;
-}
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
 
-/* Cards with soft shadows */
-.card-white {
-  background: var(--white);
-  border-radius: 6px;
-  padding: 24px;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-sm);
-  color: var(--charcoal);
-  transition: box-shadow 0.2s ease;
-}
-.card-white:hover { box-shadow: var(--shadow-md); }
-.card-light {
-  background: var(--off-white);
-  border-radius: 6px;
-  padding: 20px;
-  border: 1px solid var(--border);
-  color: var(--charcoal);
-}
-.card-elevated {
-  background: var(--white);
-  border-radius: 6px;
-  padding: 28px;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-md);
-  color: var(--charcoal);
-}
-.card-dark {
-  background: var(--dark-gray);
-  border-radius: 6px;
-  padding: 24px;
-  border: none;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-}
-.card-purple {
-  background: var(--purple);
-  border-radius: 6px;
-  padding: 24px;
-  color: var(--white);
-  box-shadow: 0 4px 20px rgba(139,44,245,0.3);
-}
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
 
-/* Grid */
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-.grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
-.flex-row { display: flex; align-items: center; gap: 12px; }
-.flex-col { display: flex; flex-direction: column; gap: 8px; }
+        /* Typography */
+        .eyebrow {
+            font-size: 11px;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #9B9BA5;
+            margin-bottom: 24px;
+        }
 
-/* Badge */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 32px; height: 28px;
-  border-radius: 6px;
-  background: var(--purple);
-  color: var(--white);
-  font-size: 11px;
-  font-weight: 700;
-  flex-shrink: 0;
-  padding: 0 8px;
-}
-.badge-lg {
-  width: 44px; height: 44px;
-  border-radius: 10px;
-  font-size: 18px;
-}
+        h1 {
+            font-size: 56px;
+            font-weight: 700;
+            color: #1B1B1E;
+            margin-bottom: 24px;
+            line-height: 1.2;
+        }
 
-/* Pill */
-.pill {
-  display: inline-block;
-  background: var(--purple-light);
-  border: 1px solid rgba(139,44,245,0.15);
-  border-radius: 999px;
-  padding: 8px 20px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--purple);
-}
-.section-dark .pill { background: rgba(139,44,245,0.2); border-color: rgba(139,44,245,0.3); }
+        h2 {
+            font-size: 42px;
+            font-weight: 700;
+            color: #1B1B1E;
+            margin-bottom: 32px;
+        }
 
-/* KPI */
-.kpi-num { font-size: 44px; font-weight: 900; color: var(--purple); letter-spacing: -2px; }
-.kpi-label { font-size: 13px; font-weight: 500; color: var(--mid-gray); margin-top: 4px; }
+        h3 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #36363B;
+            margin-bottom: 16px;
+        }
 
-/* Flow arrow */
-.flow-arrow { color: var(--purple); font-size: 18px; font-weight: 700; flex-shrink: 0; opacity: 0.6; }
-.flow-arrow-down { text-align: center; color: var(--purple); font-size: 16px; padding: 2px 0; opacity: 0.5; }
+        .subtitle {
+            font-size: 20px;
+            color: #36363B;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
 
-/* Score bar */
-.score-bar { display: flex; border-radius: 4px; overflow: hidden; box-shadow: var(--shadow-sm); }
-.score-seg { padding: 10px 12px; font-size: 12px; font-weight: 700; text-align: center; color: var(--white); }
+        .body-text {
+            font-size: 16px;
+            color: #6E6E78;
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
 
-/* Timeline */
-.timeline { border-left: 2px solid var(--purple); margin-left: 16px; padding-left: 28px; }
-.tl-item { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; position: relative; }
-.tl-item::before {
-  content: '';
-  position: absolute;
-  left: -35px;
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  background: var(--purple);
-}
-.tl-card {
-  flex: 1;
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 12px 16px;
-  box-shadow: var(--shadow-sm);
-}
-.section-dark .tl-card { background: var(--dark-gray); border: none; }
+        .label {
+            font-size: 12px;
+            color: #9B9BA5;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
 
-/* Signal card */
-.signal-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 14px 16px;
-  box-shadow: var(--shadow-sm);
-}
-.section-dark .signal-card { background: var(--dark-gray); border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        .big-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: #7B56DB;
+            line-height: 1;
+        }
 
-/* Divider */
-.divider { border-top: 1px solid var(--pale-gray); margin: 48px 0; }
-.section-dark .divider { border-color: rgba(255,255,255,0.1); }
+        /* Cards */
+        .card {
+            background-color: #FFFFFF;
+            border: 1px solid #ECECF0;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
 
-/* Flow box */
-.flow-box {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 12px 16px;
-  text-align: center;
-  font-weight: 600;
-  font-size: 14px;
-  flex: 1;
-  color: var(--charcoal);
-  box-shadow: var(--shadow-sm);
-}
-.flow-box-purple {
-  background: var(--purple);
-  border-radius: 4px;
-  padding: 12px 16px;
-  text-align: center;
-  font-weight: 600;
-  font-size: 14px;
-  flex: 1;
-  color: var(--white);
-  box-shadow: 0 4px 12px rgba(139,44,245,0.25);
-}
-.section-dark .flow-box { background: var(--dark-gray); border: none; color: var(--white); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        .card.accent {
+            border-left: 4px solid #7B56DB;
+        }
 
-/* Nav */
-.nav {
-  position: fixed;
-  top: 0;
-  left: 0; right: 0;
-  z-index: 100;
-  background: rgba(255,255,255,0.95);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--border);
-  padding: 16px 0;
-}
-.nav-inner { max-width: 1080px; margin: 0 auto; padding: 0 40px; display: flex; align-items: center; justify-content: space-between; }
-.nav-brand { display: flex; align-items: center; }
-.nav-brand svg { height: 26px; width: auto; }
-.nav-links { display: flex; gap: 28px; }
-.nav-links a { color: var(--mid-gray); text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.15s; }
-.nav-links a:hover { color: var(--charcoal); }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 32px;
+        }
 
-/* Code block */
-.code-block {
-  background: var(--off-white);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 20px 24px;
-  font-family: 'Roboto Mono', monospace;
-  font-size: 13px;
-  line-height: 1.7;
-  color: var(--dark-gray);
-  box-shadow: var(--shadow-sm);
-}
-.section-dark .code-block { background: var(--off-black); border: none; color: var(--light-gray); }
+        .card-small {
+            background-color: #FFFFFF;
+            border: 1px solid #ECECF0;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
 
-/* Responsive */
-@media (max-width: 768px) {
-  h1 { font-size: 36px; letter-spacing: -1.5px; }
-  h2 { font-size: 28px; letter-spacing: -1px; }
-  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
-  .section-white, .section-light, .section-dark { padding: 56px 0; }
-  .flow-row-responsive { flex-wrap: wrap; }
-  .container { padding: 0 24px; }
-}
-</style>
+        .card-small h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 24px;
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        thead {
+            background-color: #F5F5F5;
+            border-bottom: 1px solid #ECECF0;
+        }
+
+        th {
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #36363B;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #ECECF0;
+            font-size: 14px;
+            color: #6E6E78;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Color-coded badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge.purple {
+            background-color: rgba(123, 86, 219, 0.1);
+            color: #7B56DB;
+        }
+
+        .badge.coral {
+            background-color: rgba(255, 100, 132, 0.1);
+            color: #FF6484;
+        }
+
+        .badge.teal {
+            background-color: rgba(78, 205, 196, 0.1);
+            color: #4ECDC4;
+        }
+
+        .badge.gold {
+            background-color: rgba(255, 185, 56, 0.1);
+            color: #FFB938;
+        }
+
+        .badge.green {
+            background-color: rgba(52, 199, 89, 0.1);
+            color: #34C759;
+        }
+
+        .badge.orange {
+            background-color: rgba(255, 149, 0, 0.1);
+            color: #FF9500;
+        }
+
+        .badge.red {
+            background-color: rgba(255, 59, 48, 0.1);
+            color: #FF3B30;
+        }
+
+        /* Code blocks */
+        pre {
+            background-color: #F5F5F5;
+            border: 1px solid #ECECF0;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+            color: #36363B;
+            margin-top: 16px;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        /* Timeline */
+        .timeline {
+            margin-top: 32px;
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 24px;
+            align-items: flex-start;
+        }
+
+        .timeline-time {
+            font-weight: 600;
+            color: #7B56DB;
+            min-width: 80px;
+            font-size: 14px;
+        }
+
+        .timeline-content {
+            margin-left: 24px;
+            flex: 1;
+        }
+
+        .timeline-content .label {
+            margin-bottom: 4px;
+        }
+
+        .timeline-content .body-text {
+            margin-bottom: 0;
+        }
+
+        /* Flow diagram */
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .flow-box {
+            background-color: #FFFFFF;
+            border: 2px solid #ECECF0;
+            border-radius: 8px;
+            padding: 16px 24px;
+            text-align: center;
+            font-weight: 600;
+            color: #36363B;
+            font-size: 14px;
+            min-width: 120px;
+        }
+
+        .flow-box.active {
+            border-color: #7B56DB;
+            background-color: rgba(123, 86, 219, 0.08);
+            color: #7B56DB;
+        }
+
+        .flow-arrow {
+            font-size: 20px;
+            color: #9B9BA5;
+        }
+
+        /* Vertical flow */
+        .vertical-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        .flow-level {
+            background-color: #FFFFFF;
+            border: 1px solid #ECECF0;
+            border-radius: 12px;
+            padding: 24px;
+            border-left: 4px solid #7B56DB;
+        }
+
+        .flow-level:nth-child(1) { border-left-color: #FF6484; }
+        .flow-level:nth-child(2) { border-left-color: #4ECDC4; }
+        .flow-level:nth-child(3) { border-left-color: #FFB938; }
+        .flow-level:nth-child(4) { border-left-color: #8B9FE8; }
+
+        .flow-level-title {
+            font-weight: 700;
+            color: #1B1B1E;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .flow-level-desc {
+            font-size: 14px;
+            color: #6E6E78;
+        }
+
+        /* Navigation */
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: #FFFFFF;
+            border-bottom: 1px solid #ECECF0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-button {
+            background-color: #FFFFFF;
+            border: 1px solid #ECECF0;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #36363B;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-button:hover {
+            background-color: #F5F5F5;
+            border-color: #7B56DB;
+            color: #7B56DB;
+        }
+
+        .nav-button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            text-align: center;
+            font-weight: 600;
+            color: #36363B;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .slide-counter:hover {
+            background-color: #F5F5F5;
+        }
+
+        .slide-counter.toc-open {
+            background-color: #7B56DB;
+            color: #FFFFFF;
+        }
+
+        /* Table of Contents */
+        .toc-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toc-overlay.active {
+            display: flex;
+        }
+
+        .toc-panel {
+            background-color: #FFFFFF;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .toc-panel h2 {
+            margin-bottom: 32px;
+        }
+
+        .toc-item {
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            color: #6E6E78;
+            border-left: 3px solid transparent;
+        }
+
+        .toc-item:hover {
+            background-color: #F5F5F5;
+            color: #7B56DB;
+            border-left-color: #7B56DB;
+        }
+
+        .toc-item.current {
+            background-color: rgba(123, 86, 219, 0.1);
+            color: #7B56DB;
+            font-weight: 600;
+            border-left-color: #7B56DB;
+        }
+
+        /* Stat rows */
+        .stat-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .stat-value {
+            margin-right: 32px;
+        }
+
+        .stat-label {
+            font-size: 18px;
+            color: #36363B;
+            font-weight: 500;
+        }
+
+        /* Hub nodes */
+        .hub-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-top: 32px;
+        }
+
+        .hub-node {
+            background-color: #FFFFFF;
+            border: 1px solid #ECECF0;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .hub-node-title {
+            font-weight: 700;
+            color: #1B1B1E;
+            font-size: 14px;
+            margin-bottom: 8px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .hub-node-desc {
+            font-size: 12px;
+            color: #9B9BA5;
+            line-height: 1.5;
+        }
+
+        /* Spacing utilities */
+        .mt-48 { margin-top: 48px; }
+        .mt-32 { margin-top: 32px; }
+        .mb-32 { margin-bottom: 32px; }
+        .mb-24 { margin-bottom: 24px; }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            .hub-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .slide {
+                padding: 60px 40px;
+            }
+        }
+
+        /* Slide-specific */
+        .title-slide {
+            text-align: center;
+            justify-content: center;
+        }
+
+        .title-slide h1 {
+            margin-bottom: 16px;
+            font-size: 64px;
+        }
+
+        .title-slide .subtitle {
+            font-size: 24px;
+            margin-bottom: 48px;
+        }
+
+        .title-slide .meta {
+            font-size: 14px;
+            color: #9B9BA5;
+            margin-top: 48px;
+        }
+    </style>
 </head>
 <body>
-
-<!-- NAV -->
-<nav class="nav">
-  <div class="nav-inner">
-    <div class="nav-brand">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 387 98" fill="none" style="height:26px;width:auto;">
-        <path fill="#0C0C0C" d="m106.441 79.658 23.8-65.164h15.704l23.622 65.164H155.81l-5.264-15.007h-25.392l-5.264 15.007h-13.449Zm22.561-26.03h17.651l-8.847-25.19-8.804 25.19Zm41.881 26.03V30.874h11.768v6.419c1.444-2.302 3.45-4.132 6.016-5.49 2.595-1.357 5.397-2.021 8.405-1.992 3.303.03 6.193.767 8.67 2.214 2.507 1.416 4.365 3.364 5.574 5.843 1.415-2.42 3.48-4.368 6.193-5.843 2.713-1.505 5.736-2.243 9.068-2.214 5.191.03 9.364 1.653 12.52 4.87 3.155 3.217 4.733 7.467 4.733 12.75v32.227h-12.121V49.644c0-2.804-.826-5.047-2.477-6.73-1.652-1.681-3.849-2.537-6.592-2.567-2.654-.03-4.866.9-6.635 2.79-1.74 1.858-2.61 4.22-2.61 7.082v29.44h-12.121V49.156c0-2.656-.811-4.781-2.433-6.375-1.622-1.594-3.745-2.405-6.37-2.435-2.713-.03-4.969.96-6.768 2.966-1.799 2.007-2.698 4.56-2.698 7.659v28.686h-12.122Zm105.096-49.714c6.812 0 12.386 2.39 16.721 7.172 4.336 4.751 6.488 10.846 6.459 18.283-.029 7.467-2.241 13.56-6.636 18.283-4.394 4.722-10.026 7.068-16.898 7.038a20.316 20.316 0 0 1-8.67-1.814c-2.743-1.27-4.969-2.981-6.68-5.136v23.862h-12.121V30.874h12.032l-.044 6.463c1.829-2.273 4.173-4.073 7.034-5.4 2.861-1.329 5.795-1.993 8.803-1.993Zm-16.102 25.499c-.03 4.161 1.283 7.614 3.937 10.359 2.654 2.715 5.913 4.058 9.776 4.028 3.864.03 6.989-1.284 9.378-3.94 2.419-2.655 3.628-6.138 3.628-10.447 0-4.309-1.209-7.791-3.628-10.447-2.389-2.686-5.514-4.029-9.378-4.029-3.834 0-7.078 1.372-9.732 4.117-2.654 2.745-3.981 6.198-3.981 10.359ZM314.056 12.9v66.758h-12.077V12.9h12.077Zm5.165 66.758V30.874h12.12v48.784h-12.12Zm-.133-53.92v-12.35h12.651v12.35h-12.651Zm40.687 54.983c-7.462.03-13.596-2.332-18.403-7.083-4.778-4.752-7.181-10.861-7.211-18.328 0-4.928 1.092-9.34 3.274-13.236 2.183-3.896 5.22-6.906 9.113-9.031 3.892-2.155 8.301-3.232 13.227-3.232 3.716 0 7.166.635 10.351 1.904 3.214 1.24 5.942 2.98 8.184 5.223 2.241 2.214 3.996 4.914 5.264 8.102 1.297 3.158 1.946 6.581 1.946 10.27 0 3.69-.649 7.113-1.946 10.27-1.268 3.158-3.023 5.844-5.264 8.058-2.242 2.213-4.97 3.954-8.184 5.223-3.185 1.24-6.635 1.86-10.351 1.86Zm-13.05-25.41c0 4.249 1.194 7.702 3.583 10.358 2.418 2.627 5.573 3.94 9.467 3.94 3.922 0 7.092-1.313 9.511-3.94 2.447-2.656 3.671-6.11 3.671-10.359 0-4.309-1.224-7.776-3.671-10.403-2.419-2.656-5.589-3.984-9.511-3.984-3.923 0-7.093 1.328-9.512 3.984-2.388 2.656-3.568 6.124-3.538 10.403ZM87.455 40.877H5.76A5.763 5.763 0 0 0 0 46.642a5.763 5.763 0 0 0 5.76 5.764h81.695a5.763 5.763 0 0 0 5.76-5.764 5.763 5.763 0 0 0-5.76-5.765Z"/>
-        <path fill="#0C0C0C" d="M40.848 5.764V87.52a5.761 5.761 0 1 0 11.52 0V5.764A5.763 5.763 0 0 0 46.609 0a5.763 5.763 0 0 0-5.76 5.764Z"/>
-        <path fill="#0C0C0C" d="M71.418 13.662 13.65 71.47a5.768 5.768 0 0 0 0 8.152 5.757 5.757 0 0 0 8.147 0l57.766-57.809a5.768 5.768 0 0 0 0-8.152 5.757 5.757 0 0 0-8.146 0Z"/>
-      </svg>
-    </div>
-    <div class="nav-links">
-      <a href="#vault">Vault</a>
-      <a href="#layers">Layers</a>
-      <a href="#schedule">Schedule</a>
-      <a href="#pipeline">Pipeline</a>
-      <a href="#lifecycle">Lifecycle</a>
-      <a href="#learning">Learning</a>
-      <a href="#health">Health</a>
-      <a href="#autoresearch">Autoresearch</a>
-    </div>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section class="section-white" style="padding-top: 148px; padding-bottom: 104px;">
-  <div class="container">
-    <div class="eyebrow">/OPERATIONS ARCHITECTURE</div>
-    <h1>The complete <span class="text-purple">system</span> behind<br>the Amplio Vault.</h1>
-    <p class="lead" style="max-width: 600px;">How data flows from client platforms through IP Amplio into a self-improving knowledge vault — with daily automations, pattern discovery, and feedback loops.</p>
-
-    <div class="grid-4" style="margin-top: 56px;">
-      <div class="card-elevated" style="text-align: center;">
-        <div class="kpi-num">9</div>
-        <div class="kpi-label">Scheduled Tasks</div>
-      </div>
-      <div class="card-elevated" style="text-align: center;">
-        <div class="kpi-num">6</div>
-        <div class="kpi-label">Vault Skills</div>
-      </div>
-      <div class="card-elevated" style="text-align: center;">
-        <div class="kpi-num">3</div>
-        <div class="kpi-label">Layers</div>
-      </div>
-      <div class="card-elevated" style="text-align: center;">
-        <div class="kpi-num">7</div>
-        <div class="kpi-label">Hub Indexes</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- IPARAG STRUCTURE -->
-<section class="section-light" id="vault">
-  <div class="container">
-    <div class="eyebrow">/VAULT ARCHITECTURE</div>
-    <h2>The <span class="text-purple">IPARAG</span> Structure</h2>
-
-    <!-- Root -->
-    <div style="text-align: center; margin-bottom: 24px;">
-      <div style="display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; border-radius: 10px; background: var(--purple); color: white; font-size: 11px; font-weight: 700; box-shadow: 0 4px 16px rgba(139,44,245,0.3);">Amplio<br>Vault</div>
-    </div>
-
-    <!-- Row 1 -->
-    <div class="grid-4" style="margin-bottom: 16px;">
-      <div class="card-white" style="text-align: center;">
-        <h4 class="text-purple">00-Inbox/</h4>
-        <div class="mono text-xs text-gray" style="text-transform: uppercase; margin-top: 4px; letter-spacing: 0.5px;">Capture</div>
-        <p class="text-sm text-gray" style="margin-top: 8px;">Raw sources land here. raw/ is immutable.</p>
-      </div>
-      <div class="card-white" style="text-align: center;">
-        <h4 class="text-purple">01-Projects/</h4>
-        <div class="mono text-xs text-gray" style="text-transform: uppercase; margin-top: 4px; letter-spacing: 0.5px;">Time-Bound</div>
-        <p class="text-sm text-gray" style="margin-top: 8px;">Work with a deadline. Active projects only.</p>
-      </div>
-      <div class="card-white" style="text-align: center;">
-        <h4 class="text-purple">02-Areas/</h4>
-        <div class="mono text-xs text-gray" style="text-transform: uppercase; margin-top: 4px; letter-spacing: 0.5px;">Ongoing</div>
-        <p class="text-sm text-gray" style="margin-top: 8px;">Ads, Analytics, Sales. No finish line.</p>
-      </div>
-      <div class="card-white" style="text-align: center;">
-        <h4 class="text-purple">03-Resources/</h4>
-        <div class="mono text-xs text-gray" style="text-transform: uppercase; margin-top: 4px; letter-spacing: 0.5px;">Reference</div>
-        <p class="text-sm text-gray" style="margin-top: 8px;">Brand, Playbooks, SOPs, Templates.</p>
-      </div>
-    </div>
-
-    <!-- Row 2 -->
-    <div class="grid-3">
-      <div class="card-white" style="text-align: center;">
-        <h4 class="text-purple">04-Archives/</h4>
-        <div class="mono text-xs text-gray" style="text-transform: uppercase; margin-top: 4px; letter-spacing: 0.5px;">Completed</div>
-        <p class="text-sm text-gray" style="margin-top: 8px;">Past work, retired notes.</p>
-      </div>
-      <div class="card-white" style="text-align: center;">
-        <h4 class="text-purple">05-Galaxy/</h4>
-        <div class="mono text-xs text-gray" style="text-transform: uppercase; margin-top: 4px; letter-spacing: 0.5px;">Zettelkasten</div>
-        <p class="text-sm text-gray" style="margin-top: 8px;">Atomic concept notes. [[wikilinks]].</p>
-      </div>
-      <div class="card-white" style="text-align: center;">
-        <h4 class="text-purple">06-Clients/</h4>
-        <div class="mono text-xs text-gray" style="text-transform: uppercase; margin-top: 4px; letter-spacing: 0.5px;">Client Spaces</div>
-        <p class="text-sm text-gray" style="margin-top: 8px;">Per-client folders. _Prospects/ pipeline.</p>
-      </div>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="card-elevated">
-      <h4 class="text-purple" style="font-size: 16px;">7 Hub Indexes</h4>
-      <p class="text-sm text-gray" style="margin-top: 8px;">[[memory]] · [[_Galaxy-Index]] · [[_Skills-Index]] · [[_Playbooks-Index]] · [[_Client-Index]] · [[_Pipeline-Dashboard]] · [[_Archives-Index]]</p>
-      <p class="text-xs text-gray" style="margin-top: 8px; font-style: italic;">Every note links to at least one hub. [[vault-linking-sop]] for rules.</p>
-    </div>
-  </div>
-</section>
-
-<!-- THREE-LAYER ARCHITECTURE -->
-<section class="section-dark" id="layers">
-  <div class="container">
-    <div class="eyebrow" style="color: rgba(139,44,245,0.8);">/KARPATHY LLM WIKI PATTERN</div>
-    <h2>Three-Layer <span class="text-purple">Architecture</span></h2>
-
-    <div class="flex-col" style="gap: 14px; max-width: 680px;">
-      <div class="card-purple" style="padding: 28px;">
-        <div class="mono text-xs" style="letter-spacing: 1.5px; opacity: 0.6; text-transform: uppercase;">Layer 3: Schema</div>
-        <div style="font-size: 17px; font-weight: 600; margin-top: 10px;">CLAUDE.md + program.md</div>
-        <p class="text-sm" style="margin-top: 6px; opacity: 0.65;">Rules governing the vault. The "operating system".</p>
-      </div>
-
-      <div class="flow-arrow-down">↓ <span class="text-xs" style="font-weight: 600;">governs</span></div>
-
-      <div class="card-dark" style="padding: 28px;">
-        <div class="mono text-xs text-gray" style="letter-spacing: 1.5px; text-transform: uppercase;">Layer 2: Compiled Knowledge</div>
-        <div style="font-size: 17px; font-weight: 600; margin-top: 10px; color: var(--white);">05-Galaxy/ + 03-Resources/</div>
-        <p class="text-sm text-gray" style="margin-top: 6px;">Structured atomic notes. LLM acts as compiler.</p>
-      </div>
-
-      <div class="flow-arrow-down">↓ <span class="text-xs" style="font-weight: 600;">compiles from</span></div>
-
-      <div class="card-dark" style="padding: 28px;">
-        <div class="mono text-xs text-gray" style="letter-spacing: 1.5px; text-transform: uppercase;">Layer 1: Raw Sources (Immutable)</div>
-        <div style="font-size: 17px; font-weight: 600; margin-top: 10px; color: var(--white);">00-Inbox/raw/</div>
-        <p class="text-sm text-gray" style="margin-top: 6px;">Articles, PDFs, transcripts. Never modified.</p>
-      </div>
-    </div>
-
-    <div style="text-align: center; margin-top: 28px;">
-      <div class="pill">↻ Layer 1 informs Layer 2, which updates Layer 3</div>
-    </div>
-
-    <div class="divider"></div>
-
-    <h3>Compile <span class="text-purple">Pipeline</span></h3>
-    <div class="flex-row flow-row-responsive" style="gap: 8px; margin-top: 16px;">
-      <div class="flow-box">Scan raw/</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-box">Extract concepts</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-box">Create Galaxy</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-box">Add provenance</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-box">Cross-link</div>
-    </div>
-
-    <div class="card-dark" style="margin-top: 24px;">
-      <h4 style="color: var(--white);">Daily Autoresearch Run</h4>
-      <p class="text-sm text-gray" style="margin-top: 6px;">Triggered at 09:00 UTC · Compile unprocessed raw/ → Extract concepts → Create/update Galaxy → Add provenance tags → Log operations</p>
-    </div>
-  </div>
-</section>
-
-<!-- DAILY SCHEDULED TASKS -->
-<section class="section-white" id="schedule">
-  <div class="container">
-    <div class="eyebrow">/9 AUTOMATION JOBS</div>
-    <h2>Daily Scheduled <span class="text-purple">Tasks</span></h2>
-
-    <div class="timeline">
-      <div class="tl-item">
-        <div class="tl-card">
-          <div class="mono text-xs text-gray">07:30 UTC</div>
-          <h4 style="margin-top: 2px;">Weekly Executive Briefing</h4>
+    <div class="presentation-container">
+        <!-- Navigation Bar -->
+        <div class="nav-bar">
+            <button class="nav-button" id="prevBtn" onclick="previousSlide()">← Previous</button>
+            <div class="slide-counter" id="slideCounter" onclick="toggleTOC()">1 / 15</div>
+            <button class="nav-button" id="nextBtn" onclick="nextSlide()">Next →</button>
         </div>
-        <div class="badge">MON</div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-card">
-          <div class="mono text-xs text-gray">08:00 UTC</div>
-          <h4 style="margin-top: 2px;">Daily Client Data Pull</h4>
+
+        <!-- Slides Container -->
+        <div style="flex: 1; overflow: hidden;">
+            <!-- Slide 1: Title -->
+            <div class="slide active title-slide">
+                <div>
+                    <h1>Operations Architecture</h1>
+                    <p class="subtitle">Amplio Data® — Automation, Vault Structure & Data Pipelines</p>
+                    <p class="meta">Internal Documentation</p>
+                    <p class="meta" style="margin-top: 16px;">Last updated: April 13, 2026</p>
+                </div>
+            </div>
+
+            <!-- Slide 2: Architecture Overview -->
+            <div class="slide">
+                <div class="eyebrow">System Design</div>
+                <h2>Architecture Overview</h2>
+                <p class="body-text" style="margin-bottom: 32px;">Amplio operates across three integrated pillars. Each layer feeds the next, creating a closed-loop system of knowledge, data, and action.</p>
+
+                <div class="cards-grid">
+                    <div class="card">
+                        <h3>Knowledge Vault</h3>
+                        <p class="body-text" style="margin-bottom: 0;">IPARAG folder structure with three-layer architecture (raw sources → compiled wiki → schema rules). Session continuity via memory.md.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Data Pipelines</h3>
+                        <p class="body-text" style="margin-bottom: 0;">IP Amplio workspace connects GA4, Google Ads, Meta, Klaviyo, and GSC. Client data context maps schemas and key metrics.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Automation Layer</h3>
+                        <p class="body-text" style="margin-bottom: 0;">Scheduled tasks orchestrate vault health, client learning, ad research, and report generation. Daily pipeline from 7:30 AM onward.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: Vault Structure -->
+            <div class="slide">
+                <div class="eyebrow">Knowledge Management</div>
+                <h2>Vault Structure — IPARAG</h2>
+                <pre>Amplio-Brain/
+├── 00-Inbox/              # Everything lands here first
+│   └── raw/               # Immutable source material (Layer 1)
+├── 01-Projects/Active/    # Time-bound work with a finish line
+├── 02-Areas/              # Ongoing responsibilities
+├── 03-Resources/          # Reference: Brand, Playbooks, Templates, Research, Skills
+│   └── program.md         # Autoresearch config
+├── 04-Archives/           # Completed projects, past content
+├── 05-Galaxy/             # Zettelkasten atomic notes (Layer 2)
+├── 06-Clients/            # Client spaces + Prospects pipeline
+├── CLAUDE.md              # Schema (Layer 3 — rules governing compilation)
+└── memory.md              # Session continuity</pre>
+            </div>
+
+            <!-- Slide 4: Three-Layer Architecture -->
+            <div class="slide">
+                <div class="eyebrow">Knowledge Architecture</div>
+                <h2>Three-Layer Architecture (Karpathy LLM Wiki)</h2>
+                <p class="body-text">Inspired by Andrej Karpathy's approach to building a searchable wiki, Amplio uses a three-layer compilation model.</p>
+
+                <div class="vertical-flow">
+                    <div class="flow-level">
+                        <div class="flow-level-title">Layer 1: Raw Sources (00-Inbox/raw/)</div>
+                        <div class="flow-level-desc">Immutable inputs — articles, PDFs, transcripts, web clips. Never modified. Marked processed once compiled.</div>
+                    </div>
+                    <div class="flow-level">
+                        <div class="flow-level-title">Layer 2: Wiki (05-Galaxy/ + 03-Resources/)</div>
+                        <div class="flow-level-desc">LLM-compiled structured knowledge. Atomic notes (≤300 words) with wikilinks. One idea per note.</div>
+                    </div>
+                    <div class="flow-level">
+                        <div class="flow-level-title">Layer 3: Schema (CLAUDE.md + program.md)</div>
+                        <div class="flow-level-desc">Rules governing compilation. Commands, routing logic, behavior rules, hub connections.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 5: Vault Health Scoring -->
+            <div class="slide">
+                <div class="eyebrow">Quality Metrics</div>
+                <h2>Vault Health Scoring (6 Dimensions)</h2>
+                <p class="body-text">Quantitative measure of vault quality. Each dimension scored 0-max, contributing to overall health.</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Dimension</th>
+                            <th style="text-align: right;">Max</th>
+                            <th>What It Measures</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Structural Integrity</strong></td>
+                            <td style="text-align: right;"><span class="badge purple">25</span></td>
+                            <td>Broken wikilinks, invalid YAML, malformed frontmatter</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Hub Connectivity</strong></td>
+                            <td style="text-align: right;"><span class="badge purple">20</span></td>
+                            <td>% of notes linked to hub indexes (target 100%)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Frontmatter Completeness</strong></td>
+                            <td style="text-align: right;"><span class="badge coral">15</span></td>
+                            <td>Required YAML fields (title, created, updated, tags, type)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Link Density</strong></td>
+                            <td style="text-align: right;"><span class="badge teal">15</span></td>
+                            <td>Average wikilinks per note (target ≥3)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Content Freshness</strong></td>
+                            <td style="text-align: right;"><span class="badge gold">10</span></td>
+                            <td>% notes updated within 90 days</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="body-text mt-32"><strong>Current health:</strong> <span class="big-number">92.5/100</span></p>
+            </div>
+
+            <!-- Slide 6: Seven Hub Notes -->
+            <div class="slide">
+                <div class="eyebrow">Graph Structure</div>
+                <h2>Seven Hub Notes</h2>
+                <p class="body-text">The vault orbits around seven hubs. Every note must link to at least one. Hubs are:
+                    <br/><br/>
+                    <strong>Core rule (Rule #7):</strong> Every new note gets a <code>## Related</code> section with at least one inbound hub link before saving.
+                </p>
+
+                <div class="hub-grid">
+                    <div class="hub-node">
+                        <div class="hub-node-title">[[memory]]</div>
+                        <div class="hub-node-desc">Session continuity and current state</div>
+                    </div>
+                    <div class="hub-node">
+                        <div class="hub-node-title">[[_Galaxy-Index]]</div>
+                        <div class="hub-node-desc">Atomic concept notes (≤300w)</div>
+                    </div>
+                    <div class="hub-node">
+                        <div class="hub-node-title">[[_Skills-Index]]</div>
+                        <div class="hub-node-desc">Claude skills and capabilities</div>
+                    </div>
+                    <div class="hub-node">
+                        <div class="hub-node-title">[[_Playbooks-Index]]</div>
+                        <div class="hub-node-desc">SOPs and how-tos</div>
+                    </div>
+                    <div class="hub-node">
+                        <div class="hub-node-title">[[_Client-Index]]</div>
+                        <div class="hub-node-desc">Client spaces and status</div>
+                    </div>
+                    <div class="hub-node">
+                        <div class="hub-node-title">[[_Pipeline-Dashboard]]</div>
+                        <div class="hub-node-desc">Prospects and sales pipeline</div>
+                    </div>
+                    <div class="hub-node">
+                        <div class="hub-node-title">[[_Archives-Index]]</div>
+                        <div class="hub-node-desc">Retired notes and completed work</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 7: Scheduled Tasks -->
+            <div class="slide">
+                <div class="eyebrow">Daily Automation</div>
+                <h2>Scheduled Tasks — Daily Pipeline</h2>
+                <p class="body-text">Tasks execute in sequence, each reading output from the previous. No duplication. Staggered start times balance load.</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Task</th>
+                            <th>Role</th>
+                            <th>Frequency</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>07:30</td>
+                            <td><strong>weekly-executive-briefing</strong></td>
+                            <td><span class="badge coral">ROLLUP</span></td>
+                            <td>Mon</td>
+                        </tr>
+                        <tr>
+                            <td>08:00</td>
+                            <td><strong>daily-client-data-pull</strong></td>
+                            <td><span class="badge teal">DATA</span></td>
+                            <td>Daily</td>
+                        </tr>
+                        <tr>
+                            <td>08:30</td>
+                            <td><strong>daily-access-tracker-sweep</strong></td>
+                            <td><span class="badge teal">DATA</span></td>
+                            <td>Daily</td>
+                        </tr>
+                        <tr>
+                            <td>08:45</td>
+                            <td><strong>employee-update-email-sync</strong></td>
+                            <td><span class="badge gold">SIGNALS</span></td>
+                            <td>Daily</td>
+                        </tr>
+                        <tr>
+                            <td>09:00</td>
+                            <td><strong>vault-autoresearch</strong></td>
+                            <td><span class="badge purple">STRUCTURE</span></td>
+                            <td>Daily</td>
+                        </tr>
+                        <tr>
+                            <td>09:15</td>
+                            <td><strong>daragh-update-email-sync</strong></td>
+                            <td><span class="badge gold">SIGNALS</span></td>
+                            <td>Daily</td>
+                        </tr>
+                        <tr>
+                            <td>09:20</td>
+                            <td><strong>daily-unreplied-client-emails</strong></td>
+                            <td><span class="badge orange">ALERTS</span></td>
+                            <td>Daily</td>
+                        </tr>
+                        <tr>
+                            <td>09:40</td>
+                            <td><strong>certify-monthly-report</strong></td>
+                            <td><span class="badge coral">OUTPUT</span></td>
+                            <td>1st of month</td>
+                        </tr>
+                        <tr>
+                            <td>10:00</td>
+                            <td><strong>daily-client-learning-sync</strong></td>
+                            <td><span class="badge purple">INTELLIGENCE</span></td>
+                            <td>Daily</td>
+                        </tr>
+                        <tr>
+                            <td>10:30</td>
+                            <td><strong>certify-ads-experimentation</strong></td>
+                            <td><span class="badge green">ACTION</span></td>
+                            <td>Wed</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Slide 8: Data Pipeline -->
+            <div class="slide">
+                <div class="eyebrow">Connected Data</div>
+                <h2>Data Pipeline — IP Amplio</h2>
+                <p class="body-text">Workspace 457 (Amplio) connects four properties via API and three platforms via credential-based SDK.</p>
+
+                <div class="card mb-32">
+                    <h3>Connected Properties</h3>
+                    <table style="margin-top: 16px;">
+                        <thead>
+                            <tr>
+                                <th>Property</th>
+                                <th>Workspace</th>
+                                <th>Type</th>
+                                <th>Primary Metric</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Amplio Data</strong></td>
+                                <td>441</td>
+                                <td>GA4</td>
+                                <td>organic sessions, email conversions</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Odisei Music</strong></td>
+                                <td>449</td>
+                                <td>GA4</td>
+                                <td>user engagement, playlist adds</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Certify Education</strong></td>
+                                <td>450</td>
+                                <td>GA4</td>
+                                <td>course signups, test prep completions</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h3>Connected Platforms</h3>
+                    <p class="body-text" style="margin-bottom: 16px;">Real-time sync via credential-based SDKs:</p>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+                        <div class="card-small">
+                            <strong style="color: #36363B;">Google Ads</strong>
+                            <p style="margin-top: 8px; font-size: 12px;">Campaigns, impressions, conversions</p>
+                        </div>
+                        <div class="card-small">
+                            <strong style="color: #36363B;">Meta Ads</strong>
+                            <p style="margin-top: 8px; font-size: 12px;">Campaign performance, audience overlap</p>
+                        </div>
+                        <div class="card-small">
+                            <strong style="color: #36363B;">GSC</strong>
+                            <p style="margin-top: 8px; font-size: 12px;">Query performance, SERP position</p>
+                        </div>
+                        <div class="card-small">
+                            <strong style="color: #36363B;">Klaviyo</strong>
+                            <p style="margin-top: 8px; font-size: 12px;">Email metrics, subscriber engagement</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 9: Vault Autoresearch Loop -->
+            <div class="slide">
+                <div class="eyebrow">Continuous Improvement</div>
+                <h2>Vault Autoresearch Loop</h2>
+                <p class="body-text">The core autonomous improvement cycle. Runs daily at 09:00 AM, makes one atomic change per iteration.</p>
+
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-time">Step 1</div>
+                        <div class="timeline-content">
+                            <div class="label">Score the Vault</div>
+                            <p class="body-text">Compute six-dimension health score (structural integrity, hub connectivity, frontmatter, links, freshness, client data).</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">Step 2</div>
+                        <div class="timeline-content">
+                            <div class="label">Identify Highest-Impact Improvement</div>
+                            <p class="body-text">Rank pending improvements by dimension, priority tier (P0 → P1 → P2 → P3), and expected impact.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">Step 3</div>
+                        <div class="timeline-content">
+                            <div class="label">Make One Atomic Change</div>
+                            <p class="body-text">Add link, fix broken reference, create missing note, update stale content. One change only.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">Step 4</div>
+                        <div class="timeline-content">
+                            <div class="label">Re-Score</div>
+                            <p class="body-text">Measure change impact. If score improved, commit. If not, revert.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">Step 5</div>
+                        <div class="timeline-content">
+                            <div class="label">Log Result</div>
+                            <p class="body-text">Append to memory.md log. Track impact, dimension, and reasoning.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card accent mt-32">
+                    <p class="body-text mb-24"><strong>Priority Tiers:</strong></p>
+                    <p class="body-text" style="margin-bottom: 8px;"><span class="badge red">P0</span> Structural Integrity — broken links, invalid YAML</p>
+                    <p class="body-text" style="margin-bottom: 8px;"><span class="badge orange">P1</span> Hub Connectivity — notes without hub links</p>
+                    <p class="body-text" style="margin-bottom: 8px;"><span class="badge gold">P2</span> Content Quality — missing summaries, stale notes</p>
+                    <p class="body-text"><span class="badge teal">P3</span> Client Data Hygiene — incomplete overviews, missing sections</p>
+                </div>
+            </div>
+
+            <!-- Slide 10: Compile Operation -->
+            <div class="slide">
+                <div class="eyebrow">Knowledge Extraction</div>
+                <h2>Compile Operation</h2>
+                <p class="body-text">Automatic transformation of raw sources → Galaxy notes. Runs on-demand or as part of autoresearch. Immutable sources never modified.</p>
+
+                <div class="vertical-flow">
+                    <div class="flow-level">
+                        <div class="flow-level-title">Input: Read Raw Sources</div>
+                        <div class="flow-level-desc">Scan 00-Inbox/raw/ for unprocessed files. Immutable — never edits original.</div>
+                    </div>
+                    <div class="flow-level">
+                        <div class="flow-level-title">Extract Concepts</div>
+                        <div class="flow-level-desc">Identify key ideas, entities, relationships. One atomic concept per note.</div>
+                    </div>
+                    <div class="flow-level">
+                        <div class="flow-level-title">Create Galaxy Notes</div>
+                        <div class="flow-level-desc">Write atomic notes (≤300 words) with YAML frontmatter, summary line, body, wikilinks.</div>
+                    </div>
+                    <div class="flow-level">
+                        <div class="flow-level-title">Cross-Link</div>
+                        <div class="flow-level-desc">Connect to existing vault content, hub indexes, client spaces, patterns.</div>
+                    </div>
+                    <div class="flow-level">
+                        <div class="flow-level-title">Mark Raw Source Processed</div>
+                        <div class="flow-level-desc">Add frontmatter: <code>processed: true</code>, <code>compiled_to: [[note-name]]</code>. Body never modified.</div>
+                    </div>
+                </div>
+
+                <div class="card accent mt-32">
+                    <p class="body-text mb-0;"><strong>Provenance Rule:</strong> AI-generated or AI-enriched content gets <code>ai-enriched</code> in tags. Notes compiled from raw get <code>compiled_from: [[raw/filename]]</code> in frontmatter.</p>
+                </div>
+            </div>
+
+            <!-- Slide 11: Learning Layer -->
+            <div class="slide">
+                <div class="eyebrow">Feedback Systems</div>
+                <h2>Learning Layer</h2>
+                <p class="body-text">The closed-loop feedback system. Tracks what Amplio recommends, what clients do, and what results.</p>
+
+                <div class="cards-grid">
+                    <div class="card">
+                        <h3>Recommendation Tracking</h3>
+                        <p class="body-text">Every recommendation → recommendations-tracker.md. Captures: text, pattern ID, priority, outcome, date.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Client Signal Extraction</h3>
+                        <p class="body-text">Qualitative signals from comms. Categories: Feature Request (FR), Objection (OB), Satisfaction (SAT), Churn Risk (PS), Exit Intent (EX).</p>
+                    </div>
+                    <div class="card">
+                        <h3>Health Scoring</h3>
+                        <p class="body-text">0-100 composite per client. Signals feed score. Scores <70 trigger alerts. Recalculated after each client touchpoint.</p>
+                    </div>
+                </div>
+
+                <div class="card accent mt-32">
+                    <h3>Pattern Contradiction Testing</h3>
+                    <p class="body-text mb-16">When new client data contradicts an existing pattern, log it. Three contradictions in 30 days → auto-downgrade confidence level (High → Medium → Low). High-confidence patterns become playbooks.</p>
+                    <p class="body-text mb-0;"><strong>Example:</strong> Pattern A-102 (Google Ads bid-up improves ROAS) contradicted by Certify Education data. Two other contradictions exist. Total: 3 in 28 days → downgrade from High to Medium.</p>
+                </div>
+            </div>
+
+            <!-- Slide 12: Ad Campaign Autoresearch -->
+            <div class="slide">
+                <div class="eyebrow">Experimental Automation</div>
+                <h2>Ad Campaign Autoresearch</h2>
+                <p class="body-text">Applied to Certify Education Google Ads. Four experiment types (E0–E3) with guardrails and auto-execution thresholds.</p>
+
+                <div class="card mb-32">
+                    <h3>Experiment Types (Escalation Model)</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Execution</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="badge teal">E0</span></td>
+                                <td>Bid/Budget adjustments (±20% max)</td>
+                                <td>Auto-execute if score ≥70</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge teal">E1</span></td>
+                                <td>Targeting refinement (keywords, audiences)</td>
+                                <td>Auto-execute if score ≥70</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge gold">E2</span></td>
+                                <td>Copy optimization (headlines, descriptions)</td>
+                                <td>Always flagged for review</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge gold">E3</span></td>
+                                <td>Campaign structure changes (consolidation, splits)</td>
+                                <td>Always flagged for review</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card accent">
+                    <h3>Scoring Rubric (100 points)</h3>
+                    <p class="body-text" style="margin-bottom: 8px;"><strong>Expected Impact:</strong> 30 — historical similar experiments</p>
+                    <p class="body-text" style="margin-bottom: 8px;"><strong>Confidence:</strong> 25 — data quality, sample size</p>
+                    <p class="body-text" style="margin-bottom: 8px;"><strong>Reversibility:</strong> 20 — can revert quickly?</p>
+                    <p class="body-text" style="margin-bottom: 8px;"><strong>Alignment:</strong> 15 — matches client goals?</p>
+                    <p class="body-text mb-0;"><strong>Risk:</strong> 10 — downside if wrong?</p>
+                </div>
+
+                <div class="card mt-32">
+                    <h3>Guardrails</h3>
+                    <p class="body-text mb-8;">• One active experiment per campaign (no conflicts)</p>
+                    <p class="body-text mb-8;">• Bid changes capped at ±20%</p>
+                    <p class="body-text mb-0;">• Circuit breaker: if CPA spikes >30%, pause auto-execute, alert manually</p>
+                </div>
+            </div>
+
+            <!-- Slide 13: Report Autoresearch -->
+            <div class="slide">
+                <div class="eyebrow">Content Automation</div>
+                <h2>Report Autoresearch</h2>
+                <p class="body-text">Draft → Score → Refine loop. Maintains quality history per client. Target: score ≥90 before shipping.</p>
+
+                <div class="flow-diagram" style="justify-content: center; flex-direction: row; gap: 8px;">
+                    <div class="flow-box active">Draft</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-box">Score</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-box">Refine</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-box" style="border-color: #34C759; color: #34C759;">Ship (≥90)</div>
+                </div>
+
+                <div class="card mt-32 mb-32">
+                    <h3>Quality Rubric (100 points)</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Dimension</th>
+                                <th style="text-align: right;">Max</th>
+                                <th>What It Measures</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Data Completeness</strong></td>
+                                <td style="text-align: right;">20</td>
+                                <td>All promised metrics present, no blanks</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Insight Density</strong></td>
+                                <td style="text-align: right;">20</td>
+                                <td>Findings per metric, pattern identification</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Actionability</strong></td>
+                                <td style="text-align: right;">20</td>
+                                <td>Clear recommendations, next steps</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Narrative Coherence</strong></td>
+                                <td style="text-align: right;">15</td>
+                                <td>Story flow, logical progression</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Visual Clarity</strong></td>
+                                <td style="text-align: right;">15</td>
+                                <td>Charts readable, labeling clear</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Client Context</strong></td>
+                                <td style="text-align: right;">10</td>
+                                <td>Personalized to their business, tone matched</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card accent">
+                    <p class="body-text mb-0;"><strong>Iteration limit:</strong> Up to 5 refinement cycles per report. After 5, ship at current score or escalate for manual review.</p>
+                </div>
+            </div>
+
+            <!-- Slide 14: Cross-Client Pattern Library -->
+            <div class="slide">
+                <div class="eyebrow">Knowledge Reuse</div>
+                <h2>Cross-Client Pattern Library</h2>
+                <p class="body-text">Patterns extracted from client work. Confidence levels evolve as data accumulates. High confidence patterns become playbooks.</p>
+
+                <div class="card mb-32">
+                    <h3>Pattern Categories</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Example Pattern ID</th>
+                                <th>Example</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Tracking</strong></td>
+                                <td>T-xxx</td>
+                                <td>GA4 event mapping, consent-layer fixes</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ads</strong></td>
+                                <td>A-xxx</td>
+                                <td>Bid optimization, audience overlap, landing page tests</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ecommerce</strong></td>
+                                <td>E-xxx</td>
+                                <td>Cart abandonment, checkout funnel, AOV lift</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Retention</strong></td>
+                                <td>R-xxx</td>
+                                <td>Repeat purchase triggers, email segmentation</td>
+                            </tr>
+                            <tr>
+                                <td><strong>SEO</strong></td>
+                                <td>S-xxx</td>
+                                <td>Content clusters, SERP monitoring, featured snippets</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Business</strong></td>
+                                <td>B-xxx</td>
+                                <td>Pricing experiments, positioning tests, feature adoption</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Qualitative</strong></td>
+                                <td>Q-xxx</td>
+                                <td>Objection handling, client communication, consulting frameworks</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card accent">
+                    <h3>Confidence Evolution</h3>
+                    <p class="body-text mb-16;">Patterns rated on a three-level scale based on validation across clients:</p>
+                    <p class="body-text mb-8;"><span class="badge red">Low</span> — Observed in 1 client or contradicted once</p>
+                    <p class="body-text mb-8;"><span class="badge orange">Medium</span> — Observed in 2 clients, no contradictions OR 1 contradiction + 2 confirmations</p>
+                    <p class="body-text mb-0;"><span class="badge green">High</span> — Observed in ≥3 clients, no contradictions in 30 days. Becomes playbook.</p>
+                </div>
+            </div>
+
+            <!-- Slide 15: Integration Map -->
+            <div class="slide">
+                <div class="eyebrow">System Flow</div>
+                <h2>Integration Map</h2>
+                <p class="body-text">Daily pipeline from 07:30 onwards. Each layer reads from the one before. No task duplicates another's work.</p>
+
+                <div class="flow-diagram" style="flex-direction: column; gap: 16px; margin-top: 32px; align-items: stretch; justify-content: center;">
+                    <div style="display: flex; gap: 8px; align-items: center; justify-content: center;">
+                        <div class="flow-box" style="border-color: #FF6484; background-color: rgba(255, 100, 132, 0.08); color: #FF6484;">07:30 ROLLUP</div>
+                    </div>
+                    <div style="text-align: center; color: #9B9BA5;">↓</div>
+                    <div style="display: flex; gap: 8px; align-items: center; justify-content: center;">
+                        <div class="flow-box" style="border-color: #4ECDC4; background-color: rgba(78, 205, 196, 0.08); color: #4ECDC4;">08:00-08:30 DATA</div>
+                    </div>
+                    <div style="text-align: center; color: #9B9BA5;">↓</div>
+                    <div style="display: flex; gap: 8px; align-items: center; justify-content: center;">
+                        <div class="flow-box" style="border-color: #FFB938; background-color: rgba(255, 185, 56, 0.08); color: #FFB938;">08:45-09:15 SIGNALS</div>
+                    </div>
+                    <div style="text-align: center; color: #9B9BA5;">↓</div>
+                    <div style="display: flex; gap: 8px; align-items: center; justify-content: center;">
+                        <div class="flow-box" style="border-color: #7B56DB; background-color: rgba(123, 86, 219, 0.08); color: #7B56DB;">09:00 STRUCTURE</div>
+                    </div>
+                    <div style="text-align: center; color: #9B9BA5;">↓</div>
+                    <div style="display: flex; gap: 8px; align-items: center; justify-content: center;">
+                        <div class="flow-box" style="border-color: #8B9FE8; background-color: rgba(139, 159, 232, 0.08); color: #8B9FE8;">10:00 INTELLIGENCE</div>
+                    </div>
+                    <div style="text-align: center; color: #9B9BA5;">↓</div>
+                    <div style="display: flex; gap: 8px; align-items: center; justify-content: center;">
+                        <div class="flow-box" style="border-color: #34C759; background-color: rgba(52, 199, 89, 0.08); color: #34C759;">10:30 ACTION</div>
+                    </div>
+                </div>
+
+                <div class="card accent mt-48">
+                    <p class="body-text mb-16;"><strong>Pipeline Logic:</strong></p>
+                    <p class="body-text mb-8;">1. <strong>ROLLUP (07:30)</strong> — Aggregate all last week's metrics, write brief</p>
+                    <p class="body-text mb-8;">2. <strong>DATA (08:00)</strong> — Pull fresh client data, update context files</p>
+                    <p class="body-text mb-8;">3. <strong>SIGNALS (08:45)</strong> — Parse Gmail, extract client signals, update overviews</p>
+                    <p class="body-text mb-8;">4. <strong>STRUCTURE (09:00)</strong> — Score vault, compile raw sources, fix links</p>
+                    <p class="body-text mb-8;">5. <strong>INTELLIGENCE (10:00)</strong> — Run learning sync, test patterns, score clients</p>
+                    <p class="body-text mb-0;">6. <strong>ACTION (10:30)</strong> — Execute approved ad experiments, draft reports</p>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-card">
-          <div class="mono text-xs text-gray">08:30 UTC</div>
-          <h4 style="margin-top: 2px;">Access Tracker Sweep</h4>
+    </div>
+
+    <!-- Table of Contents Overlay -->
+    <div class="toc-overlay" id="tocOverlay">
+        <div class="toc-panel">
+            <h2>Table of Contents</h2>
+            <div class="toc-item current" onclick="goToSlide(0)">1. Title</div>
+            <div class="toc-item" onclick="goToSlide(1)">2. Architecture Overview</div>
+            <div class="toc-item" onclick="goToSlide(2)">3. Vault Structure — IPARAG</div>
+            <div class="toc-item" onclick="goToSlide(3)">4. Three-Layer Architecture</div>
+            <div class="toc-item" onclick="goToSlide(4)">5. Vault Health Scoring</div>
+            <div class="toc-item" onclick="goToSlide(5)">6. Seven Hub Notes</div>
+            <div class="toc-item" onclick="goToSlide(6)">7. Scheduled Tasks — Daily Pipeline</div>
+            <div class="toc-item" onclick="goToSlide(7)">8. Data Pipeline — IP Amplio</div>
+            <div class="toc-item" onclick="goToSlide(8)">9. Vault Autoresearch Loop</div>
+            <div class="toc-item" onclick="goToSlide(9)">10. Compile Operation</div>
+            <div class="toc-item" onclick="goToSlide(10)">11. Learning Layer</div>
+            <div class="toc-item" onclick="goToSlide(11)">12. Ad Campaign Autoresearch</div>
+            <div class="toc-item" onclick="goToSlide(12)">13. Report Autoresearch</div>
+            <div class="toc-item" onclick="goToSlide(13)">14. Cross-Client Pattern Library</div>
+            <div class="toc-item" onclick="goToSlide(14)">15. Integration Map</div>
         </div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-card">
-          <div class="mono text-xs text-gray">08:45 UTC</div>
-          <h4 style="margin-top: 2px;">Employee Update Sync</h4>
-        </div>
-        <div class="badge">4×</div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-card">
-          <div class="mono text-xs text-gray">09:00 UTC</div>
-          <h4 style="margin-top: 2px;">Vault Autoresearch</h4>
-        </div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-card">
-          <div class="mono text-xs text-gray">09:00 UTC</div>
-          <h4 style="margin-top: 2px;">Daragh Update Sync</h4>
-        </div>
-        <div class="badge">2×</div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-card">
-          <div class="mono text-xs text-gray">09:20 UTC</div>
-          <h4 style="margin-top: 2px;">Unreplied Client Emails</h4>
-        </div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-card">
-          <div class="mono text-xs text-gray">09:40 UTC</div>
-          <h4 style="margin-top: 2px;">Certify Monthly Report</h4>
-        </div>
-        <div class="badge">1st</div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-card">
-          <div class="mono text-xs text-gray">10:00 UTC</div>
-          <h4 style="margin-top: 2px;">Daily Client Learning Sync</h4>
-        </div>
-      </div>
     </div>
 
-    <div style="text-align: center; margin-top: 28px;">
-      <div class="pill">↻ Each task enriches the vault for the next</div>
-    </div>
-  </div>
-</section>
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
 
-<!-- IP AMPLIO DATA FLOW -->
-<section class="section-light" id="pipeline">
-  <div class="container">
-    <div class="eyebrow">/PLATFORM INTEGRATION PIPELINE</div>
-    <h2>IP Amplio <span class="text-purple">Data</span> Flow</h2>
+        function showSlide(n) {
+            if (n >= totalSlides) currentSlide = totalSlides - 1;
+            if (n < 0) currentSlide = 0;
 
-    <div class="grid-4" style="align-items: start; gap: 14px;">
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide].classList.add('active');
 
-      <!-- Sources -->
-      <div>
-        <div class="mono text-xs text-purple" style="margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; font-weight: 500;">Source Platforms</div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-          <div class="card-white" style="padding: 10px; text-align: center; font-weight: 600; font-size: 13px;">GA4</div>
-          <div class="card-white" style="padding: 10px; text-align: center; font-weight: 600; font-size: 13px;">Klaviyo</div>
-          <div class="card-white" style="padding: 10px; text-align: center; font-weight: 600; font-size: 13px;">Google Ads</div>
-          <div class="card-white" style="padding: 10px; text-align: center; font-weight: 600; font-size: 13px;">GSC</div>
-          <div class="card-white" style="padding: 10px; text-align: center; font-weight: 600; font-size: 13px;">Meta Ads</div>
-          <div class="card-white" style="padding: 10px; text-align: center; font-weight: 600; font-size: 13px;">Shopify</div>
-        </div>
-      </div>
+            document.getElementById('slideCounter').textContent = (currentSlide + 1) + ' / ' + totalSlides;
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
 
-      <!-- IP Amplio -->
-      <div>
-        <div class="mono text-xs text-purple" style="margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; font-weight: 500;">IP Amplio</div>
-        <div class="card-purple" style="padding: 20px;">
-          <div style="font-size: 16px; font-weight: 700;">Insightful Pipe</div>
-          <div class="text-xs" style="opacity: 0.65; margin-top: 4px;">Workspace: 457</div>
-          <div class="text-xs" style="opacity: 0.65; margin-top: 10px;"><strong>Brands:</strong> Odisei (449) · Certify (450) · Amplio (441)</div>
-          <div class="text-xs" style="opacity: 0.65; margin-top: 6px;"><strong>API:</strong> query_data · execute_action</div>
-        </div>
-      </div>
+            // Update TOC
+            document.querySelectorAll('.toc-item').forEach((item, idx) => {
+                if (idx === currentSlide) {
+                    item.classList.add('current');
+                } else {
+                    item.classList.remove('current');
+                }
+            });
+        }
 
-      <!-- Daily Pull -->
-      <div>
-        <div class="mono text-xs text-purple" style="margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; font-weight: 500;">Daily Pull 8:00 AM</div>
-        <div class="flex-col" style="gap: 8px;">
-          <div class="card-white" style="padding: 10px 14px;"><span class="text-sm" style="font-weight: 600;">/01 Query Platforms</span></div>
-          <div class="card-white" style="padding: 10px 14px;"><span class="text-sm" style="font-weight: 600;">/02 Update data-context</span></div>
-          <div class="card-white" style="padding: 10px 14px;"><span class="text-sm" style="font-weight: 600;">/03 Pattern Analysis</span></div>
-        </div>
-      </div>
+        function nextSlide() {
+            currentSlide++;
+            showSlide(currentSlide);
+        }
 
-      <!-- Output -->
-      <div>
-        <div class="mono text-xs text-purple" style="margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; font-weight: 500;">Output</div>
-        <div class="flex-col" style="gap: 8px;">
-          <div class="card-white" style="padding: 8px 12px; text-align: center;"><span class="mono text-xs">data-context.md</span></div>
-          <div class="card-white" style="padding: 8px 12px; text-align: center;"><span class="mono text-xs">cross-client-patterns.md</span></div>
-          <div class="card-white" style="padding: 8px 12px; text-align: center;"><span class="mono text-xs">memory.md</span></div>
-          <div class="card-white" style="padding: 8px 12px; text-align: center;"><span class="mono text-xs">autoresearch-log.md</span></div>
-        </div>
-      </div>
+        function previousSlide() {
+            currentSlide--;
+            showSlide(currentSlide);
+        }
 
-    </div>
+        function goToSlide(n) {
+            currentSlide = n;
+            showSlide(currentSlide);
+            toggleTOC();
+        }
 
-    <div style="text-align: center; margin-top: 36px;">
-      <div class="pill">↻ Enriched data feeds next cycle</div>
-    </div>
-  </div>
-</section>
+        function toggleTOC() {
+            const toc = document.getElementById('tocOverlay');
+            toc.classList.toggle('active');
+            document.getElementById('slideCounter').classList.toggle('toc-open');
+        }
 
-<!-- CLIENT LIFECYCLE -->
-<section class="section-white" id="lifecycle">
-  <div class="container">
-    <div class="eyebrow">/DISCOVER → ONBOARD → MANAGE</div>
-    <h2>Client <span class="text-purple">Lifecycle</span></h2>
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'n') nextSlide();
+            if (e.key === 'ArrowLeft' || e.key === 'p') previousSlide();
+            if (e.key === 'Escape') {
+                if (document.getElementById('tocOverlay').classList.contains('active')) {
+                    toggleTOC();
+                }
+            }
+        });
 
-    <div class="grid-3" style="gap: 32px;">
+        // Close TOC when clicking outside
+        document.getElementById('tocOverlay').addEventListener('click', (e) => {
+            if (e.target.id === 'tocOverlay') toggleTOC();
+        });
 
-      <!-- Discover -->
-      <div>
-        <div style="text-align: center; margin-bottom: 16px;">
-          <div class="badge badge-lg">1</div>
-          <h3 style="margin-top: 10px;">Discover</h3>
-        </div>
-        <div class="flex-col" style="gap: 4px;">
-          <div class="card-white" style="text-align: center; padding: 12px;"><strong style="font-size: 13px;">Scrape website</strong><br><span class="text-xs text-gray">with ICP score</span></div>
-          <div class="flow-arrow-down">↓</div>
-          <div class="card-white" style="text-align: center; padding: 12px;"><strong style="font-size: 13px;">Score opportunity</strong><br><span class="text-xs text-gray">tier</span></div>
-          <div class="flow-arrow-down">↓</div>
-          <div class="card-white" style="text-align: center; padding: 12px;"><strong style="font-size: 13px;">Add to _Prospects/</strong></div>
-          <div class="flow-arrow-down">↓</div>
-          <div class="card-white" style="text-align: center; padding: 12px;"><strong style="font-size: 13px;">Enrich via Attio CRM</strong></div>
-          <div class="flow-arrow-down">↓</div>
-          <div class="card-white" style="text-align: center; padding: 12px;"><strong style="font-size: 13px;">Draft outreach</strong></div>
-        </div>
-      </div>
-
-      <!-- Onboard -->
-      <div>
-        <div style="text-align: center; margin-bottom: 16px;">
-          <div class="badge badge-lg">2</div>
-          <h3 style="margin-top: 10px;">Onboard</h3>
-        </div>
-        <div class="flex-col" style="gap: 4px;">
-          <div class="card-white" style="text-align: center; padding: 12px;"><strong style="font-size: 13px;">Create /06-Clients/</strong><br><span class="text-xs text-gray">[name]/ folder</span></div>
-          <div class="flow-arrow-down">↓</div>
-          <div class="card-white" style="text-align: center; padding: 12px;"><strong style="font-size: 13px;">Create subfolders</strong><br><span class="text-xs text-gray">docs, notes, tracking</span></div>
-          <div class="flow-arrow-down">↓</div>
-          <div class="card-white" style="text-align: center; padding: 12px;"><strong style="font-size: 13px;">Setup _overview.md</strong><br><span class="text-xs text-gray">+ data-context.md</span></div>
-          <div class="flow-arrow-down">↓</div>
-          <div class="card-white" style="text-align: center; padding: 12px;"><strong style="font-size: 13px;">Pre-load patterns</strong><br><span class="text-xs text-gray">+ recs tracker</span></div>
-          <div class="flow-arrow-down">↓</div>
-          <div class="card-white" style="text-align: center; padding: 12px;"><strong style="font-size: 13px;">Launch first project</strong></div>
-        </div>
-      </div>
-
-      <!-- Manage -->
-      <div>
-        <div style="text-align: center; margin-bottom: 16px;">
-          <div class="badge badge-lg">3</div>
-          <h3 style="margin-top: 10px;">Manage</h3>
-        </div>
-        <div class="flex-col" style="gap: 4px;">
-          <div class="card-white" style="text-align: center; padding: 12px;"><strong style="font-size: 13px;">Daily IP Amplio</strong><br><span class="text-xs text-gray">data pulls</span></div>
-          <div class="flow-arrow-down">↓</div>
-          <div class="card-white" style="text-align: center; padding: 12px;"><strong style="font-size: 13px;">Ongoing email</strong><br><span class="text-xs text-gray">+ signal sync</span></div>
-          <div class="flow-arrow-down">↓</div>
-          <div class="card-white" style="text-align: center; padding: 12px;"><strong style="font-size: 13px;">Monthly branded reports</strong></div>
-          <div class="flow-arrow-down">↓</div>
-          <div class="card-white" style="text-align: center; padding: 12px;"><strong style="font-size: 13px;">Continuous health score</strong></div>
-          <div class="flow-arrow-down">↓</div>
-          <div class="card-white" style="text-align: center; padding: 12px;"><strong style="font-size: 13px;">Feedback recs tracker</strong></div>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="code-block">
-      <div style="font-weight: 700; font-size: 14px; color: var(--charcoal); margin-bottom: 8px;">Client Space Structure</div>
-      <span style="color: var(--charcoal);">06-Clients/[name]/</span><br>
-      ├── _overview.md<br>
-      ├── data-context.md<br>
-      ├── recommendations-tracker.md<br>
-      ├── meeting-notes/ <span style="color: var(--mid-gray);">[dated files]</span><br>
-      ├── docs/ <span style="color: var(--mid-gray);">[contracts, briefs]</span><br>
-      └── projects/ <span style="color: var(--mid-gray);">[time-bound work]</span>
-    </div>
-  </div>
-</section>
-
-<!-- SELF-IMPROVING LEARNING LOOP -->
-<section class="section-dark" id="learning">
-  <div class="container">
-    <div class="eyebrow" style="color: rgba(139,44,245,0.8);">/FEEDBACK CYCLE</div>
-    <h2>Self-Improving <span class="text-purple">Learning</span> Loop</h2>
-
-    <div class="flex-row flow-row-responsive" style="gap: 8px;">
-      <div class="flow-box">Data Pull</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-box">Analyse</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-box">Recommend</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-box">Measure</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-box">Learn</div>
-    </div>
-
-    <div style="text-align: center; margin-top: 24px;">
-      <div class="pill">↻ Continuous improvement loop</div>
-    </div>
-
-    <div class="divider"></div>
-
-    <h3>Pattern Confidence <span class="text-purple">Progression</span></h3>
-    <div class="flex-row flow-row-responsive" style="gap: 8px; margin-top: 16px;">
-      <div class="flow-box" style="flex: 1;"><strong>Low</strong><br><span class="text-sm text-gray">1 client</span></div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-box" style="flex: 1;"><strong>Medium</strong><br><span class="text-sm text-gray">2 clients</span></div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-box" style="flex: 1;"><strong>High</strong><br><span class="text-sm text-gray">3+ clients</span></div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-box-purple" style="flex: 1;"><strong>Playbook</strong><br><span class="text-sm" style="opacity: 0.65;">Graduated</span></div>
-    </div>
-
-    <div class="card-dark" style="margin-top: 24px;">
-      <h4 style="color: var(--white);">Degradation Rules</h4>
-      <p class="text-sm text-gray" style="margin-top: 6px;">Three contradictions in 30 days downgrades confidence by 1 level. Zero confirmations for 60 days archives the pattern. Patterns never expire if actively confirmed.</p>
-    </div>
-
-    <div class="divider"></div>
-
-    <h3>Outcome <span class="text-purple">Feedback</span></h3>
-    <div class="grid-2" style="margin-top: 16px;">
-      <div class="card-dark" style="text-align: center;">
-        <h4 style="color: var(--white);">Positive Outcome</h4>
-        <div class="text-purple text-sm" style="margin-top: 6px;">→ Confidence boost</div>
-        <div class="text-xs text-gray" style="margin-top: 4px;">Log in recommendations-tracker.md</div>
-      </div>
-      <div class="card-dark" style="text-align: center;">
-        <h4 style="color: var(--white);">Negative Outcome</h4>
-        <div class="text-purple text-sm" style="margin-top: 6px;">→ Contradiction detected</div>
-        <div class="text-xs text-gray" style="margin-top: 4px;">Log in cross-client-patterns.md</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- HEALTH SCORING -->
-<section class="section-light" id="health">
-  <div class="container">
-    <div class="eyebrow">/MEASUREMENT FRAMEWORK</div>
-    <h2>Health <span class="text-purple">Scoring</span> &amp; Client Signals</h2>
-
-    <h3 style="font-size: 15px; color: var(--mid-gray); font-weight: 600;">Health Score Composition (0–100)</h3>
-    <div class="score-bar" style="margin-top: 12px;">
-      <div class="score-seg" style="flex: 20; background: var(--purple);">20<br><span class="text-xs">Engagement</span></div>
-      <div class="score-seg" style="flex: 20; background: #6B22C4;">20<br><span class="text-xs">ROI Impact</span></div>
-      <div class="score-seg" style="flex: 20; background: var(--dark-gray);">20<br><span class="text-xs">Data Quality</span></div>
-      <div class="score-seg" style="flex: 20; background: #2a2a2a;">20<br><span class="text-xs">Churn Risk</span></div>
-      <div class="score-seg" style="flex: 10; background: var(--dark-gray);">10<br><span class="text-xs">Tier</span></div>
-      <div class="score-seg" style="flex: 10; background: #2a2a2a;">10<br><span class="text-xs">Active</span></div>
-    </div>
-
-    <h3 style="font-size: 15px; margin-top: 40px; color: var(--mid-gray); font-weight: 600;">Alert Thresholds</h3>
-    <div class="grid-4" style="margin-top: 12px;">
-      <div class="card-white" style="text-align: center;">
-        <div style="font-size: 24px; font-weight: 900; letter-spacing: -1px;">85–100</div>
-        <div class="text-xs" style="font-weight: 600; margin-top: 6px; color: var(--purple); text-transform: uppercase; letter-spacing: 0.5px;">Healthy</div>
-        <div class="text-xs text-gray" style="margin-top: 4px;">Engaged, growing</div>
-      </div>
-      <div class="card-white" style="text-align: center;">
-        <div style="font-size: 24px; font-weight: 900; letter-spacing: -1px;">70–84</div>
-        <div class="text-xs" style="font-weight: 600; margin-top: 6px; color: var(--mid-gray); text-transform: uppercase; letter-spacing: 0.5px;">Watch</div>
-        <div class="text-xs text-gray" style="margin-top: 4px;">Needs attention</div>
-      </div>
-      <div class="card-white" style="text-align: center;">
-        <div style="font-size: 24px; font-weight: 900; letter-spacing: -1px;">50–69</div>
-        <div class="text-xs" style="font-weight: 600; margin-top: 6px; color: var(--orange); text-transform: uppercase; letter-spacing: 0.5px;">At Risk</div>
-        <div class="text-xs text-gray" style="margin-top: 4px;">Intervention req'd</div>
-      </div>
-      <div class="card-purple" style="text-align: center;">
-        <div style="font-size: 24px; font-weight: 900; letter-spacing: -1px;">0–49</div>
-        <div class="text-xs" style="font-weight: 600; margin-top: 6px; opacity: 0.75; text-transform: uppercase; letter-spacing: 0.5px;">Critical</div>
-        <div class="text-xs" style="margin-top: 4px; opacity: 0.6;">Escalate now</div>
-      </div>
-    </div>
-
-    <h3 style="font-size: 15px; margin-top: 40px; color: var(--mid-gray); font-weight: 600;">Signal Types</h3>
-    <div class="grid-3" style="margin-top: 12px;">
-      <div class="signal-card"><span style="font-weight: 600; font-size: 13px;">Feature Request</span><div class="badge">FR</div></div>
-      <div class="signal-card"><span style="font-weight: 600; font-size: 13px;">Objection</span><div class="badge">OB</div></div>
-      <div class="signal-card"><span style="font-weight: 600; font-size: 13px;">Satisfaction+</span><div class="badge">SAT+</div></div>
-      <div class="signal-card"><span style="font-weight: 600; font-size: 13px;">Satisfaction-</span><div class="badge">SAT-</div></div>
-      <div class="signal-card"><span style="font-weight: 600; font-size: 13px;">Priority Shift</span><div class="badge">PS</div></div>
-      <div class="signal-card"><span style="font-weight: 600; font-size: 13px;">Expansion</span><div class="badge">EX</div></div>
-      <div class="signal-card"><span style="font-weight: 600; font-size: 13px;">Churn Signal</span><div class="badge">CH</div></div>
-      <div class="signal-card"><span style="font-weight: 600; font-size: 13px;">Data/Access</span><div class="badge">DA</div></div>
-      <div class="signal-card"><span style="font-weight: 600; font-size: 13px;">Industry Context</span><div class="badge">IC</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- VAULT AUTORESEARCH -->
-<section class="section-white" id="autoresearch">
-  <div class="container">
-    <div class="eyebrow">/DAILY VAULT OPTIMIZATION</div>
-    <h2>Vault <span class="text-purple">Autoresearch</span></h2>
-
-    <div class="flex-row flow-row-responsive" style="gap: 8px;">
-      <div class="flow-box-purple">SCORE</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-box">IDENTIFY</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-box">FIX</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-box">RE-SCORE</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-box">DECIDE</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-box">LOG</div>
-    </div>
-
-    <div style="text-align: center; margin-top: 24px;">
-      <div class="pill">↻ Repeats 10–20× per daily run (09:00 UTC)</div>
-    </div>
-
-    <div class="divider"></div>
-
-    <h3>Priority <span class="text-purple">Tiers</span></h3>
-    <div class="flex-col" style="gap: 10px; margin-top: 12px;">
-      <div class="signal-card"><div><strong style="font-size: 14px;">Structural Integrity</strong><br><span class="text-sm text-gray">Broken wikilinks, orphan notes, missing frontmatter</span></div><div class="badge">P0</div></div>
-      <div class="signal-card"><div><strong style="font-size: 14px;">Hub Connectivity</strong><br><span class="text-sm text-gray">Missing Related sections, disconnected notes from hubs</span></div><div class="badge">P1</div></div>
-      <div class="signal-card"><div><strong style="font-size: 14px;">Content Quality</strong><br><span class="text-sm text-gray">Stale content, thin notes, insufficient detail (&lt; 300w context)</span></div><div class="badge">P2</div></div>
-      <div class="signal-card"><div><strong style="font-size: 14px;">Client Data Hygiene</strong><br><span class="text-sm text-gray">Incomplete overviews, missing data-context.md, stale _overview.md</span></div><div class="badge">P3</div></div>
-    </div>
-
-    <div class="divider"></div>
-
-    <h3 style="font-size: 15px; color: var(--mid-gray); font-weight: 600;">Vault Health Score (0–100)</h3>
-    <div class="score-bar" style="margin-top: 12px;">
-      <div class="score-seg" style="flex: 25; background: var(--purple);">25 Structural</div>
-      <div class="score-seg" style="flex: 20; background: #6B22C4;">20 Hub</div>
-      <div class="score-seg" style="flex: 15; background: var(--mid-gray);">15 FM</div>
-      <div class="score-seg" style="flex: 15; background: var(--light-gray); color: var(--charcoal);">15 Links</div>
-      <div class="score-seg" style="flex: 15; background: var(--mid-gray);">15 Fresh</div>
-      <div class="score-seg" style="flex: 10; background: var(--light-gray); color: var(--charcoal);">10 Client</div>
-    </div>
-
-    <p class="text-sm text-gray" style="margin-top: 16px; line-height: 1.6;">
-      Structural: Links + Wikilinks integrity. Hub: Related sections present. FM: YAML frontmatter completeness.
-      Links: Avg wikilinks per note. Fresh: Recency (&lt; 30 days updated). Client: data-context.md ≥ 5 sources.
-    </p>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer style="background: var(--charcoal); padding: 36px 0;">
-  <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
-    <div>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 387 98" fill="none" style="height:20px;width:auto;">
-        <path fill="#FFFFFF" d="m106.441 79.658 23.8-65.164h15.704l23.622 65.164H155.81l-5.264-15.007h-25.392l-5.264 15.007h-13.449Zm22.561-26.03h17.651l-8.847-25.19-8.804 25.19Zm41.881 26.03V30.874h11.768v6.419c1.444-2.302 3.45-4.132 6.016-5.49 2.595-1.357 5.397-2.021 8.405-1.992 3.303.03 6.193.767 8.67 2.214 2.507 1.416 4.365 3.364 5.574 5.843 1.415-2.42 3.48-4.368 6.193-5.843 2.713-1.505 5.736-2.243 9.068-2.214 5.191.03 9.364 1.653 12.52 4.87 3.155 3.217 4.733 7.467 4.733 12.75v32.227h-12.121V49.644c0-2.804-.826-5.047-2.477-6.73-1.652-1.681-3.849-2.537-6.592-2.567-2.654-.03-4.866.9-6.635 2.79-1.74 1.858-2.61 4.22-2.61 7.082v29.44h-12.121V49.156c0-2.656-.811-4.781-2.433-6.375-1.622-1.594-3.745-2.405-6.37-2.435-2.713-.03-4.969.96-6.768 2.966-1.799 2.007-2.698 4.56-2.698 7.659v28.686h-12.122Zm105.096-49.714c6.812 0 12.386 2.39 16.721 7.172 4.336 4.751 6.488 10.846 6.459 18.283-.029 7.467-2.241 13.56-6.636 18.283-4.394 4.722-10.026 7.068-16.898 7.038a20.316 20.316 0 0 1-8.67-1.814c-2.743-1.27-4.969-2.981-6.68-5.136v23.862h-12.121V30.874h12.032l-.044 6.463c1.829-2.273 4.173-4.073 7.034-5.4 2.861-1.329 5.795-1.993 8.803-1.993Zm-16.102 25.499c-.03 4.161 1.283 7.614 3.937 10.359 2.654 2.715 5.913 4.058 9.776 4.028 3.864.03 6.989-1.284 9.378-3.94 2.419-2.655 3.628-6.138 3.628-10.447 0-4.309-1.209-7.791-3.628-10.447-2.389-2.686-5.514-4.029-9.378-4.029-3.834 0-7.078 1.372-9.732 4.117-2.654 2.745-3.981 6.198-3.981 10.359ZM314.056 12.9v66.758h-12.077V12.9h12.077Zm5.165 66.758V30.874h12.12v48.784h-12.12Zm-.133-53.92v-12.35h12.651v12.35h-12.651Zm40.687 54.983c-7.462.03-13.596-2.332-18.403-7.083-4.778-4.752-7.181-10.861-7.211-18.328 0-4.928 1.092-9.34 3.274-13.236 2.183-3.896 5.22-6.906 9.113-9.031 3.892-2.155 8.301-3.232 13.227-3.232 3.716 0 7.166.635 10.351 1.904 3.214 1.24 5.942 2.98 8.184 5.223 2.241 2.214 3.996 4.914 5.264 8.102 1.297 3.158 1.946 6.581 1.946 10.27 0 3.69-.649 7.113-1.946 10.27-1.268 3.158-3.023 5.844-5.264 8.058-2.242 2.213-4.97 3.954-8.184 5.223-3.185 1.24-6.635 1.86-10.351 1.86Zm-13.05-25.41c0 4.249 1.194 7.702 3.583 10.358 2.418 2.627 5.573 3.94 9.467 3.94 3.922 0 7.092-1.313 9.511-3.94 2.447-2.656 3.671-6.11 3.671-10.359 0-4.309-1.224-7.776-3.671-10.403-2.419-2.656-5.589-3.984-9.511-3.984-3.923 0-7.093 1.328-9.512 3.984-2.388 2.656-3.568 6.124-3.538 10.403ZM87.455 40.877H5.76A5.763 5.763 0 0 0 0 46.642a5.763 5.763 0 0 0 5.76 5.764h81.695a5.763 5.763 0 0 0 5.76-5.764 5.763 5.763 0 0 0-5.76-5.765Z"/>
-        <path fill="#FFFFFF" d="M40.848 5.764V87.52a5.761 5.761 0 1 0 11.52 0V5.764A5.763 5.763 0 0 0 46.609 0a5.763 5.763 0 0 0-5.76 5.764Z"/>
-        <path fill="#FFFFFF" d="M71.418 13.662 13.65 71.47a5.768 5.768 0 0 0 0 8.152 5.757 5.757 0 0 0 8.147 0l57.766-57.809a5.768 5.768 0 0 0 0-8.152 5.757 5.757 0 0 0-8.146 0Z"/>
-      </svg>
-      <div class="text-sm" style="color: var(--mid-gray); margin-top: 8px;">Better Data. Smarter Campaigns. Proven ROI.</div>
-    </div>
-    <div class="text-xs" style="color: var(--mid-gray);">April 2026 · v6.0</div>
-  </div>
-</footer>
-
+        // Initialize
+        showSlide(0);
+    </script>
 </body>
 </html>
