@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amplio Data — Sales Onboarding Guide</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --charcoal: #131313;
+  --off-black: #0C0C0C;
+  --white: #FFFFFF;
+  --off-white: #F5F5F5;
+  --warm-white: #FAFAFA;
+  --purple: #8B2CF5;
+  --purple-dark: #6B22C4;
+  --purple-light: rgba(139,44,245,0.08);
+  --purple-15: rgba(139,44,245,0.15);
+  --purple-30: rgba(139,44,245,0.3);
+  --dark-gray: #3A3A3A;
+  --mid-gray: #6B6B6B;
+  --light-gray: #D3D3D3;
+  --pale-gray: #E8E8E8;
+  --border: rgba(0,0,0,0.08);
+  --border-dark: rgba(255,255,255,0.08);
+  --red: #DE362A;
+  --orange: #FF9500;
+  --green: #34C759;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-purple: 0 4px 20px rgba(139,44,245,0.3);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+
+body {
+  font-family: 'Satoshi', -apple-system, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: -0.2px;
+  line-height: 1.6;
+  color: var(--charcoal);
+  background: var(--white);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* PROGRESS BAR */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  background: var(--purple);
+  z-index: 200;
+  width: 0%;
+  transition: width 0.1s linear;
+}
+
+/* NAV */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0;
+}
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-logo { height: 24px; width: auto; }
+.nav-badge {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 11px;
+  color: var(--mid-gray);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+/* SIDE NAV */
+.side-nav {
+  position: fixed;
+  left: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.side-nav a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 11px;
+  color: var(--mid-gray);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.6;
+  transition: all 0.2s;
+  padding: 6px 0;
+}
+.side-nav a::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 1px;
+  background: var(--mid-gray);
+  transition: all 0.2s;
+}
+.side-nav a:hover, .side-nav a.active {
+  color: var(--purple);
+  opacity: 1;
+}
+.side-nav a.active::before, .side-nav a:hover::before {
+  width: 40px;
+  background: var(--purple);
+}
+.side-nav a .label { white-space: nowrap; }
+
+/* CONTAINER */
+.container { max-width: 1080px; margin: 0 auto; padding: 0 40px; }
+.container-wide { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+
+/* SECTIONS */
+.section-white { background: var(--white); color: var(--charcoal); padding: 120px 0; }
+.section-light { background: var(--off-white); color: var(--charcoal); padding: 120px 0; }
+.section-dark { background: var(--charcoal); color: var(--white); padding: 120px 0; }
+.section-dark h2, .section-dark h3, .section-dark h4 { color: var(--white); }
+.section-dark .lead { color: rgba(255,255,255,0.6); }
+.section-dark .text-sm { color: rgba(255,255,255,0.5); }
+.section-dark .eyebrow { color: rgba(139,44,245,0.9); }
+
+/* TYPOGRAPHY */
+h1 {
+  font-size: 88px;
+  font-weight: 700;
+  letter-spacing: -4px;
+  line-height: 0.95;
+  margin-bottom: 32px;
+}
+h2 {
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: -2px;
+  line-height: 1.05;
+  margin-bottom: 24px;
+}
+h3 {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.8px;
+  line-height: 1.25;
+  margin-bottom: 14px;
+}
+h4 {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  line-height: 1.35;
+  margin-bottom: 8px;
+}
+.lead {
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--mid-gray);
+  max-width: 720px;
+  letter-spacing: -0.3px;
+}
+.text-sm { font-size: 14px; line-height: 1.6; color: var(--mid-gray); }
+.text-xs { font-size: 11px; line-height: 1.4; }
+.eyebrow {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--purple);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 24px;
+  display: inline-block;
+}
+.number-label {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 11px;
+  color: var(--mid-gray);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.purple { color: var(--purple); }
+.bold { font-weight: 700; }
+.italic { font-style: italic; }
+
+/* GRIDS */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.grid-2-asym { display: grid; grid-template-columns: 1fr 1.4fr; gap: 60px; align-items: start; }
+
+/* CARDS */
+.card {
+  background: var(--white);
+  border-radius: 6px;
+  padding: 28px;
+  border: 1px solid var(--border);
+  transition: all 0.25s ease;
+}
+.card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.card-flat {
+  background: var(--white);
+  border-radius: 6px;
+  padding: 28px;
+  border: 1px solid var(--border);
+}
+.card-light {
+  background: var(--off-white);
+  border-radius: 6px;
+  padding: 24px;
+  border: 1px solid var(--border);
+}
+.card-dark {
+  background: var(--dark-gray);
+  border-radius: 6px;
+  padding: 28px;
+  border: 1px solid var(--border-dark);
+}
+.card-dark h3, .card-dark h4 { color: var(--white); }
+.card-dark p, .card-dark .text-sm { color: rgba(255,255,255,0.65); }
+.card-dark code {
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.85);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 12px;
+}
+.card-purple {
+  background: var(--purple);
+  border-radius: 6px;
+  padding: 28px;
+  color: var(--white);
+  box-shadow: var(--shadow-purple);
+}
+.card-purple h3, .card-purple h4 { color: var(--white); }
+.card-outlined {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 28px;
+}
+
+/* BADGES & PILLS */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 26px;
+  border-radius: 4px;
+  background: var(--purple);
+  color: var(--white);
+  font-family: 'Roboto Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 0 8px;
+  letter-spacing: 0.5px;
+}
+.badge-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 26px;
+  border-radius: 4px;
+  background: var(--purple-light);
+  color: var(--purple);
+  font-family: 'Roboto Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 0 10px;
+  letter-spacing: 0.5px;
+  border: 1px solid var(--purple-15);
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  background: var(--purple-light);
+  border: 1px solid var(--purple-15);
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--purple);
+  letter-spacing: 0;
+}
+.pill-dark {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(139,44,245,0.15);
+  border: 1px solid rgba(139,44,245,0.25);
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #C898FD;
+}
+.pill-stage {
+  display: inline-flex;
+  align-items: center;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--charcoal);
+}
+.pill-stage.active { background: var(--purple); color: var(--white); border-color: var(--purple); }
+
+/* KPI */
+.kpi-num {
+  font-size: 56px;
+  font-weight: 900;
+  letter-spacing: -3px;
+  line-height: 1;
+  color: var(--purple);
+  margin-bottom: 8px;
+}
+.kpi-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--mid-gray);
+}
+.section-dark .kpi-label { color: rgba(255,255,255,0.5); }
+
+/* TIMELINE */
+.timeline { border-left: 2px solid var(--purple); margin-left: 16px; padding-left: 32px; position: relative; }
+.tl-item { position: relative; padding-bottom: 32px; }
+.tl-item:last-child { padding-bottom: 0; }
+.tl-item::before {
+  content: '';
+  position: absolute;
+  left: -39px;
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--purple);
+  box-shadow: 0 0 0 4px var(--white);
+}
+.section-dark .tl-item::before { box-shadow: 0 0 0 4px var(--charcoal); }
+.tl-item h4 { margin-bottom: 6px; }
+.tl-day {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 11px;
+  color: var(--purple);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 4px;
+}
+
+/* TABLES */
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th {
+  text-align: left;
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 500;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--mid-gray);
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+td {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.section-dark th { color: rgba(255,255,255,0.4); border-bottom-color: rgba(255,255,255,0.08); }
+.section-dark td { color: rgba(255,255,255,0.85); border-bottom-color: rgba(255,255,255,0.06); }
+
+/* HERO */
+.hero { padding-top: 180px; padding-bottom: 100px; position: relative; overflow: hidden; }
+.hero-meta {
+  display: flex;
+  gap: 40px;
+  margin-top: 64px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+.hero-meta-item .num {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 11px;
+  color: var(--purple);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.hero-meta-item .val { font-size: 14px; color: var(--charcoal); font-weight: 500; }
+
+/* TABS */
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0;
+}
+.section-dark .tabs { border-bottom-color: var(--border-dark); }
+.tab {
+  padding: 14px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--mid-gray);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all 0.2s;
+}
+.tab:hover { color: var(--charcoal); }
+.section-dark .tab:hover { color: var(--white); }
+.tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+.tab-content { display: none; animation: fadeIn 0.3s ease; }
+.tab-content.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ACCORDION */
+.accordion-item {
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+}
+.accordion-header {
+  padding: 24px 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 18px;
+  transition: all 0.2s;
+  letter-spacing: -0.3px;
+}
+.accordion-header:hover { color: var(--purple); }
+.accordion-header .arrow {
+  transition: transform 0.25s;
+  color: var(--purple);
+  font-size: 16px;
+  font-weight: 300;
+}
+.accordion-item.open .accordion-header .arrow { transform: rotate(45deg); }
+.accordion-body {
+  display: none;
+  padding: 0 0 28px;
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--mid-gray);
+  max-width: 780px;
+}
+.accordion-item.open .accordion-body { display: block; }
+
+/* PROCESS FLOW */
+.process-flow {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  position: relative;
+}
+.process-step {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 24px 20px;
+  position: relative;
+  transition: all 0.25s;
+}
+.process-step:hover { border-color: var(--purple); transform: translateY(-2px); }
+.process-step.last { background: var(--purple); color: var(--white); border-color: var(--purple); }
+.process-step.last h4, .process-step.last .step-num { color: var(--white); }
+.process-step.last .step-num { background: rgba(255,255,255,0.2); }
+.process-step.last .text-sm { color: rgba(255,255,255,0.85); }
+.step-num {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 11px;
+  color: var(--purple);
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  font-weight: 500;
+  display: block;
+}
+.process-step h4 { font-size: 16px; margin-bottom: 6px; }
+.process-step .text-sm { font-size: 13px; }
+
+/* QUOTE CARD */
+.quote-card {
+  background: var(--off-white);
+  border-left: 3px solid var(--purple);
+  padding: 24px 28px;
+  margin: 32px 0;
+  border-radius: 0 6px 6px 0;
+  font-style: italic;
+  color: var(--charcoal);
+  font-size: 18px;
+  line-height: 1.6;
+  letter-spacing: -0.3px;
+}
+.quote-card .quote-author {
+  font-style: normal;
+  font-size: 13px;
+  color: var(--mid-gray);
+  margin-top: 12px;
+  display: block;
+}
+
+/* CODE BLOCK */
+.code-block {
+  background: var(--off-black);
+  border-radius: 6px;
+  padding: 24px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 13px;
+  line-height: 1.8;
+  color: rgba(255,255,255,0.85);
+  overflow-x: auto;
+  border: 1px solid var(--border-dark);
+}
+.code-block .comment { color: rgba(255,255,255,0.4); }
+.code-block .purple { color: var(--purple); }
+.code-block .label { color: #C898FD; }
+.code-block .subject { color: var(--orange); font-weight: 500; }
+
+/* DIVIDER */
+.divider { border-top: 1px solid var(--pale-gray); margin: 64px 0; }
+.section-dark .divider { border-color: var(--border-dark); }
+
+/* SPACING UTILS */
+.mb-8 { margin-bottom: 8px; }
+.mb-12 { margin-bottom: 12px; }
+.mb-16 { margin-bottom: 16px; }
+.mb-24 { margin-bottom: 24px; }
+.mb-32 { margin-bottom: 32px; }
+.mb-48 { margin-bottom: 48px; }
+.mb-64 { margin-bottom: 64px; }
+.mt-16 { margin-top: 16px; }
+.mt-32 { margin-top: 32px; }
+.mt-48 { margin-top: 48px; }
+.mt-64 { margin-top: 64px; }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.justify-between { justify-content: space-between; }
+.gap-16 { gap: 16px; }
+.gap-24 { gap: 24px; }
+.gap-32 { gap: 32px; }
+.text-center { text-align: center; }
+.max-w-700 { max-width: 700px; }
+.max-w-800 { max-width: 800px; }
+
+/* STAT ROW */
+.stat-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 20px;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+}
+.stat-row:last-child { border-bottom: none; }
+.section-dark .stat-row { border-bottom-color: var(--border-dark); }
+.stat-row .stat-num {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 11px;
+  color: var(--mid-gray);
+  letter-spacing: 1px;
+}
+.stat-row .stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--purple);
+  letter-spacing: -0.5px;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--off-white); }
+::-webkit-scrollbar-thumb { background: var(--light-gray); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--mid-gray); }
+
+/* FOOTER */
+footer {
+  background: var(--off-black);
+  color: rgba(255,255,255,0.4);
+  padding: 64px 0 40px;
+  font-size: 13px;
+}
+footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
+
+/* RESPONSIVE */
+@media (max-width: 1300px) {
+  .side-nav { display: none; }
+}
+@media (max-width: 900px) {
+  .grid-2, .grid-3, .grid-4, .grid-5, .grid-2-asym { grid-template-columns: 1fr; }
+  .process-flow { grid-template-columns: 1fr; }
+  h1 { font-size: 52px; letter-spacing: -2px; }
+  h2 { font-size: 36px; letter-spacing: -1.5px; }
+  .container, .container-wide { padding: 0 24px; }
+  .section-white, .section-light, .section-dark { padding: 80px 0; }
+  .hero { padding-top: 140px; }
+  .kpi-num { font-size: 40px; }
+  .hero-meta { flex-direction: column; gap: 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="flex items-center gap-16">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 387 98" fill="none" class="nav-logo">
+        <path fill="#0C0C0C" d="m106.441 79.658 23.8-65.164h15.704l23.622 65.164H155.81l-5.264-15.007h-25.392l-5.264 15.007h-13.449Zm22.561-26.03h17.651l-8.847-25.19-8.804 25.19Zm41.881 26.03V30.874h11.768v6.419c1.444-2.302 3.45-4.132 6.016-5.49 2.595-1.357 5.397-2.021 8.405-1.992 3.303.03 6.193.767 8.67 2.214 2.507 1.416 4.365 3.364 5.574 5.843 1.415-2.42 3.48-4.368 6.193-5.843 2.713-1.505 5.736-2.243 9.068-2.214 5.191.03 9.364 1.653 12.52 4.87 3.155 3.217 4.733 7.467 4.733 12.75v32.227h-12.121V49.644c0-2.804-.826-5.047-2.477-6.73-1.652-1.681-3.849-2.537-6.592-2.567-2.654-.03-4.866.9-6.635 2.79-1.74 1.858-2.61 4.22-2.61 7.082v29.44h-12.121V49.156c0-2.656-.811-4.781-2.433-6.375-1.622-1.594-3.745-2.405-6.37-2.435-2.713-.03-4.969.96-6.768 2.966-1.799 2.007-2.698 4.56-2.698 7.659v28.686h-12.122Zm105.096-49.714c6.812 0 12.386 2.39 16.721 7.172 4.336 4.751 6.488 10.846 6.459 18.283-.029 7.467-2.241 13.56-6.636 18.283-4.394 4.722-10.026 7.068-16.898 7.038a20.316 20.316 0 0 1-8.67-1.814c-2.743-1.27-4.969-2.981-6.68-5.136v23.862h-12.121V30.874h12.032l-.044 6.463c1.829-2.273 4.173-4.073 7.034-5.4 2.861-1.329 5.795-1.993 8.803-1.993Zm-16.102 25.499c-.03 4.161 1.283 7.614 3.937 10.359 2.654 2.715 5.913 4.058 9.776 4.028 3.864.03 6.989-1.284 9.378-3.94 2.419-2.655 3.628-6.138 3.628-10.447 0-4.309-1.209-7.791-3.628-10.447-2.389-2.686-5.514-4.029-9.378-4.029-3.834 0-7.078 1.372-9.732 4.117-2.654 2.745-3.981 6.198-3.981 10.359ZM314.056 12.9v66.758h-12.077V12.9h12.077Zm5.165 66.758V30.874h12.12v48.784h-12.12Zm-.133-53.92v-12.35h12.651v12.35h-12.651Zm40.687 54.983c-7.462.03-13.596-2.332-18.403-7.083-4.778-4.752-7.181-10.861-7.211-18.328 0-4.928 1.092-9.34 3.274-13.236 2.183-3.896 5.22-6.906 9.113-9.031 3.892-2.155 8.301-3.232 13.227-3.232 3.716 0 7.166.635 10.351 1.904 3.214 1.24 5.942 2.98 8.184 5.223 2.241 2.214 3.996 4.914 5.264 8.102 1.297 3.158 1.946 6.581 1.946 10.27 0 3.69-.649 7.113-1.946 10.27-1.268 3.158-3.023 5.844-5.264 8.058-2.242 2.213-4.97 3.954-8.184 5.223-3.185 1.24-6.635 1.86-10.351 1.86Zm-13.05-25.41c0 4.249 1.194 7.702 3.583 10.358 2.418 2.627 5.573 3.94 9.467 3.94 3.922 0 7.092-1.313 9.511-3.94 2.447-2.656 3.671-6.11 3.671-10.359 0-4.309-1.224-7.776-3.671-10.403-2.419-2.656-5.589-3.984-9.511-3.984-3.923 0-7.093 1.328-9.512 3.984-2.388 2.656-3.568 6.124-3.538 10.403ZM87.455 40.877H5.76A5.763 5.763 0 0 0 0 46.642a5.763 5.763 0 0 0 5.76 5.764h81.695a5.763 5.763 0 0 0 5.76-5.764 5.763 5.763 0 0 0-5.76-5.765Z"/>
+        <path fill="#0C0C0C" d="M40.848 5.764V87.52a5.761 5.761 0 1 0 11.52 0V5.764A5.763 5.763 0 0 0 46.609 0a5.763 5.763 0 0 0-5.76 5.764Z"/>
+        <path fill="#0C0C0C" d="M71.418 13.662 13.65 71.47a5.768 5.768 0 0 0 0 8.152 5.757 5.757 0 0 0 8.147 0l57.766-57.809a5.768 5.768 0 0 0 0-8.152 5.757 5.757 0 0 0-8.146 0Z"/>
+      </svg>
+      <span class="nav-badge">Sales Onboarding</span>
+    </div>
+    <span class="text-sm" style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;">Confidential · v1.0</span>
+  </div>
+</nav>
+
+<!-- SIDE NAV -->
+<div class="side-nav" id="sideNav">
+  <a href="#hero" class="active"><span class="label">Welcome</span></a>
+  <a href="#what-we-do"><span class="label">What we do</span></a>
+  <a href="#tiers"><span class="label">Service tiers</span></a>
+  <a href="#who-we-sell-to"><span class="label">ICP</span></a>
+  <a href="#personas"><span class="label">Personas</span></a>
+  <a href="#sales-process"><span class="label">Sales process</span></a>
+  <a href="#outreach"><span class="label">Outreach</span></a>
+  <a href="#attio"><span class="label">Attio CRM</span></a>
+  <a href="#vault"><span class="label">The Vault</span></a>
+  <a href="#day-to-day"><span class="label">Day-to-day</span></a>
+  <a href="#voice"><span class="label">Brand voice</span></a>
+</div>
+
+<!-- HERO -->
+<section class="section-white hero" id="hero">
+  <div class="container">
+    <div class="eyebrow">/FOR YOUR EYES ONLY — INTERNAL</div>
+    <h1>Welcome to<br><span class="purple">Amplio Data.</span></h1>
+    <p class="lead">Everything you need to know about how we sell, who we sell to, the tools we use, and what your day-to-day looks like. Read it top to bottom. Bookmark it. Come back to it.</p>
+
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <div class="num">Founded by</div>
+        <div class="val">Walter &amp; Daragh · Barcelona, Spain</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="num">Tagline</div>
+        <div class="val">Better Data. Smarter Campaigns. Proven ROI.</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="num">GTM motion</div>
+        <div class="val">B2B2C via agency partners</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT WE DO -->
+<section class="section-light" id="what-we-do">
+  <div class="container">
+    <div class="grid-2-asym">
+      <div>
+        <div class="eyebrow">/01 — WHAT WE DO</div>
+        <h2>We <span class="purple">embed</span> senior data expertise inside marketing teams.</h2>
+      </div>
+      <div>
+        <p class="lead mb-32">Not a consultancy that advises from the outside. Not a freelancer that disappears. We sit inside the team — fixing tracking, proving ROI, and automating reporting. Powered by AI.</p>
+        <div class="quote-card">
+          The rule of Amplio: we don't just show numbers. We make sure the numbers are right first.
+          <span class="quote-author">— Our founding principle</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3 class="mb-24">The six things we actually deliver</h3>
+    <div class="grid-3">
+      <div class="card">
+        <span class="pill mb-16">01 · Tracking</span>
+        <h4>GA4, GTM &amp; Server-side Setup</h4>
+        <p class="text-sm mt-16">Full implementation of GA4, GTM, server-side GTM via Stape, enhanced conversions, and consent mode v2. We recover 20–40% of lost conversions.</p>
+      </div>
+      <div class="card">
+        <span class="pill mb-16">02 · Attribution</span>
+        <h4>Conversion Tracking &amp; ROI Proof</h4>
+        <p class="text-sm mt-16">Cross-platform attribution. GA4-to-ads platform reconciliation. Closed-loop reporting that connects campaigns to revenue. 34% of sessions are hidden by consent — we measure the gap.</p>
+      </div>
+      <div class="card">
+        <span class="pill mb-16">03 · Reporting</span>
+        <h4>Automated Dashboards &amp; Intelligence</h4>
+        <p class="text-sm mt-16">AI-powered reporting, anomaly detection, consent impact analysis. Monthly reports that tell the story — not just show the numbers.</p>
+      </div>
+      <div class="card">
+        <span class="pill mb-16">04 · Privacy</span>
+        <h4>Consent &amp; Compliance</h4>
+        <p class="text-sm mt-16">CMP implementation (Cookiebot, Usercentrics), Consent Mode v2 setup, privacy-compliant tracking that satisfies GDPR without sacrificing data quality.</p>
+      </div>
+      <div class="card">
+        <span class="pill mb-16">05 · Ads</span>
+        <h4>Google Ads Management</h4>
+        <p class="text-sm mt-16">Campaign management, bid strategy, audience optimization — all powered by clean data. Better tracking = better campaigns = better ROAS.</p>
+      </div>
+      <div class="card">
+        <span class="pill mb-16">06 · Integration</span>
+        <h4>CRM &amp; Data Integration</h4>
+        <p class="text-sm mt-16">Connect GA4 to HubSpot, Salesforce, or any CRM. Pipeline attribution, lead scoring, end-to-end visibility from first touch to closed deal.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIERS -->
+<section class="section-white" id="tiers">
+  <div class="container">
+    <div class="eyebrow">/02 — SERVICE TIERS</div>
+    <h2>Three ways to <span class="purple">package</span> the work.</h2>
+    <p class="lead mb-64">Every proposal maps to one of these tiers. Pick the right one for the prospect based on their maturity, budget, and ambition.</p>
+
+    <div class="grid-3">
+      <div class="card-flat">
+        <div class="number-label mb-16">TIER 01</div>
+        <h3>Foundation</h3>
+        <div style="font-size:40px;font-weight:900;letter-spacing:-1.5px;color:var(--purple);margin:8px 0;">€400 — €1,500</div>
+        <div class="text-sm mb-24"><em>One-time project</em></div>
+        <div class="divider" style="margin:24px 0;"></div>
+        <p class="text-sm mb-12"><strong style="color:var(--charcoal);">Best for:</strong> Startups, small e-commerce, "get the basics right" projects.</p>
+        <p class="text-sm"><strong style="color:var(--charcoal);">Scope:</strong> GA4 + GTM setup, consent mode, basic tracking audit. Quick win, fast delivery.</p>
+      </div>
+      <div class="card-flat" style="border: 2px solid var(--purple); position: relative;">
+        <div style="position:absolute;top:-12px;right:20px;"><span class="pill" style="background:var(--purple);color:var(--white);border-color:var(--purple);">Most popular</span></div>
+        <div class="number-label mb-16" style="color:var(--purple);">TIER 02</div>
+        <h3>Maintained</h3>
+        <div style="font-size:40px;font-weight:900;letter-spacing:-1.5px;color:var(--purple);margin:8px 0;">€700 — €1,200<span style="font-size:18px;font-weight:400;color:var(--mid-gray);">/mo</span></div>
+        <div class="text-sm mb-24"><em>Monthly retainer</em></div>
+        <div class="divider" style="margin:24px 0;"></div>
+        <p class="text-sm mb-12"><strong style="color:var(--charcoal);">Best for:</strong> Growth-stage companies and agencies. Where most deals land.</p>
+        <p class="text-sm"><strong style="color:var(--charcoal);">Scope:</strong> Ongoing tracking management, monthly reporting, server-side GTM, enhanced conversions.</p>
+      </div>
+      <div class="card-flat">
+        <div class="number-label mb-16">TIER 03</div>
+        <h3>Managed</h3>
+        <div style="font-size:40px;font-weight:900;letter-spacing:-1.5px;color:var(--purple);margin:8px 0;">€1,800+<span style="font-size:18px;font-weight:400;color:var(--mid-gray);">/mo</span></div>
+        <div class="text-sm mb-24"><em>Monthly retainer</em></div>
+        <div class="divider" style="margin:24px 0;"></div>
+        <p class="text-sm mb-12"><strong style="color:var(--charcoal);">Best for:</strong> Agencies with multiple clients, larger brands, multi-property setups.</p>
+        <p class="text-sm"><strong style="color:var(--charcoal);">Scope:</strong> Full embedded analytics team. Multi-property tracking, Google Ads management, cross-platform attribution, custom dashboards, dedicated AM.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3 class="mb-24">The verified proof points. <span style="color:var(--mid-gray);font-weight:400;font-size:16px;">Use these. Never fabricate others.</span></h3>
+    <div class="grid-5">
+      <div class="card-outlined text-center">
+        <div class="kpi-num">+23%</div>
+        <div class="kpi-label">Avg ROAS lift</div>
+      </div>
+      <div class="card-outlined text-center">
+        <div class="kpi-num">48h</div>
+        <div class="kpi-label">Full setup time</div>
+      </div>
+      <div class="card-outlined text-center">
+        <div class="kpi-num">-90%</div>
+        <div class="kpi-label">Data back-and-forth</div>
+      </div>
+      <div class="card-outlined text-center">
+        <div class="kpi-num">100+</div>
+        <div class="kpi-label">Teams served</div>
+      </div>
+      <div class="card-outlined text-center">
+        <div class="kpi-num">34%</div>
+        <div class="kpi-label">Sessions hidden by consent</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO WE SELL TO -->
+<section class="section-dark" id="who-we-sell-to">
+  <div class="container">
+    <div class="eyebrow">/03 — WHO WE SELL TO</div>
+    <h2>Our ideal <span class="purple">customer profile</span>.</h2>
+    <p class="lead mb-64">Not everyone is a fit. Not every fit is a priority. Our sweet spot is narrow and deep.</p>
+
+    <div class="grid-2-asym mb-48">
+      <div>
+        <h3>Firmographic sweet spot</h3>
+        <div class="stat-row">
+          <div class="stat-num">01</div>
+          <div>Employee size</div>
+          <div class="stat-value">20–200</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-num">02</div>
+          <div>Annual revenue</div>
+          <div class="stat-value">€2M – €30M</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-num">03</div>
+          <div>Monthly ad spend</div>
+          <div class="stat-value">€10K – €50K</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-num">04</div>
+          <div>Geography</div>
+          <div class="stat-value">UK · DE · NL</div>
+        </div>
+      </div>
+      <div>
+        <h3>Strong technographic signals</h3>
+        <div class="stat-row">
+          <div class="stat-num">01</div>
+          <div>GTM + GA4 together</div>
+          <div class="stat-value">★★★★★</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-num">02</div>
+          <div>Meta Pixel / Google Ads active</div>
+          <div class="stat-value">★★★★</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-num">03</div>
+          <div>Shopify / WooCommerce</div>
+          <div class="stat-value">★★★★</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-num">04</div>
+          <div>HubSpot / Salesforce CRM</div>
+          <div class="stat-value">★★★</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3 class="mb-24">ICP segments, ranked by priority</h3>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Segment</th>
+            <th>Score</th>
+            <th>Tier</th>
+            <th>Why they buy</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="badge">01</span></td><td style="font-weight:600;color:var(--white);">Performance Agencies</td><td><span class="purple bold">95+</span></td><td>T2–T3</td><td>Prove client ROI, scale tracking across accounts. Highest revenue, partnership channel.</td></tr>
+          <tr><td><span class="badge">02</span></td><td style="font-weight:600;color:var(--white);">E-commerce €1M–€50M</td><td><span class="purple bold">90+</span></td><td>T2–T3</td><td>Attribution accuracy, ad optimization, consent-compliant tracking.</td></tr>
+          <tr><td><span class="badge">03</span></td><td style="font-weight:600;color:var(--white);">SaaS Growth Stage</td><td><span class="purple bold">85+</span></td><td>T2</td><td>Product analytics, conversion tracking, funnel diagnostics.</td></tr>
+          <tr><td><span class="badge">04</span></td><td style="font-weight:600;color:var(--white);">Lead Gen / B2B Services</td><td><span class="purple bold">80+</span></td><td>T1–T2</td><td>Form tracking, CRM integration, pipeline contribution.</td></tr>
+          <tr><td><span class="badge">05</span></td><td style="font-weight:600;color:var(--white);">Startups (Seed–A)</td><td><span class="purple bold">70+</span></td><td>T1</td><td>Quick setup, budget-conscious, investor-ready metrics.</td></tr>
+          <tr><td><span class="badge">06</span></td><td style="font-weight:600;color:var(--white);">Multi-brand Retailers</td><td><span class="purple bold">85+</span></td><td>T3</td><td>Cross-property tracking, unified reporting. High revenue per account.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3 class="mb-16">Disqualify early — walk away if...</h3>
+    <p class="lead mb-32" style="font-size:16px;">Not every lead is a fit. Spotting bad-fits fast is how you protect your time.</p>
+    <div class="grid-4">
+      <div class="card-dark"><h4 style="color:var(--red);">✕ No website</h4><p class="text-sm mt-8">Nothing to track. Obvious no.</p></div>
+      <div class="card-dark"><h4 style="color:var(--red);">✕ In-house team 5+</h4><p class="text-sm mt-8">They have what we sell.</p></div>
+      <div class="card-dark"><h4 style="color:var(--red);">✕ Enterprise 1000+</h4><p class="text-sm mt-8">Too slow, too political.</p></div>
+      <div class="card-dark"><h4 style="color:var(--red);">✕ No digital marketing</h4><p class="text-sm mt-8">No urgency, no budget.</p></div>
+      <div class="card-dark"><h4 style="color:var(--red);">✕ Direct competitor</h4><p class="text-sm mt-8">Obvious conflict.</p></div>
+      <div class="card-dark"><h4 style="color:var(--red);">✕ Non-commercial</h4><p class="text-sm mt-8">Non-profits, public sector.</p></div>
+      <div class="card-dark"><h4 style="color:var(--red);">✕ Financial distress</h4><p class="text-sm mt-8">They won't pay.</p></div>
+      <div class="card-dark"><h4 style="color:var(--red);">✕ Unresponsive 4+ touches</h4><p class="text-sm mt-8">Graceful exit. 90-day cooldown.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PERSONAS -->
+<section class="section-white" id="personas">
+  <div class="container">
+    <div class="eyebrow">/04 — BUYER PERSONAS</div>
+    <h2>Five people you'll <span class="purple">talk to</span>.</h2>
+    <p class="lead mb-48">Each persona has different pressures, different KPIs, and different opening lines. Don't send the same message to all of them.</p>
+
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab(event, 'persona-1')">Agency Owner</div>
+      <div class="tab" onclick="switchTab(event, 'persona-2')">Head of Performance</div>
+      <div class="tab" onclick="switchTab(event, 'persona-3')">CMO / VP</div>
+      <div class="tab" onclick="switchTab(event, 'persona-4')">E-commerce Manager</div>
+      <div class="tab" onclick="switchTab(event, 'persona-5')">Startup Founder</div>
+    </div>
+
+    <div id="persona-1" class="tab-content active">
+      <div class="grid-2">
+        <div class="card-flat">
+          <div class="flex items-center justify-between mb-24">
+            <span class="pill">Fit 95–100</span>
+            <span class="number-label">Priority 01</span>
+          </div>
+          <h3>Agency Owner / MD</h3>
+          <p class="text-sm mb-24" style="color:var(--charcoal);"><strong>Tier:</strong> T2–T3 &nbsp;·&nbsp; <strong>Volume:</strong> High &nbsp;·&nbsp; <strong>Channel:</strong> LinkedIn DM</p>
+          <p>They think in <strong>client deliverables</strong>. Position Amplio as something that makes THEM look good to THEIR clients. KPIs: client retention, agency profitability, client ROAS.</p>
+          <div class="quote-card" style="margin-top:24px;">
+            "How much time does your team spend on tracking setup for new clients?"
+          </div>
+        </div>
+        <div class="card-dark">
+          <div class="number-label mb-16" style="color:rgba(255,255,255,0.5);">SAMPLE COLD DM · ~70 WORDS</div>
+          <div class="code-block" style="background:transparent;padding:0;border:none;">
+<span class="comment">Hi [Name],</span>
+
+I noticed you're managing client accounts for [specific verticals/channels].
+
+<span class="purple">Question:</span> How much of your team's time goes into GA4 setup + tracking validation for new clients?
+
+I ask because we've helped agencies like [similar] cut that from weeks to <span class="purple">48 hours</span> — and deliver better data audits as part of client onboarding.
+
+Worth a quick call?
+
+<span class="comment">[Your name]</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="persona-2" class="tab-content">
+      <div class="grid-2">
+        <div class="card-flat">
+          <div class="flex items-center justify-between mb-24">
+            <span class="pill">Fit 85–95</span>
+            <span class="number-label">Priority 02</span>
+          </div>
+          <h3>Head of Performance Marketing</h3>
+          <p class="text-sm mb-24" style="color:var(--charcoal);"><strong>Tier:</strong> T2 &nbsp;·&nbsp; <strong>Volume:</strong> High &nbsp;·&nbsp; <strong>Channel:</strong> Email</p>
+          <p>Judged on <strong>numbers</strong>. If numbers are wrong, everything downstream fails. Lead with accuracy. KPIs: ROAS (3x–10x target), CAC, conversion rates, attribution.</p>
+          <div class="quote-card" style="margin-top:24px;">
+            "Are your attribution numbers matching between platforms and GA4?"
+          </div>
+        </div>
+        <div class="card-dark">
+          <div class="number-label mb-16" style="color:rgba(255,255,255,0.5);">SAMPLE COLD EMAIL · ~95 WORDS</div>
+          <div class="code-block" style="background:transparent;padding:0;border:none;">
+<span class="subject">Subject: GA4 ↔ [Ads platform] reconciliation</span>
+
+<span class="comment">Hi [Name],</span>
+
+We audited [similar company type] last month. Their GA4 conversions were <span class="purple">22% lower</span> than Google Ads conversions.
+
+Root cause: client-side tracking gaps (consent, ad blockers, cross-domain issues).
+
+Fix: server-side GTM + enhanced conversions. Recovery: <span class="purple">+18%</span> conversion visibility in 2 weeks.
+
+Sound familiar? Happy to run a quick audit on your setup.
+
+<span class="comment">[Your name]</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="persona-3" class="tab-content">
+      <div class="grid-2">
+        <div class="card-flat">
+          <div class="flex items-center justify-between mb-24">
+            <span class="pill">Fit 80–90</span>
+            <span class="number-label">Priority 03</span>
+          </div>
+          <h3>CMO / VP Marketing</h3>
+          <p class="text-sm mb-24" style="color:var(--charcoal);"><strong>Tier:</strong> T3 &nbsp;·&nbsp; <strong>Volume:</strong> Medium &nbsp;·&nbsp; <strong>Channel:</strong> Warm intro</p>
+          <p>Cares about <strong>narrative, not data</strong>. Frame everything as credible storytelling about marketing impact. KPIs: revenue contribution, pipeline influenced, marketing efficiency.</p>
+          <div class="quote-card" style="margin-top:24px;">
+            "Can you prove marketing's impact at your next board meeting?"
+          </div>
+        </div>
+        <div class="card-dark">
+          <div class="number-label mb-16" style="color:rgba(255,255,255,0.5);">SAMPLE COLD EMAIL · ~105 WORDS</div>
+          <div class="code-block" style="background:transparent;padding:0;border:none;">
+<span class="subject">Subject: [Name] — board-ready marketing metrics</span>
+
+<span class="comment">Hi [Name],</span>
+
+CMOs face the same challenge: proving marketing's impact at board level.
+
+Most pitch dashboards. That's not the same as a credible story.
+
+We embed a team that connects <span class="purple">GA4 → CRM → pipeline → revenue</span>. Real data. Closed-loop.
+
+Result: Your board goes from "marketing spends money" to "marketing drives revenue."
+
+We did this for [similar-sized company]. Worth a chat?
+
+<span class="comment">[Your name]</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="persona-4" class="tab-content">
+      <div class="grid-2">
+        <div class="card-flat">
+          <div class="flex items-center justify-between mb-24">
+            <span class="pill">Fit 75–90</span>
+            <span class="number-label">Priority 04</span>
+          </div>
+          <h3>E-commerce Manager</h3>
+          <p class="text-sm mb-24" style="color:var(--charcoal);"><strong>Tier:</strong> T1–T2 &nbsp;·&nbsp; <strong>Volume:</strong> High &nbsp;·&nbsp; <strong>Channel:</strong> Email</p>
+          <p><strong>Overwhelmed and practical</strong>. Lead with speed and low effort. KPIs: conversion rate, revenue per visitor, cart abandonment, AOV, campaign ROAS.</p>
+          <div class="quote-card" style="margin-top:24px;">
+            "Is your purchase event firing correctly in GA4?"
+          </div>
+        </div>
+        <div class="card-dark">
+          <div class="number-label mb-16" style="color:rgba(255,255,255,0.5);">SAMPLE COLD EMAIL · ~90 WORDS</div>
+          <div class="code-block" style="background:transparent;padding:0;border:none;">
+<span class="subject">Subject: GA4 purchase tracking check for [company]</span>
+
+<span class="comment">Hi [Name],</span>
+
+We audit GA4 e-commerce setups. Typical finding: purchase events are incomplete (missing SKU, wrong value, no real-time revenue).
+
+Result: bad ROAS reporting + wasted ad spend on unprofitable products.
+
+We fix it in <span class="purple">48 hours</span>. Impact: <span class="purple">5–20%</span> conversion visibility lift.
+
+Want a quick audit?
+
+<span class="comment">[Your name]</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="persona-5" class="tab-content">
+      <div class="grid-2">
+        <div class="card-flat">
+          <div class="flex items-center justify-between mb-24">
+            <span class="pill">Fit 70–85</span>
+            <span class="number-label">Priority 05</span>
+          </div>
+          <h3>Startup Founder / Growth</h3>
+          <p class="text-sm mb-24" style="color:var(--charcoal);"><strong>Tier:</strong> T1 &nbsp;·&nbsp; <strong>Volume:</strong> High &nbsp;·&nbsp; <strong>Channel:</strong> LinkedIn · Twitter/X</p>
+          <p>Building the plane while flying it. Position Amplio as <strong>the thing they don't have to think about</strong>. KPIs: MRR growth, activation, CAC, trial-to-paid, investor metrics.</p>
+          <div class="quote-card" style="margin-top:24px;">
+            "Have you set up proper funnel tracking yet?"
+          </div>
+        </div>
+        <div class="card-dark">
+          <div class="number-label mb-16" style="color:rgba(255,255,255,0.5);">SAMPLE COLD DM · ~60 WORDS</div>
+          <div class="code-block" style="background:transparent;padding:0;border:none;">
+<span class="comment">Hey [Name],</span>
+
+Have you set up proper funnel tracking yet?
+
+Most founders skip it early (fair — busy), but it bites you at Series A when investors ask <span class="purple">"what's your CAC?"</span>
+
+We do that setup in <span class="purple">48h</span>. One less thing to worry about.
+
+Worth a call?
+
+<span class="comment">[Your name]</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SALES PROCESS -->
+<section class="section-light" id="sales-process">
+  <div class="container">
+    <div class="eyebrow">/05 — SALES PROCESS</div>
+    <h2>How a deal <span class="purple">moves</span> from lead to close.</h2>
+    <p class="lead mb-64">Five stages. Each one has a clear definition and a clear next action. No ambiguity.</p>
+
+    <div class="process-flow mb-64">
+      <div class="process-step">
+        <span class="step-num">STAGE 01</span>
+        <h4>Lead</h4>
+        <p class="text-sm">Scraped or inbound. Added to Attio. Not yet contacted.</p>
+      </div>
+      <div class="process-step">
+        <span class="step-num">STAGE 02</span>
+        <h4>Qualified</h4>
+        <p class="text-sm">ICP scored, persona matched, outreach angle identified.</p>
+      </div>
+      <div class="process-step">
+        <span class="step-num">STAGE 03</span>
+        <h4>Meeting</h4>
+        <p class="text-sm">Discovery call booked or completed. Understanding their pain.</p>
+      </div>
+      <div class="process-step">
+        <span class="step-num">STAGE 04</span>
+        <h4>Proposal</h4>
+        <p class="text-sm">Proposal sent with recommended tier and scope.</p>
+      </div>
+      <div class="process-step last">
+        <span class="step-num" style="color:rgba(255,255,255,0.8);">STAGE 05</span>
+        <h4>Won</h4>
+        <p class="text-sm">Client signed. Moves to Onboarding in Client Success.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3 class="mb-32">The AI-powered prospecting engine</h3>
+    <p class="lead mb-48" style="font-size:17px;">We don't cold-call random companies. An automated pipeline does the heavy lifting — you focus on messaging and conversations.</p>
+
+    <div class="grid-3">
+      <div class="card-flat">
+        <div class="number-label mb-16">STEP 01 · SCRAPER</div>
+        <h4>Website scraping</h4>
+        <p class="text-sm mt-16">AI scraper crawls prospect sites. Extracts technographic signals: GTM present? GA4 client-side or server-side? CMP missing or misconfigured? Ad platforms running?</p>
+      </div>
+      <div class="card-flat">
+        <div class="number-label mb-16">STEP 02 · SCORING</div>
+        <h4>ICP scoring matrix</h4>
+        <p class="text-sm mt-16">Each prospect scored 0–100. Industry 25% · Size 15% · Tech 20% · Ads 15% · Trigger 15% · Contact 5% · Geo 5%.</p>
+      </div>
+      <div class="card-flat">
+        <div class="number-label mb-16">STEP 03 · CLASSIFY</div>
+        <h4>Opportunity tier</h4>
+        <p class="text-sm mt-16"><strong style="color:var(--purple);">HIGH:</strong> Missing CMP/tracking. <strong style="color:var(--orange);">MID:</strong> Basics present, gaps exist. <strong style="color:var(--mid-gray);">LOW:</strong> Sophisticated — partnership angle.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3 class="mb-24">Competitive positioning</h3>
+    <p class="text-sm mb-32" style="max-width:620px;"><strong>Golden rule:</strong> Never disparage competitors. Acknowledge strengths, then differentiate on speed, embeddedness, and AI.</p>
+    <div class="grid-2">
+      <div class="card">
+        <h4>vs. Big consultancies</h4>
+        <p class="text-sm" style="color:var(--mid-gray);">Deloitte Digital · Accenture</p>
+        <p class="mt-16"><strong class="purple">Our angle:</strong> Enterprise expertise at mid-market speed and price.</p>
+      </div>
+      <div class="card">
+        <h4>vs. Freelancers</h4>
+        <p class="text-sm" style="color:var(--mid-gray);">Upwork contractors</p>
+        <p class="mt-16"><strong class="purple">Our angle:</strong> We're a team, not a person. Always available, always senior.</p>
+      </div>
+      <div class="card">
+        <h4>vs. Analytics SaaS</h4>
+        <p class="text-sm" style="color:var(--mid-gray);">Triple Whale · Northbeam</p>
+        <p class="mt-16"><strong class="purple">Our angle:</strong> They show numbers. We make sure numbers are right first.</p>
+      </div>
+      <div class="card">
+        <h4>vs. DIY / In-house</h4>
+        <p class="text-sm" style="color:var(--mid-gray);">GA4 + Looker Studio</p>
+        <p class="mt-16"><strong class="purple">Our angle:</strong> Who audits the auditor?</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OUTREACH -->
+<section class="section-white" id="outreach">
+  <div class="container">
+    <div class="eyebrow">/06 — OUTREACH CADENCE</div>
+    <h2>The <span class="purple">4-touch</span> cadence.</h2>
+    <p class="lead mb-64">Don't wing it. Don't spam. Four calibrated touches, then respectful silence for 90 days.</p>
+
+    <div class="grid-2-asym">
+      <div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-day">Day 0</div>
+            <h4>Touch 1 — First contact</h4>
+            <p class="text-sm">Cold LinkedIn DM or email. Under 100 words. Lead with their problem, not our solution. End with a question.</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-day">Day 3–4</div>
+            <h4>Touch 2 — Follow-up</h4>
+            <p class="text-sm">Friendly, not pushy. Reference a case study or useful resource. Under 80 words.</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-day">Day 8–11</div>
+            <h4>Touch 3 — New angle</h4>
+            <p class="text-sm">Share a blog post, insight, or checklist relevant to their specific challenge. Educational, not salesy.</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-day">Day 15–21</div>
+            <h4>Touch 4 — Graceful exit</h4>
+            <p class="text-sm">Final attempt. "If things change, I'm here." Then silence for 90 days.</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card-dark">
+          <h4 style="color:var(--white);" class="mb-16">Rules of the road</h4>
+          <ul style="list-style:none;padding:0;color:rgba(255,255,255,0.75);font-size:14px;line-height:2;">
+            <li>→ Cold: under 100 words. Warm: under 150.</li>
+            <li>→ Always personalize — research their company, recent activity, visible challenges.</li>
+            <li>→ Never more than one emoji. Zero is ideal.</li>
+            <li>→ Lead with their problem. Not our solution.</li>
+            <li>→ End with a question or soft CTA. Never a hard ask.</li>
+            <li>→ If they respond at any touch → shift to discovery/qualification mode.</li>
+            <li>→ No em-dashes in LinkedIn posts (they render poorly on mobile).</li>
+          </ul>
+        </div>
+        <div class="card-purple mt-16">
+          <h4>Remember</h4>
+          <p style="color:rgba(255,255,255,0.9);font-size:14px;line-height:1.6;margin-top:8px;">If they respond at ANY touch, abandon the cadence. Shift immediately to discovery mode. Your job stops being "get them to reply" and starts being "understand their pain."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ATTIO -->
+<section class="section-dark" id="attio">
+  <div class="container">
+    <div class="eyebrow">/07 — ATTIO CRM</div>
+    <h2>Your <span class="purple">daily workspace</span>.</h2>
+    <p class="lead mb-64">Attio is our CRM. Every prospect, every contact, every deal flows through it. Learn it deeply — this is where most of your day will happen.</p>
+
+    <h3 class="mb-24">The three core objects</h3>
+    <div class="grid-3 mb-64">
+      <div class="card-dark">
+        <div class="number-label mb-16" style="color:var(--purple);">OBJECT 01</div>
+        <h3>Companies</h3>
+        <p class="text-sm mb-16" style="color:rgba(255,255,255,0.75);">The anchor of everything. Matched by domain (unique key). One company = one record. Always.</p>
+        <p class="text-sm mb-8" style="color:rgba(255,255,255,0.85);"><strong>Key fields you'll use daily:</strong></p>
+        <ul style="list-style:none;padding:0;color:rgba(255,255,255,0.6);font-size:13px;line-height:1.9;">
+          <li>→ <code>icp</code> — Hot · Warm · Cool</li>
+          <li>→ <code>lead_score</code> — 0–100</li>
+          <li>→ <code>opportunity_tier</code> — HIGH · MID · LOW</li>
+          <li>→ <code>outreach_status</code></li>
+          <li>→ <code>pitch_angle</code></li>
+        </ul>
+      </div>
+      <div class="card-dark">
+        <div class="number-label mb-16" style="color:var(--purple);">OBJECT 02</div>
+        <h3>People</h3>
+        <p class="text-sm mb-16" style="color:rgba(255,255,255,0.75);">Contacts linked to companies. Matched by email (unique key). The humans you're actually messaging.</p>
+        <p class="text-sm mb-8" style="color:rgba(255,255,255,0.85);"><strong>Key fields you'll use daily:</strong></p>
+        <ul style="list-style:none;padding:0;color:rgba(255,255,255,0.6);font-size:13px;line-height:1.9;">
+          <li>→ <code>persona_type</code></li>
+          <li>→ <code>decision_authority</code></li>
+          <li>→ <code>preferred_channel</code></li>
+          <li>→ <code>job_title</code></li>
+          <li>→ <code>linkedin</code></li>
+        </ul>
+      </div>
+      <div class="card-dark">
+        <div class="number-label mb-16" style="color:var(--purple);">OBJECT 03</div>
+        <h3>Deals</h3>
+        <p class="text-sm mb-16" style="color:rgba(255,255,255,0.75);">Revenue opportunities linked to companies + people. Created at the Proposal stage.</p>
+        <p class="text-sm mb-8" style="color:rgba(255,255,255,0.85);"><strong>Key fields you'll use daily:</strong></p>
+        <ul style="list-style:none;padding:0;color:rgba(255,255,255,0.6);font-size:13px;line-height:1.9;">
+          <li>→ <code>stage</code> — Lead · Qualified · Meeting · Proposal · Won</li>
+          <li>→ <code>value</code> — EUR only</li>
+          <li>→ <code>service_tier</code> — Foundation · Maintained · Managed</li>
+          <li>→ <code>deal_type</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="mb-24">Two lists. Two jobs.</h3>
+    <div class="grid-2 mb-64">
+      <div class="card-dark">
+        <div class="flex items-center justify-between mb-16">
+          <h4>Sales List</h4>
+          <span class="pill-dark">Your primary view</span>
+        </div>
+        <p class="text-sm mb-20" style="color:rgba(255,255,255,0.75);">Every company from first touch to close. This is where you live.</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:20px;">
+          <span class="pill-stage" style="background:var(--dark-gray);border-color:var(--border-dark);color:var(--white);">Lead</span>
+          <span style="color:var(--purple);">→</span>
+          <span class="pill-stage" style="background:var(--dark-gray);border-color:var(--border-dark);color:var(--white);">Qualified</span>
+          <span style="color:var(--purple);">→</span>
+          <span class="pill-stage" style="background:var(--dark-gray);border-color:var(--border-dark);color:var(--white);">Meeting</span>
+          <span style="color:var(--purple);">→</span>
+          <span class="pill-stage" style="background:var(--dark-gray);border-color:var(--border-dark);color:var(--white);">Proposal</span>
+          <span style="color:var(--purple);">→</span>
+          <span class="pill-stage active">Won</span>
+        </div>
+        <p class="text-sm" style="color:rgba(255,255,255,0.6);"><strong style="color:var(--white);">Key entry fields:</strong> Stage · Priority (High/Med/Low) · Estimated Contract Value (EUR) · Projected Close Date · Next Action · Next Action Date.</p>
+      </div>
+      <div class="card-dark">
+        <div class="flex items-center justify-between mb-16">
+          <h4>Client Success List</h4>
+          <span class="pill-dark">Post-sale</span>
+        </div>
+        <p class="text-sm mb-20" style="color:rgba(255,255,255,0.75);">Active clients through their lifecycle. You'll consult it — AMs drive it.</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:20px;">
+          <span class="pill-stage" style="background:var(--dark-gray);border-color:var(--border-dark);color:var(--white);">Onboarding</span>
+          <span style="color:var(--purple);">→</span>
+          <span class="pill-stage" style="background:var(--dark-gray);border-color:var(--border-dark);color:var(--white);">Steady</span>
+          <span style="color:var(--purple);">→</span>
+          <span class="pill-stage" style="background:var(--dark-gray);border-color:var(--border-dark);color:var(--white);">Expansion</span>
+          <span style="color:var(--purple);">→</span>
+          <span class="pill-stage active">Renewal</span>
+        </div>
+        <p class="text-sm" style="color:rgba(255,255,255,0.6);"><strong style="color:var(--white);">Key entry fields:</strong> Health (Excellent/Good/Fair/Risk) · MRR · Services Active · Next Review Date · Contract End Date.</p>
+      </div>
+    </div>
+
+    <h3 class="mb-24">Data flow — scraper to client</h3>
+    <div class="card-dark">
+      <div class="grid-3 gap-24">
+        <div>
+          <div class="number-label mb-12" style="color:var(--purple);">PHASE 01</div>
+          <h4>Scraper runs</h4>
+          <p class="text-sm mt-8" style="color:rgba(255,255,255,0.7);">AI crawls websites, extracts GTM/GA4/CMP signals, scores with ICP matrix, classifies opportunity tier. Outputs an XLSX.</p>
+        </div>
+        <div>
+          <div class="number-label mb-12" style="color:var(--purple);">PHASE 02</div>
+          <h4>Attio enrichment</h4>
+          <p class="text-sm mt-8" style="color:rgba(255,255,255,0.7);">Upserts company records (matched by domain). Creates notes with signal breakdowns. Adds to Sales list as "Lead".</p>
+        </div>
+        <div>
+          <div class="number-label mb-12" style="color:var(--purple);">PHASE 03</div>
+          <h4>Vibe outreach</h4>
+          <p class="text-sm mt-8" style="color:rgba(255,255,255,0.7);">Finds contacts → creates People records → writes personalised messages. You review, personalize further, send, and log.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE VAULT -->
+<section class="section-white" id="vault">
+  <div class="container">
+    <div class="eyebrow">/08 — THE VAULT</div>
+    <h2>Our <span class="purple">second brain</span>.</h2>
+    <p class="lead mb-64">A structured knowledge system that holds everything — client intel, playbooks, templates, research. AI keeps it alive. You'll query it daily.</p>
+
+    <div class="grid-2-asym mb-48">
+      <div>
+        <h3 class="mb-24">Folder structure</h3>
+        <div class="code-block">
+<span class="purple">Amplio-Brain/</span>
+├── <span class="label">00-Inbox/</span> <span class="comment"># Raw captures, brain dumps</span>
+│   └── raw/ <span class="comment"># Immutable source material</span>
+├── <span class="label">01-Projects/</span> <span class="comment"># Time-bound work</span>
+├── <span class="label">02-Areas/</span> <span class="comment"># Ongoing responsibilities</span>
+├── <span class="label">03-Resources/</span> <span class="comment"># Brand · Playbooks · Templates</span>
+│   └── program.md <span class="comment"># Autoresearch config</span>
+├── <span class="label">04-Archives/</span> <span class="comment"># Completed work</span>
+├── <span class="label">05-Galaxy/</span> <span class="comment"># Atomic linked notes</span>
+├── <span class="purple">06-Clients/</span> <span class="comment"># ← you'll live here</span>
+│   ├── _Prospects/ <span class="comment"># Pipeline dashboard</span>
+│   └── [client]/ <span class="comment"># Per-client spaces</span>
+├── CLAUDE.md <span class="comment"># The master schema</span>
+└── memory.md <span class="comment"># Session continuity</span>
+        </div>
+      </div>
+      <div>
+        <h3 class="mb-24">Why it matters for you</h3>
+        <div class="card mb-16">
+          <h4>Client intelligence on tap</h4>
+          <p class="text-sm mt-8">Every client has a dedicated space in <code style="background:var(--off-white);padding:2px 6px;border-radius:3px;font-family:'Roboto Mono',monospace;font-size:12px;">06-Clients/</code> with an overview, meeting notes, data context, and recommendations tracker. Before any call: read their <code style="background:var(--off-white);padding:2px 6px;border-radius:3px;font-family:'Roboto Mono',monospace;font-size:12px;">_overview.md</code>.</p>
+        </div>
+        <div class="card mb-16">
+          <h4>Pipeline mirror</h4>
+          <p class="text-sm mt-8">The vault's pipeline dashboard in <code style="background:var(--off-white);padding:2px 6px;border-radius:3px;font-family:'Roboto Mono',monospace;font-size:12px;">06-Clients/_Prospects/</code> mirrors and enriches Attio. ~30 prospects across Denmark · UK · Germany · Netherlands.</p>
+        </div>
+        <div class="card mb-16">
+          <h4>Templates &amp; playbooks</h4>
+          <p class="text-sm mt-8">Outreach templates, proposal templates, meeting notes templates. All in <code style="background:var(--off-white);padding:2px 6px;border-radius:3px;font-family:'Roboto Mono',monospace;font-size:12px;">03-Resources/Templates/</code>. Never start from scratch.</p>
+        </div>
+        <div class="card">
+          <h4>AI-powered research</h4>
+          <p class="text-sm mt-8">Our autoresearch system continuously enriches the vault — compiling raw sources, cross-linking concepts, surfacing patterns across clients.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3 class="mb-24">Key files to bookmark</h3>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>When you need to…</th>
+            <th>Open this file</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Score a lead / qualify a prospect</td><td><code style="background:var(--off-white);padding:3px 8px;border-radius:3px;font-family:'Roboto Mono',monospace;font-size:12px;">03-Resources/Brand/ICP-buyer-personas-summary.md</code></td></tr>
+          <tr><td>Write outreach messages</td><td><code style="background:var(--off-white);padding:3px 8px;border-radius:3px;font-family:'Roboto Mono',monospace;font-size:12px;">03-Resources/Templates/outreach-templates.md</code></td></tr>
+          <tr><td>Handle competitive objections</td><td><code style="background:var(--off-white);padding:3px 8px;border-radius:3px;font-family:'Roboto Mono',monospace;font-size:12px;">03-Resources/Brand/competitive-intel.md</code></td></tr>
+          <tr><td>Write a proposal</td><td><code style="background:var(--off-white);padding:3px 8px;border-radius:3px;font-family:'Roboto Mono',monospace;font-size:12px;">03-Resources/Templates/proposal-template.md</code></td></tr>
+          <tr><td>Prep for a client meeting</td><td><code style="background:var(--off-white);padding:3px 8px;border-radius:3px;font-family:'Roboto Mono',monospace;font-size:12px;">06-Clients/[name]/_overview.md</code></td></tr>
+          <tr><td>Review the pipeline</td><td><code style="background:var(--off-white);padding:3px 8px;border-radius:3px;font-family:'Roboto Mono',monospace;font-size:12px;">06-Clients/_Prospects/_Pipeline-Dashboard.md</code></td></tr>
+          <tr><td>Check brand voice / tone</td><td><code style="background:var(--off-white);padding:3px 8px;border-radius:3px;font-family:'Roboto Mono',monospace;font-size:12px;">03-Resources/Brand/brand-voice-guide.md</code></td></tr>
+          <tr><td>Understand Attio CRM fields</td><td><code style="background:var(--off-white);padding:3px 8px;border-radius:3px;font-family:'Roboto Mono',monospace;font-size:12px;">03-Resources/Playbooks/attio-crm-structure-blueprint.md</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- DAY TO DAY -->
+<section class="section-light" id="day-to-day">
+  <div class="container">
+    <div class="eyebrow">/09 — YOUR DAY-TO-DAY</div>
+    <h2>What a typical <span class="purple">day and week</span> looks like.</h2>
+    <p class="lead mb-64">A rhythm that mixes pipeline hygiene, outreach, calls, and prep. Supported by AI and the vault.</p>
+
+    <div class="grid-2-asym mb-64">
+      <div>
+        <h3 class="mb-24">A day in your life</h3>
+        <div class="accordion-item open">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>09:00 — Morning: Pipeline review</span>
+            <span class="arrow">+</span>
+          </div>
+          <div class="accordion-body">
+            Open the Sales list in Attio. Filter by "Next Action Date = Today" or "Stage = Meeting / Proposal". Check which deals need follow-up. Review any new leads that came in from the scraper overnight. Pull up Gmail for any replies from yesterday's outreach.
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>10:30 — Outreach block</span>
+            <span class="arrow">+</span>
+          </div>
+          <div class="accordion-body">
+            Work through qualified leads in the Sales list. Send personalised LinkedIn DMs or emails using the outreach templates (adapted to the persona). Update <code style="background:var(--white);padding:2px 6px;border-radius:3px;">outreach_status</code> and <code style="background:var(--white);padding:2px 6px;border-radius:3px;">last_contacted_date</code> on each record. Log notes on what you said.
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>14:00 — Discovery calls &amp; proposals</span>
+            <span class="arrow">+</span>
+          </div>
+          <div class="accordion-body">
+            Take discovery calls. After each call, update the company record in Attio: move the Sales list stage forward, add notes, update the pitch angle. If ready for a proposal, move to "Proposal" stage and note the recommended tier. Pull the proposal template from the vault.
+          </div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>17:00 — End of day: Update &amp; plan</span>
+            <span class="arrow">+</span>
+          </div>
+          <div class="accordion-body">
+            Review everything you touched today. Make sure all Attio records are up to date. Set "Next Action" and "Next Action Date" on every active deal — no deal should ever be "stale". Flag any deals that need Walter or Daragh's input. Drop notes in memory.md if anything needs to carry over.
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3 class="mb-24">A week in your life</h3>
+        <div class="card-flat" style="border-left: 3px solid var(--purple);margin-bottom:12px;">
+          <div class="number-label mb-8">MONDAY</div>
+          <h4>Pipeline review &amp; planning</h4>
+          <p class="text-sm mt-8">Review all active deals in Attio. Check which prospects need follow-up. Plan the week's outreach targets. Review new scraped leads.</p>
+        </div>
+        <div class="card-flat" style="border-left: 3px solid var(--purple);margin-bottom:12px;">
+          <div class="number-label mb-8">TUE · WED · THU</div>
+          <h4>Core selling days</h4>
+          <p class="text-sm mt-8">Send personalised outreach (LinkedIn DM + email). Run discovery calls. Send proposals. Update Attio after every touchpoint.</p>
+        </div>
+        <div class="card-flat" style="border-left: 3px solid var(--purple);margin-bottom:12px;">
+          <div class="number-label mb-8">FRIDAY</div>
+          <h4>Reporting &amp; prep</h4>
+          <p class="text-sm mt-8">Update pipeline numbers. Flag deals that need Walter or Daragh's help. Prep for next week's calls. Review vault for cross-client patterns.</p>
+        </div>
+        <div class="card-purple">
+          <h4>Target rhythm</h4>
+          <p style="color:rgba(255,255,255,0.9);font-size:14px;line-height:1.6;margin-top:8px;">Aim for 15–25 fresh outreach touches per day. Every deal in the Sales list should have a "Next Action" and a date — always.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3 class="mb-24">Your tools</h3>
+    <div class="grid-4">
+      <div class="card">
+        <div class="badge mb-16">CRM</div>
+        <h4>Attio</h4>
+        <p class="text-sm mt-8">Pipeline, contacts, deal tracking, notes. Your primary daily workspace.</p>
+      </div>
+      <div class="card">
+        <div class="badge mb-16">AI</div>
+        <h4>Claude (Cowork)</h4>
+        <p class="text-sm mt-8">AI assistant wired into the vault, Attio, Gmail, and web scraping. Ask it to score leads, draft outreach, pull client briefs.</p>
+      </div>
+      <div class="card">
+        <div class="badge mb-16">KB</div>
+        <h4>The Vault</h4>
+        <p class="text-sm mt-8">Knowledge base with templates, playbooks, client intel, ICP data. Read before every call.</p>
+      </div>
+      <div class="card">
+        <div class="badge mb-16">LI</div>
+        <h4>LinkedIn</h4>
+        <p class="text-sm mt-8">Primary outreach channel for agency owners and founders. DMs, not InMail.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VOICE -->
+<section class="section-white" id="voice">
+  <div class="container">
+    <div class="eyebrow">/10 — BRAND VOICE</div>
+    <h2>Sound like a smart, experienced <span class="purple">colleague</span>.</h2>
+    <p class="lead mb-64">Every message represents Amplio. Here's how we talk — and how we don't.</p>
+
+    <div class="grid-2 mb-48">
+      <div class="card" style="border-left: 3px solid var(--green);">
+        <div class="number-label mb-12" style="color:var(--green);">DO THIS</div>
+        <h4 style="margin-bottom:16px;">On-brand examples</h4>
+        <div style="font-size:14px;line-height:1.9;">
+          <p class="mb-8"><strong>Confident, not arrogant:</strong><br><em>"We've lifted ROAS by 23% on average."</em></p>
+          <p class="mb-8"><strong>Direct, not blunt:</strong><br><em>"Your GA4 isn't tracking purchases correctly — here's why."</em></p>
+          <p class="mb-8"><strong>Technical, not intimidating:</strong><br><em>"Server-side GTM isolates conversion data from third-party cookies."</em></p>
+          <p><strong>Warm, not casual:</strong><br><em>"Let's fix this tracking gap together."</em></p>
+        </div>
+      </div>
+      <div class="card" style="border-left: 3px solid var(--red);">
+        <div class="number-label mb-12" style="color:var(--red);">NOT THIS</div>
+        <h4 style="margin-bottom:16px;">Off-brand examples</h4>
+        <div style="font-size:14px;line-height:1.9;">
+          <p class="mb-8"><strong>Arrogant:</strong><br><em>"We're the best data experts you'll find."</em></p>
+          <p class="mb-8"><strong>Blunt:</strong><br><em>"Your setup is broken and amateur."</em></p>
+          <p class="mb-8"><strong>Intimidating:</strong><br><em>"You need sGTM implementation asap."</em></p>
+          <p><strong>Too casual:</strong><br><em>"Yo, ur tracking is sus lol."</em></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card-flat">
+        <h4 class="mb-16">Preferred terms</h4>
+        <div style="font-size:14px;line-height:2;">
+          Say <strong class="purple">tracking</strong> — not instrumentation.<br>
+          Say <strong class="purple">insights / intelligence</strong> — not learnings.<br>
+          Say <strong class="purple">setup / implementation</strong> — not deployment.<br>
+          Say <strong class="purple">fix / solve</strong> — not optimize / enhance.<br>
+          Say <strong class="purple">AI-powered</strong> — not ML / algorithm-driven.<br>
+          Say <strong class="purple">privacy-compliant</strong> — not GDPR-ready.
+        </div>
+      </div>
+      <div class="card-flat">
+        <h4 class="mb-16">Style rules</h4>
+        <div style="font-size:14px;line-height:2;">
+          <strong>Length:</strong> 15–20 words max per sentence.<br>
+          <strong>Voice:</strong> Active, not passive.<br>
+          <strong>Pronouns:</strong> Use "you" and "your" liberally.<br>
+          <strong>Numbers:</strong> Specific, never vague.<br>
+          <strong>Verbs:</strong> fix, solve, prove, embed, automate — not leverage, synergize.<br>
+          <strong>Proof points:</strong> Only verified ones. Never fabricate.
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-64" style="text-align:center;padding:48px 24px;background:var(--off-white);border-radius:6px;">
+      <div class="eyebrow">/FINAL WORD</div>
+      <h2 style="font-size:36px;max-width:700px;margin:0 auto 16px;">Welcome aboard. Read this twice, then read a client file. You'll be ready.</h2>
+      <p class="lead" style="margin:0 auto;">Questions? Ask Walter or Daragh. Better questions? Ask Claude.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="flex items-center justify-between">
+      <div>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 387 98" fill="none" style="height:20px;width:auto;margin-bottom:12px;display:block;">
+          <path fill="#FFFFFF" d="m106.441 79.658 23.8-65.164h15.704l23.622 65.164H155.81l-5.264-15.007h-25.392l-5.264 15.007h-13.449Zm22.561-26.03h17.651l-8.847-25.19-8.804 25.19Zm41.881 26.03V30.874h11.768v6.419c1.444-2.302 3.45-4.132 6.016-5.49 2.595-1.357 5.397-2.021 8.405-1.992 3.303.03 6.193.767 8.67 2.214 2.507 1.416 4.365 3.364 5.574 5.843 1.415-2.42 3.48-4.368 6.193-5.843 2.713-1.505 5.736-2.243 9.068-2.214 5.191.03 9.364 1.653 12.52 4.87 3.155 3.217 4.733 7.467 4.733 12.75v32.227h-12.121V49.644c0-2.804-.826-5.047-2.477-6.73-1.652-1.681-3.849-2.537-6.592-2.567-2.654-.03-4.866.9-6.635 2.79-1.74 1.858-2.61 4.22-2.61 7.082v29.44h-12.121V49.156c0-2.656-.811-4.781-2.433-6.375-1.622-1.594-3.745-2.405-6.37-2.435-2.713-.03-4.969.96-6.768 2.966-1.799 2.007-2.698 4.56-2.698 7.659v28.686h-12.122Zm105.096-49.714c6.812 0 12.386 2.39 16.721 7.172 4.336 4.751 6.488 10.846 6.459 18.283-.029 7.467-2.241 13.56-6.636 18.283-4.394 4.722-10.026 7.068-16.898 7.038a20.316 20.316 0 0 1-8.67-1.814c-2.743-1.27-4.969-2.981-6.68-5.136v23.862h-12.121V30.874h12.032l-.044 6.463c1.829-2.273 4.173-4.073 7.034-5.4 2.861-1.329 5.795-1.993 8.803-1.993Zm-16.102 25.499c-.03 4.161 1.283 7.614 3.937 10.359 2.654 2.715 5.913 4.058 9.776 4.028 3.864.03 6.989-1.284 9.378-3.94 2.419-2.655 3.628-6.138 3.628-10.447 0-4.309-1.209-7.791-3.628-10.447-2.389-2.686-5.514-4.029-9.378-4.029-3.834 0-7.078 1.372-9.732 4.117-2.654 2.745-3.981 6.198-3.981 10.359ZM314.056 12.9v66.758h-12.077V12.9h12.077Zm5.165 66.758V30.874h12.12v48.784h-12.12Zm-.133-53.92v-12.35h12.651v12.35h-12.651Zm40.687 54.983c-7.462.03-13.596-2.332-18.403-7.083-4.778-4.752-7.181-10.861-7.211-18.328 0-4.928 1.092-9.34 3.274-13.236 2.183-3.896 5.22-6.906 9.113-9.031 3.892-2.155 8.301-3.232 13.227-3.232 3.716 0 7.166.635 10.351 1.904 3.214 1.24 5.942 2.98 8.184 5.223 2.241 2.214 3.996 4.914 5.264 8.102 1.297 3.158 1.946 6.581 1.946 10.27 0 3.69-.649 7.113-1.946 10.27-1.268 3.158-3.023 5.844-5.264 8.058-2.242 2.213-4.97 3.954-8.184 5.223-3.185 1.24-6.635 1.86-10.351 1.86Zm-13.05-25.41c0 4.249 1.194 7.702 3.583 10.358 2.418 2.627 5.573 3.94 9.467 3.94 3.922 0 7.092-1.313 9.511-3.94 2.447-2.656 3.671-6.11 3.671-10.359 0-4.309-1.224-7.776-3.671-10.403-2.419-2.656-5.589-3.984-9.511-3.984-3.923 0-7.093 1.328-9.512 3.984-2.388 2.656-3.568 6.124-3.538 10.403ZM87.455 40.877H5.76A5.763 5.763 0 0 0 0 46.642a5.763 5.763 0 0 0 5.76 5.764h81.695a5.763 5.763 0 0 0 5.76-5.764 5.763 5.763 0 0 0-5.76-5.765Z"/>
+          <path fill="#FFFFFF" d="M40.848 5.764V87.52a5.761 5.761 0 1 0 11.52 0V5.764A5.763 5.763 0 0 0 46.609 0a5.763 5.763 0 0 0-5.76 5.764Z"/>
+          <path fill="#FFFFFF" d="M71.418 13.662 13.65 71.47a5.768 5.768 0 0 0 0 8.152 5.757 5.757 0 0 0 8.147 0l57.766-57.809a5.768 5.768 0 0 0 0-8.152 5.757 5.757 0 0 0-8.146 0Z"/>
+        </svg>
+        <p style="color:rgba(255,255,255,0.5); font-size:14px;letter-spacing:-0.2px;">Better Data. Smarter Campaigns. Proven ROI.</p>
+      </div>
+      <div style="text-align:right;">
+        <p style="color:rgba(255,255,255,0.35); font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase;">Sales Onboarding · Confidential</p>
+        <p style="color:rgba(255,255,255,0.35); font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase; margin-top:4px;">Amplio Data® · Barcelona</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Tab switching
+function switchTab(event, tabId) {
+  const section = event.target.closest('section');
+  section.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  section.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+}
+
+// Accordion
+function toggleAccordion(header) {
+  const item = header.parentElement;
+  const wasOpen = item.classList.contains('open');
+  item.parentElement.querySelectorAll('.accordion-item').forEach(a => a.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+
+// Progress bar + active side nav tracking
+const progressBar = document.getElementById('progressBar');
+const sideNavLinks = document.querySelectorAll('.side-nav a');
+const sections = Array.from(sideNavLinks).map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+
+function onScroll() {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  progressBar.style.width = Math.min(100, (scrollTop / docHeight) * 100) + '%';
+
+  // Active side nav
+  let currentId = sections[0]?.id;
+  const middle = scrollTop + window.innerHeight / 3;
+  sections.forEach(s => {
+    if (s.offsetTop <= middle) currentId = s.id;
+  });
+  sideNavLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + currentId);
+  });
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener('click', e => {
+    const href = link.getAttribute('href');
+    if (href.length > 1) {
+      const target = document.querySelector(href);
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+    }
+  });
+});
+</script>
+
+</body>
+</html>

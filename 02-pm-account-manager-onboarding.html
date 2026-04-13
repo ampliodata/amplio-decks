@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amplio Data — PM / Account Manager Onboarding</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* AMPLIO PRESENTATION SYSTEM — shared stylesheet for onboarding suite */
+:root {
+  --charcoal: #131313; --off-black: #0C0C0C;
+  --white: #FFFFFF; --off-white: #F5F5F5; --warm-white: #FAFAFA;
+  --purple: #8B2CF5; --purple-dark: #6B22C4;
+  --purple-light: rgba(139,44,245,0.08); --purple-15: rgba(139,44,245,0.15); --purple-30: rgba(139,44,245,0.3);
+  --dark-gray: #3A3A3A; --mid-gray: #6B6B6B; --light-gray: #D3D3D3; --pale-gray: #E8E8E8;
+  --border: rgba(0,0,0,0.08); --border-dark: rgba(255,255,255,0.08);
+  --red: #DE362A; --orange: #FF9500; --green: #34C759;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-purple: 0 4px 20px rgba(139,44,245,0.3);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body { font-family: 'Satoshi', -apple-system, sans-serif; font-size: 16px; font-weight: 400; letter-spacing: -0.2px; line-height: 1.6; color: var(--charcoal); background: var(--white); -webkit-font-smoothing: antialiased; }
+
+.progress-bar { position: fixed; top: 0; left: 0; height: 2px; background: var(--purple); z-index: 200; width: 0%; transition: width 0.1s linear; }
+
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(255,255,255,0.92); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 14px 0; }
+.nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 40px; display: flex; align-items: center; justify-content: space-between; }
+.nav-logo { height: 24px; width: auto; }
+.nav-badge { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); text-transform: uppercase; letter-spacing: 1px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px; }
+
+.side-nav { position: fixed; left: 40px; top: 50%; transform: translateY(-50%); z-index: 50; display: flex; flex-direction: column; gap: 6px; }
+.side-nav a { display: flex; align-items: center; gap: 12px; font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); text-decoration: none; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; transition: all 0.2s; padding: 6px 0; }
+.side-nav a::before { content: ''; display: inline-block; width: 20px; height: 1px; background: var(--mid-gray); transition: all 0.2s; }
+.side-nav a:hover, .side-nav a.active { color: var(--purple); opacity: 1; }
+.side-nav a.active::before, .side-nav a:hover::before { width: 40px; background: var(--purple); }
+.side-nav a .label { white-space: nowrap; }
+
+.container { max-width: 1080px; margin: 0 auto; padding: 0 40px; }
+.container-wide { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+
+.section-white { background: var(--white); color: var(--charcoal); padding: 120px 0; }
+.section-light { background: var(--off-white); color: var(--charcoal); padding: 120px 0; }
+.section-dark { background: var(--charcoal); color: var(--white); padding: 120px 0; }
+.section-dark h2, .section-dark h3, .section-dark h4 { color: var(--white); }
+.section-dark .lead { color: rgba(255,255,255,0.6); }
+.section-dark .text-sm { color: rgba(255,255,255,0.5); }
+.section-dark .eyebrow { color: rgba(139,44,245,0.9); }
+
+h1 { font-size: 88px; font-weight: 700; letter-spacing: -4px; line-height: 0.95; margin-bottom: 32px; }
+h2 { font-size: 48px; font-weight: 700; letter-spacing: -2px; line-height: 1.05; margin-bottom: 24px; }
+h3 { font-size: 24px; font-weight: 700; letter-spacing: -0.8px; line-height: 1.25; margin-bottom: 14px; }
+h4 { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; line-height: 1.35; margin-bottom: 8px; }
+.lead { font-size: 22px; font-weight: 400; line-height: 1.55; color: var(--mid-gray); max-width: 720px; letter-spacing: -0.3px; }
+.text-sm { font-size: 14px; line-height: 1.6; color: var(--mid-gray); }
+.text-xs { font-size: 11px; line-height: 1.4; }
+.eyebrow { font-family: 'Roboto Mono', monospace; font-size: 12px; font-weight: 500; color: var(--purple); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 24px; display: inline-block; }
+.number-label { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); letter-spacing: 1px; text-transform: uppercase; }
+.purple { color: var(--purple); }
+.bold { font-weight: 700; }
+.italic { font-style: italic; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.grid-2-asym { display: grid; grid-template-columns: 1fr 1.4fr; gap: 60px; align-items: start; }
+
+.card { background: var(--white); border-radius: 6px; padding: 28px; border: 1px solid var(--border); transition: all 0.25s ease; }
+.card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.card-flat { background: var(--white); border-radius: 6px; padding: 28px; border: 1px solid var(--border); }
+.card-light { background: var(--off-white); border-radius: 6px; padding: 24px; border: 1px solid var(--border); }
+.card-dark { background: var(--dark-gray); border-radius: 6px; padding: 28px; border: 1px solid var(--border-dark); }
+.card-dark h3, .card-dark h4 { color: var(--white); }
+.card-dark p, .card-dark .text-sm { color: rgba(255,255,255,0.65); }
+.card-dark code { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); padding: 2px 6px; border-radius: 3px; font-family: 'Roboto Mono', monospace; font-size: 12px; }
+.card-purple { background: var(--purple); border-radius: 6px; padding: 28px; color: var(--white); box-shadow: var(--shadow-purple); }
+.card-purple h3, .card-purple h4 { color: var(--white); }
+.card-outlined { background: transparent; border: 1px solid var(--border); border-radius: 6px; padding: 28px; }
+
+.badge { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 26px; border-radius: 4px; background: var(--purple); color: var(--white); font-family: 'Roboto Mono', monospace; font-size: 11px; font-weight: 500; padding: 0 8px; letter-spacing: 0.5px; }
+.badge-ghost { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 26px; border-radius: 4px; background: var(--purple-light); color: var(--purple); font-family: 'Roboto Mono', monospace; font-size: 11px; font-weight: 500; padding: 0 10px; letter-spacing: 0.5px; border: 1px solid var(--purple-15); }
+.pill { display: inline-flex; align-items: center; background: var(--purple-light); border: 1px solid var(--purple-15); border-radius: 999px; padding: 5px 14px; font-size: 12px; font-weight: 500; color: var(--purple); letter-spacing: 0; }
+.pill-dark { display: inline-flex; align-items: center; background: rgba(139,44,245,0.15); border: 1px solid rgba(139,44,245,0.25); border-radius: 999px; padding: 5px 14px; font-size: 12px; font-weight: 500; color: #C898FD; }
+.pill-stage { display: inline-flex; align-items: center; background: var(--white); border: 1px solid var(--border); border-radius: 999px; padding: 5px 12px; font-size: 11px; font-weight: 600; color: var(--charcoal); }
+.pill-stage.active { background: var(--purple); color: var(--white); border-color: var(--purple); }
+
+.kpi-num { font-size: 56px; font-weight: 900; letter-spacing: -3px; line-height: 1; color: var(--purple); margin-bottom: 8px; }
+.kpi-label { font-size: 13px; font-weight: 500; color: var(--mid-gray); }
+.section-dark .kpi-label { color: rgba(255,255,255,0.5); }
+
+.timeline { border-left: 2px solid var(--purple); margin-left: 16px; padding-left: 32px; position: relative; }
+.tl-item { position: relative; padding-bottom: 32px; }
+.tl-item:last-child { padding-bottom: 0; }
+.tl-item::before { content: ''; position: absolute; left: -39px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--purple); box-shadow: 0 0 0 4px var(--white); }
+.section-dark .tl-item::before { box-shadow: 0 0 0 4px var(--charcoal); }
+.tl-item h4 { margin-bottom: 6px; }
+.tl-day { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--purple); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font-family: 'Roboto Mono', monospace; font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--mid-gray); padding: 14px 16px; border-bottom: 1px solid var(--border); }
+td { padding: 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.section-dark th { color: rgba(255,255,255,0.4); border-bottom-color: rgba(255,255,255,0.08); }
+.section-dark td { color: rgba(255,255,255,0.85); border-bottom-color: rgba(255,255,255,0.06); }
+
+.hero { padding-top: 180px; padding-bottom: 100px; position: relative; overflow: hidden; }
+.hero-meta { display: flex; gap: 40px; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+.hero-meta-item .num { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--purple); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.hero-meta-item .val { font-size: 14px; color: var(--charcoal); font-weight: 500; }
+
+.tabs { display: flex; gap: 4px; margin-bottom: 32px; flex-wrap: wrap; border-bottom: 1px solid var(--border); padding-bottom: 0; }
+.section-dark .tabs { border-bottom-color: var(--border-dark); }
+.tab { padding: 14px 20px; font-size: 14px; font-weight: 500; cursor: pointer; color: var(--mid-gray); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.2s; }
+.tab:hover { color: var(--charcoal); }
+.section-dark .tab:hover { color: var(--white); }
+.tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+.tab-content { display: none; animation: fadeIn 0.3s ease; }
+.tab-content.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+.accordion-item { border-bottom: 1px solid var(--border); background: transparent; }
+.accordion-header { padding: 24px 0; cursor: pointer; display: flex; align-items: center; justify-content: space-between; font-weight: 600; font-size: 18px; transition: all 0.2s; letter-spacing: -0.3px; }
+.accordion-header:hover { color: var(--purple); }
+.accordion-header .arrow { transition: transform 0.25s; color: var(--purple); font-size: 16px; font-weight: 300; }
+.accordion-item.open .accordion-header .arrow { transform: rotate(45deg); }
+.accordion-body { display: none; padding: 0 0 28px; font-size: 15px; line-height: 1.75; color: var(--mid-gray); max-width: 780px; }
+.accordion-item.open .accordion-body { display: block; }
+
+.process-flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; position: relative; }
+.process-step { background: var(--white); border: 1px solid var(--border); border-radius: 6px; padding: 24px 20px; position: relative; transition: all 0.25s; }
+.process-step:hover { border-color: var(--purple); transform: translateY(-2px); }
+.process-step.last { background: var(--purple); color: var(--white); border-color: var(--purple); }
+.process-step.last h4, .process-step.last .step-num { color: var(--white); }
+.process-step.last .step-num { background: rgba(255,255,255,0.2); }
+.process-step.last .text-sm { color: rgba(255,255,255,0.85); }
+.step-num { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--purple); letter-spacing: 1px; margin-bottom: 12px; text-transform: uppercase; font-weight: 500; display: block; }
+.process-step h4 { font-size: 16px; margin-bottom: 6px; }
+.process-step .text-sm { font-size: 13px; }
+
+.quote-card { background: var(--off-white); border-left: 3px solid var(--purple); padding: 24px 28px; margin: 32px 0; border-radius: 0 6px 6px 0; font-style: italic; color: var(--charcoal); font-size: 18px; line-height: 1.6; letter-spacing: -0.3px; }
+.quote-card .quote-author { font-style: normal; font-size: 13px; color: var(--mid-gray); margin-top: 12px; display: block; }
+
+.code-block { background: var(--off-black); border-radius: 6px; padding: 24px; font-family: 'Roboto Mono', monospace; font-size: 13px; line-height: 1.8; color: rgba(255,255,255,0.85); overflow-x: auto; border: 1px solid var(--border-dark); white-space: pre; }
+.code-block .comment { color: rgba(255,255,255,0.4); }
+.code-block .purple { color: var(--purple); }
+.code-block .label { color: #C898FD; }
+.code-block .subject { color: var(--orange); font-weight: 500; }
+
+.divider { border-top: 1px solid var(--pale-gray); margin: 64px 0; }
+.section-dark .divider { border-color: var(--border-dark); }
+
+.mb-8 { margin-bottom: 8px; } .mb-12 { margin-bottom: 12px; } .mb-16 { margin-bottom: 16px; }
+.mb-24 { margin-bottom: 24px; } .mb-32 { margin-bottom: 32px; } .mb-48 { margin-bottom: 48px; } .mb-64 { margin-bottom: 64px; }
+.mt-16 { margin-top: 16px; } .mt-32 { margin-top: 32px; } .mt-48 { margin-top: 48px; } .mt-64 { margin-top: 64px; }
+.flex { display: flex; } .flex-col { flex-direction: column; }
+.items-center { align-items: center; } .items-start { align-items: flex-start; }
+.justify-between { justify-content: space-between; }
+.gap-16 { gap: 16px; } .gap-24 { gap: 24px; } .gap-32 { gap: 32px; }
+.text-center { text-align: center; }
+.max-w-700 { max-width: 700px; } .max-w-800 { max-width: 800px; }
+
+.stat-row { display: grid; grid-template-columns: auto 1fr auto; gap: 20px; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--border); }
+.stat-row:last-child { border-bottom: none; }
+.section-dark .stat-row { border-bottom-color: var(--border-dark); }
+.stat-row .stat-num { font-family: 'Roboto Mono', monospace; font-size: 11px; color: var(--mid-gray); letter-spacing: 1px; }
+.stat-row .stat-value { font-size: 22px; font-weight: 700; color: var(--purple); letter-spacing: -0.5px; }
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--off-white); }
+::-webkit-scrollbar-thumb { background: var(--light-gray); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--mid-gray); }
+
+footer { background: var(--off-black); color: rgba(255,255,255,0.4); padding: 64px 0 40px; font-size: 13px; }
+footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
+
+@media (max-width: 1300px) { .side-nav { display: none; } }
+@media (max-width: 900px) {
+  .grid-2, .grid-3, .grid-4, .grid-5, .grid-2-asym { grid-template-columns: 1fr; }
+  .process-flow { grid-template-columns: 1fr; }
+  h1 { font-size: 52px; letter-spacing: -2px; }
+  h2 { font-size: 36px; letter-spacing: -1.5px; }
+  .container, .container-wide { padding: 0 24px; }
+  .section-white, .section-light, .section-dark { padding: 80px 0; }
+  .hero { padding-top: 140px; }
+  .kpi-num { font-size: 40px; }
+  .hero-meta { flex-direction: column; gap: 20px; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="flex items-center gap-16">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 387 98" fill="none" class="nav-logo">
+        <path fill="#0C0C0C" d="m106.441 79.658 23.8-65.164h15.704l23.622 65.164H155.81l-5.264-15.007h-25.392l-5.264 15.007h-13.449Zm22.561-26.03h17.651l-8.847-25.19-8.804 25.19Zm41.881 26.03V30.874h11.768v6.419c1.444-2.302 3.45-4.132 6.016-5.49 2.595-1.357 5.397-2.021 8.405-1.992 3.303.03 6.193.767 8.67 2.214 2.507 1.416 4.365 3.364 5.574 5.843 1.415-2.42 3.48-4.368 6.193-5.843 2.713-1.505 5.736-2.243 9.068-2.214 5.191.03 9.364 1.653 12.52 4.87 3.155 3.217 4.733 7.467 4.733 12.75v32.227h-12.121V49.644c0-2.804-.826-5.047-2.477-6.73-1.652-1.681-3.849-2.537-6.592-2.567-2.654-.03-4.866.9-6.635 2.79-1.74 1.858-2.61 4.22-2.61 7.082v29.44h-12.121V49.156c0-2.656-.811-4.781-2.433-6.375-1.622-1.594-3.745-2.405-6.37-2.435-2.713-.03-4.969.96-6.768 2.966-1.799 2.007-2.698 4.56-2.698 7.659v28.686h-12.122Zm105.096-49.714c6.812 0 12.386 2.39 16.721 7.172 4.336 4.751 6.488 10.846 6.459 18.283-.029 7.467-2.241 13.56-6.636 18.283-4.394 4.722-10.026 7.068-16.898 7.038a20.316 20.316 0 0 1-8.67-1.814c-2.743-1.27-4.969-2.981-6.68-5.136v23.862h-12.121V30.874h12.032l-.044 6.463c1.829-2.273 4.173-4.073 7.034-5.4 2.861-1.329 5.795-1.993 8.803-1.993Zm-16.102 25.499c-.03 4.161 1.283 7.614 3.937 10.359 2.654 2.715 5.913 4.058 9.776 4.028 3.864.03 6.989-1.284 9.378-3.94 2.419-2.655 3.628-6.138 3.628-10.447 0-4.309-1.209-7.791-3.628-10.447-2.389-2.686-5.514-4.029-9.378-4.029-3.834 0-7.078 1.372-9.732 4.117-2.654 2.745-3.981 6.198-3.981 10.359ZM314.056 12.9v66.758h-12.077V12.9h12.077Zm5.165 66.758V30.874h12.12v48.784h-12.12Zm-.133-53.92v-12.35h12.651v12.35h-12.651Zm40.687 54.983c-7.462.03-13.596-2.332-18.403-7.083-4.778-4.752-7.181-10.861-7.211-18.328 0-4.928 1.092-9.34 3.274-13.236 2.183-3.896 5.22-6.906 9.113-9.031 3.892-2.155 8.301-3.232 13.227-3.232 3.716 0 7.166.635 10.351 1.904 3.214 1.24 5.942 2.98 8.184 5.223 2.241 2.214 3.996 4.914 5.264 8.102 1.297 3.158 1.946 6.581 1.946 10.27 0 3.69-.649 7.113-1.946 10.27-1.268 3.158-3.023 5.844-5.264 8.058-2.242 2.213-4.97 3.954-8.184 5.223-3.185 1.24-6.635 1.86-10.351 1.86Zm-13.05-25.41c0 4.249 1.194 7.702 3.583 10.358 2.418 2.627 5.573 3.94 9.467 3.94 3.922 0 7.092-1.313 9.511-3.94 2.447-2.656 3.671-6.11 3.671-10.359 0-4.309-1.224-7.776-3.671-10.403-2.419-2.656-5.589-3.984-9.511-3.984-3.923 0-7.093 1.328-9.512 3.984-2.388 2.656-3.568 6.124-3.538 10.403ZM87.455 40.877H5.76A5.763 5.763 0 0 0 0 46.642a5.763 5.763 0 0 0 5.76 5.764h81.695a5.763 5.763 0 0 0 5.76-5.764 5.763 5.763 0 0 0-5.76-5.765Z"/>
+        <path fill="#0C0C0C" d="M40.848 5.764V87.52a5.761 5.761 0 1 0 11.52 0V5.764A5.763 5.763 0 0 0 46.609 0a5.763 5.763 0 0 0-5.76 5.764Z"/>
+        <path fill="#0C0C0C" d="M71.418 13.662 13.65 71.47a5.768 5.768 0 0 0 0 8.152 5.757 5.757 0 0 0 8.147 0l57.766-57.809a5.768 5.768 0 0 0 0-8.152 5.757 5.757 0 0 0-8.146 0Z"/>
+      </svg>
+      <span class="nav-badge">PM / Account Manager Onboarding</span>
+    </div>
+    <span class="text-sm" style="font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;">Confidential · v1.0</span>
+  </div>
+</nav>
+
+<div class="side-nav" id="sideNav">
+  <a href="#hero" class="active"><span class="label">Welcome</span></a>
+  <a href="#role"><span class="label">Your role</span></a>
+  <a href="#week1"><span class="label">Week 1</span></a>
+  <a href="#clients"><span class="label">Active clients</span></a>
+  <a href="#lifecycle"><span class="label">Lifecycle</span></a>
+  <a href="#onboarding"><span class="label">Onboarding</span></a>
+  <a href="#reporting"><span class="label">Reporting</span></a>
+  <a href="#health"><span class="label">Health</span></a>
+  <a href="#loop"><span class="label">Learning loop</span></a>
+  <a href="#rituals"><span class="label">Rituals</span></a>
+</div>
+
+<section class="section-white hero" id="hero">
+  <div class="container">
+    <div class="eyebrow">/FOR YOUR EYES ONLY — INTERNAL</div>
+    <h1>Welcome,<br><span class="purple">Account Manager.</span></h1>
+    <p class="lead">You're the owner of the client experience. Retention, expansion, monthly reporting, and making sure the Vault learns from every interaction. Everything you need is in this doc.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><div class="num">Reports to</div><div class="val">Walter &amp; Daragh · Founders</div></div>
+      <div class="hero-meta-item"><div class="num">North star</div><div class="val">Zero avoidable churn · MRR expansion</div></div>
+      <div class="hero-meta-item"><div class="num">Core tools</div><div class="val">Vault · Attio · GA4 · Gmail · Claude</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-light" id="role">
+  <div class="container">
+    <div class="grid-2-asym">
+      <div>
+        <div class="eyebrow">/01 — YOUR ROLE</div>
+        <h2>You own the <span class="purple">relationship</span> — and the retention.</h2>
+      </div>
+      <div>
+        <p class="lead mb-32">Sales closes a deal. You deliver the next 24 months. Onboarding, monthly reports, expansion conversations, churn prevention, pattern extraction.</p>
+        <div class="quote-card">A great AM at Amplio isn't reactive. They spot problems before the client sees them, propose a fix, and log the outcome so everyone gets smarter.<span class="quote-author">— The standard</span></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <h3 class="mb-24">What success looks like</h3>
+    <div class="grid-4">
+      <div class="card"><span class="pill mb-16">Metric 01</span><h4>Retention rate</h4><p class="text-sm mt-12">Active clients who stay ≥6 months. Target: &gt;90%.</p></div>
+      <div class="card"><span class="pill mb-16">Metric 02</span><h4>Health score avg</h4><p class="text-sm mt-12">Mean health score across portfolio. Target: &gt;80 / 100.</p></div>
+      <div class="card"><span class="pill mb-16">Metric 03</span><h4>Expansion MRR</h4><p class="text-sm mt-12">Clients that move from Foundation → Maintained, or add a service.</p></div>
+      <div class="card"><span class="pill mb-16">Metric 04</span><h4>Loop closure</h4><p class="text-sm mt-12">% of recommendations logged + measured. Target: 100%.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-white" id="week1">
+  <div class="container">
+    <div class="eyebrow">/02 — YOUR FIRST WEEK</div>
+    <h2>Start here. <span class="purple">In order.</span></h2>
+    <p class="lead mb-64">No heroics. Read the Vault. Meet the clients. By Friday you own the handoff on at least one account.</p>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-day">Day 01 · Monday</div><h4>Read CLAUDE.md + the Amplio Way of Work deck</h4><p class="text-sm">Open the Vault. Read CLAUDE.md end to end — that's the company OS. Then read <code>01-amplio-way-of-work.html</code>. Don't skip.</p></div>
+      <div class="tl-item"><div class="tl-day">Day 02 · Tuesday</div><h4>Shadow Walter or Daragh on 2 client calls</h4><p class="text-sm">Watch how he runs a monthly review and a tracking audit. Take meeting notes in each client's <code>meeting-notes/</code>.</p></div>
+      <div class="tl-item"><div class="tl-day">Day 03 · Wednesday</div><h4>Read every active client's _overview.md</h4><p class="text-sm">Certify, Odisei, Cropple, Code &amp; Wander, Birdie, The Lily Effect, Rapid Agency + Malone Hotel. Know the contacts, scope, status, and open issues.</p></div>
+      <div class="tl-item"><div class="tl-day">Day 04 · Thursday</div><h4>Run your first "Client health" command</h4><p class="text-sm">Ask Claude: "Client health". Review the output. Flag anything &lt;70. Draft the intervention plan for the lowest-score client.</p></div>
+      <div class="tl-item"><div class="tl-day">Day 05 · Friday</div><h4>Take ownership of one account</h4><p class="text-sm">Walter or Daragh hands you one client. You own the next monthly report, the next check-in, and the recommendations tracker from now on.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-light" id="clients">
+  <div class="container">
+    <div class="eyebrow">/03 — THE PORTFOLIO</div>
+    <h2>Who we serve <span class="purple">right now</span>.</h2>
+    <p class="lead mb-64">Memorize this table by end of week 1. Every client has a <code>_overview.md</code> — read it before you ever write to them.</p>
+    <table>
+      <thead><tr><th>Client</th><th>Status</th><th>Tier</th><th>Contact</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Certify Education</strong></td><td><span class="pill">Active</span></td><td>€400/mo</td><td>Carme Sanchez</td><td>Google Ads mgmt (BCN + MAD), monthly reporting. IELTS test prep. 12 invoices since Apr 2025.</td></tr>
+        <tr><td><strong>Odisei Music</strong></td><td><span class="pill">Active</span></td><td>€600/mo</td><td>Gaby &amp; Kim</td><td>Active since Sep 2025. Read <code>06-Clients/Odisei/_overview.md</code> carefully.</td></tr>
+        <tr><td><strong>Cropple</strong></td><td><span class="pill" style="background:#FFF4E0;color:var(--orange);border-color:#FFE0B0;">Onboarding</span></td><td>—</td><td>—</td><td>Daily image guessing game. Website audit complete.</td></tr>
+        <tr><td><strong>Code &amp; Wander</strong></td><td><span class="pill">Active</span></td><td>Project</td><td>Alessia (London)</td><td>4 invoices, €1,280 total. Last Dec 2025.</td></tr>
+        <tr><td><strong>Birdie</strong></td><td><span class="pill">Active</span></td><td>Project</td><td>Lewis Clayton (London)</td><td>1 invoice, €3,150. Dec 2025.</td></tr>
+        <tr><td><strong>The Lily Effect</strong></td><td><span class="pill">Active</span></td><td>—</td><td>TBD</td><td>Not yet in Xolo. Details TBD.</td></tr>
+        <tr><td><strong>Rapid Agency</strong> <span class="badge-ghost" style="margin-left:6px;">Partner</span></td><td><span class="pill">Active</span></td><td>Project</td><td>Kevin Doran · Sean Webb</td><td>Belfast agency partner. Sends clients (Malone, Alternative Energy). €2,040 total.</td></tr>
+        <tr><td><strong>Malone Hotel</strong> <span class="badge-ghost" style="margin-left:6px;">via Rapid</span></td><td><span class="pill">Active</span></td><td>Project</td><td>via Rapid Agency</td><td>4-star Belfast hotel. Conversion tracking.</td></tr>
+      </tbody>
+    </table>
+    <p class="text-sm mt-32">Pipeline: ~30 prospects across Denmark, UK, Germany, Netherlands. See <code>06-Clients/_Prospects/_Pipeline-Dashboard.md</code>.</p>
+  </div>
+</section>
+
+<section class="section-white" id="lifecycle">
+  <div class="container">
+    <div class="eyebrow">/04 — THE CLIENT LIFECYCLE</div>
+    <h2>Five stages. <span class="purple">One owner.</span></h2>
+    <p class="lead mb-64">Every client moves through these stages. Your job: keep them moving in the right direction.</p>
+    <div class="process-flow">
+      <div class="process-step"><span class="step-num">Stage 01</span><h4>Onboarding</h4><p class="text-sm">Kickoff, access, data-context setup. 48h to full deployment.</p></div>
+      <div class="process-step"><span class="step-num">Stage 02</span><h4>Steady</h4><p class="text-sm">Monthly reports, tracking health, proactive recommendations.</p></div>
+      <div class="process-step"><span class="step-num">Stage 03</span><h4>Expansion</h4><p class="text-sm">Tier upgrade, added service lines, multi-property.</p></div>
+      <div class="process-step"><span class="step-num">Stage 04</span><h4>Renewal</h4><p class="text-sm">Contract check-ins, quarterly reviews, pricing conversations.</p></div>
+      <div class="process-step last"><span class="step-num">Stage 05</span><h4>Churn / Revive</h4><p class="text-sm">Health &lt;70 triggers the save playbook. Own it early.</p></div>
+    </div>
+    <div class="divider"></div>
+    <h3 class="mb-24">Attio = CRM source of truth</h3>
+    <p class="text-sm mb-32" style="max-width:780px;">Every client lives in the <strong>Client Success</strong> list in Attio. Stage updates in Attio mirror the Vault and trigger automations. Never leave Attio out of sync with the Vault.</p>
+    <div class="grid-5">
+      <span class="pill-stage active">Onboarding</span>
+      <span class="pill-stage">Steady</span>
+      <span class="pill-stage">Expansion</span>
+      <span class="pill-stage">Renewal</span>
+      <span class="pill-stage">Churned</span>
+    </div>
+  </div>
+</section>
+
+<section class="section-dark" id="onboarding">
+  <div class="container">
+    <div class="eyebrow">/05 — CLIENT ONBOARDING</div>
+    <h2>48 hours. <span class="purple">No fumbling.</span></h2>
+    <p class="lead mb-48">The single biggest retention signal is how smooth onboarding felt. These are the exact steps, in order.</p>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-day">Hour 00 · Kickoff call</div><h4>Run "New client: [name]"</h4><p class="text-sm">Claude creates the full space from template: folder tree, _overview.md, recommendations-tracker, data-context, subfolder indexes. Update _Client-Index.md.</p></div>
+      <div class="tl-item"><div class="tl-day">Hour 02 · Access collection</div><h4>Use the client-access-checklist</h4><p class="text-sm">GA4 admin, GTM publish, Google Ads MCC link, Ads grants, Search Console, Stape. Everything documented in <code>correspondence/</code>.</p></div>
+      <div class="tl-item"><div class="tl-day">Hour 08 · Data-context build</div><h4>Run the client-data-context skill</h4><p class="text-sm">Auto-discovers IP Amplio sources, maps schemas, pulls baseline metrics. If API isn't available, fall back to <code>manual-data-context-template.md</code>.</p></div>
+      <div class="tl-item"><div class="tl-day">Hour 24 · Tracking audit</div><h4>Use website-scraping-scorer + analytics-tracking skills</h4><p class="text-sm">Baseline their current tracking. Note every gap. Score the implementation.</p></div>
+      <div class="tl-item"><div class="tl-day">Hour 36 · Implementation</div><h4>Consent Mode v2, server-side GTM, enhanced conversions</h4><p class="text-sm">Follow <code>Stape-Implementation-Checklists.md</code>, <code>Consent-Mode-V2-Guide.md</code>, <code>Shopify-Tracking-SOP.md</code> as appropriate.</p></div>
+      <div class="tl-item"><div class="tl-day">Hour 48 · Handoff</div><h4>First monthly baseline in the report</h4><p class="text-sm">Use <code>monthly-report-template.md</code>. Schedule recurring check-in. Move Attio stage → Steady.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-white" id="reporting">
+  <div class="container">
+    <div class="eyebrow">/06 — MONTHLY REPORTING</div>
+    <h2>The report is the <span class="purple">product</span>.</h2>
+    <p class="lead mb-64">If clients only see one deliverable per month, it's this one. Treat it like a finished piece of writing.</p>
+    <div class="grid-2-asym">
+      <div>
+        <h3>Non-negotiables</h3>
+        <div class="mt-32">
+          <div class="stat-row"><div class="stat-num">01</div><div><strong>Always use the template.</strong> <code>monthly-report-template.md</code> — don't improvise structure.</div><span class="pill">Rule</span></div>
+          <div class="stat-row"><div class="stat-num">02</div><div><strong>Numbers first, narrative second.</strong> Lead with the KPIs the client cares about. Then explain why.</div><span class="pill">Rule</span></div>
+          <div class="stat-row"><div class="stat-num">03</div><div><strong>At least one recommendation.</strong> Log it in <code>recommendations-tracker.md</code>. Every. Single. Month.</div><span class="pill">Rule</span></div>
+          <div class="stat-row"><div class="stat-num">04</div><div><strong>Consent-impact always mentioned.</strong> 34% sessions hidden by consent — remind them what we're recovering.</div><span class="pill">Rule</span></div>
+          <div class="stat-row"><div class="stat-num">05</div><div><strong>On brand.</strong> Run the <code>marketing:brand-review</code> skill on the copy before it goes out.</div><span class="pill">Rule</span></div>
+        </div>
+      </div>
+      <div>
+        <h3>Report anatomy</h3>
+        <div class="code-block mt-32"><span class="comment"># Monthly Report · [Client] · [Month]</span>
+
+<span class="purple">## Executive Summary</span>
+- 3 bullets. Outcome-first.
+
+<span class="purple">## Performance</span>
+- ROAS / CPA / Conversions vs last period
+- Channel breakdown
+
+<span class="purple">## Tracking Health</span>
+- Consent mode coverage
+- Conversions hidden vs recovered
+- Anomalies detected
+
+<span class="purple">## Recommendations</span>
+- <span class="label">Rec #1</span> ← logged in tracker
+- <span class="label">Rec #2</span> ← logged in tracker
+
+<span class="purple">## Next Month</span>
+- What we'll ship
+- What we'll need from you</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-light" id="health">
+  <div class="container">
+    <div class="eyebrow">/07 — CLIENT HEALTH SCORING</div>
+    <h2>Score every client. <span class="purple">Every month.</span></h2>
+    <p class="lead mb-64">We don't wait for churn signals — we predict them. The health-scoring model (in <code>03-Resources/Playbooks/client-health-scoring-model.md</code>) runs automatically. Below 70 = alert.</p>
+    <div class="grid-4">
+      <div class="card text-center"><div class="kpi-num" style="color:var(--green);">90+</div><div class="kpi-label">Thriving — pitch expansion</div></div>
+      <div class="card text-center"><div class="kpi-num" style="color:var(--purple);">70–89</div><div class="kpi-label">Healthy — stay consistent</div></div>
+      <div class="card text-center"><div class="kpi-num" style="color:var(--orange);">50–69</div><div class="kpi-label">At risk — intervention</div></div>
+      <div class="card text-center"><div class="kpi-num" style="color:var(--red);">&lt;50</div><div class="kpi-label">Critical — save plan active</div></div>
+    </div>
+    <div class="divider"></div>
+    <h3 class="mb-24">What drives the score</h3>
+    <div class="grid-3">
+      <div class="card-flat"><h4>Engagement</h4><p class="text-sm mt-12">Response time to emails. Attendance on calls. Whether they read monthly reports.</p></div>
+      <div class="card-flat"><h4>Delivery</h4><p class="text-sm mt-12">SLA on tickets, tracking uptime, time since last meaningful deliverable.</p></div>
+      <div class="card-flat"><h4>Financial</h4><p class="text-sm mt-12">Invoice payment time. MRR direction. Tier maturity.</p></div>
+      <div class="card-flat"><h4>Sentiment</h4><p class="text-sm mt-12">Extracted from <code>## Client Signals</code>. Objections, praise, feature requests.</p></div>
+      <div class="card-flat"><h4>Data quality</h4><p class="text-sm mt-12">Are we still proving value? Is ROAS trending up or flat?</p></div>
+      <div class="card-flat"><h4>Strategic fit</h4><p class="text-sm mt-12">Do they still match our ICP? Is the use case still compelling for them?</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-white" id="loop">
+  <div class="container">
+    <div class="eyebrow">/08 — THE LEARNING LOOP</div>
+    <h2>Close. Every. Loop.</h2>
+    <p class="lead mb-64">This is what separates Amplio from every other agency. Recommendations don't float — they get logged, measured, and fed back into the pattern library. Three behaviors, memorize them.</p>
+    <div class="grid-3">
+      <div class="card-dark">
+        <span class="pill-dark mb-16">Behavior 01</span>
+        <h3>Log recommendations</h3>
+        <p class="text-sm mt-16">Said something to a client — in a meeting, email, or report? Append it to their <code>recommendations-tracker.md</code>. Priority, status, linked pattern ID.</p>
+        <div class="code-block mt-32" style="font-size:12px;line-height:1.6;">
+<span class="comment"># Recommendation 2026-04-13</span>
+<span class="label">Client:</span> Odisei
+<span class="label">What:</span> Move Meta campaigns to
+  server-side conversion API
+<span class="label">Priority:</span> High
+<span class="label">Status:</span> Proposed
+<span class="label">Pattern:</span> [[P-037-sCAPI-lift]]</div>
+      </div>
+      <div class="card-dark">
+        <span class="pill-dark mb-16">Behavior 02</span>
+        <h3>Extract signals</h3>
+        <p class="text-sm mt-16">Any client interaction — call, email, Slack — gets processed. Feature requests, objections, praise, satisfaction all land in the client's <code>## Client Signals</code> section in <code>_overview.md</code>.</p>
+        <div class="code-block mt-32" style="font-size:12px;line-height:1.6;">
+<span class="comment">## Client Signals</span>
+<span class="label">2026-04-10:</span> <span class="subject">(Objection)</span>
+  "We don't want another dashboard"
+<span class="label">2026-04-12:</span> <span class="subject">(Request)</span>
+  Wants weekly ROAS snapshots
+<span class="label">2026-04-13:</span> <span class="subject">(Praise)</span>
+  "The consent-mode fix was huge"</div>
+      </div>
+      <div class="card-dark">
+        <span class="pill-dark mb-16">Behavior 03</span>
+        <h3>Test patterns</h3>
+        <p class="text-sm mt-16">When you review data, actively check if it confirms or contradicts existing patterns in <code>cross-client-patterns.md</code>. Three contradictions in 30 days downgrades a pattern's confidence.</p>
+        <div class="code-block mt-32" style="font-size:12px;line-height:1.6;">
+<span class="comment"># Pattern test log</span>
+<span class="label">P-037:</span> sCAPI lifts ROAS 15-25%
+  Certify — <span class="purple">confirmed</span> (+22%)
+  Odisei — <span class="purple">confirmed</span> (+18%)
+  Birdie — <span class="subject">contradicted</span> (+3%)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-light" id="rituals">
+  <div class="container">
+    <div class="eyebrow">/09 — WEEKLY &amp; MONTHLY RITUALS</div>
+    <h2>The <span class="purple">rhythm</span> that keeps it all working.</h2>
+    <p class="lead mb-48">Show up consistently. Nothing heroic. The system is designed to make a disciplined AM look like a miracle worker.</p>
+    <div class="accordion">
+      <div class="accordion-item open">
+        <div class="accordion-header" onclick="toggleAccordion(this)">Every morning — Session brief<span class="arrow">+</span></div>
+        <div class="accordion-body">"Session brief" in Claude. Read the state of the world. Glance at pipeline. Review any alerts from client health scoring.</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">Every afternoon — Process inbox<span class="arrow">+</span></div>
+        <div class="accordion-body">"Process inbox" — Brain-Dump.md gets routed. Any "update_" labeled Gmail threads get synced to the Vault.</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">Every Friday — Client health<span class="arrow">+</span></div>
+        <div class="accordion-body">"Client health" — run the full scoring pass. Any client &lt;70 gets a save plan drafted before Monday.</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">Every 1st of month — Monthly reports<span class="arrow">+</span></div>
+        <div class="accordion-body">One report per client per month. Use the template. Run brand-review on the copy. Send with a calendar invite for the review call.</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">Quarterly — Pattern review<span class="arrow">+</span></div>
+        <div class="accordion-body">"Test patterns" + "Learning report". Cross-client patterns get confirmed, downgraded, or retired. Playbooks get updated.</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header" onclick="toggleAccordion(this)">Always — Update memory<span class="arrow">+</span></div>
+        <div class="accordion-body">End every work block with "Update memory". CURRENT STATE gets overwritten, log gets appended. Future-you thanks present-you.</div>
+      </div>
+    </div>
+    <div class="mt-64" style="text-align:center;padding:64px 32px;background:var(--white);border-radius:6px;border:1px solid var(--border);">
+      <div class="eyebrow">/FINAL WORD</div>
+      <h2 style="font-size:36px;max-width:720px;margin:0 auto 16px;">The AM job is retention through discipline, not heroics.</h2>
+      <p class="lead" style="margin:0 auto;">Questions? Ask Walter or Daragh. Better questions? Ask Claude.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="flex items-center justify-between">
+      <div>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 387 98" fill="none" style="height:20px;width:auto;margin-bottom:12px;display:block;">
+          <path fill="#FFFFFF" d="m106.441 79.658 23.8-65.164h15.704l23.622 65.164H155.81l-5.264-15.007h-25.392l-5.264 15.007h-13.449Zm22.561-26.03h17.651l-8.847-25.19-8.804 25.19Zm41.881 26.03V30.874h11.768v6.419c1.444-2.302 3.45-4.132 6.016-5.49 2.595-1.357 5.397-2.021 8.405-1.992 3.303.03 6.193.767 8.67 2.214 2.507 1.416 4.365 3.364 5.574 5.843 1.415-2.42 3.48-4.368 6.193-5.843 2.713-1.505 5.736-2.243 9.068-2.214 5.191.03 9.364 1.653 12.52 4.87 3.155 3.217 4.733 7.467 4.733 12.75v32.227h-12.121V49.644c0-2.804-.826-5.047-2.477-6.73-1.652-1.681-3.849-2.537-6.592-2.567-2.654-.03-4.866.9-6.635 2.79-1.74 1.858-2.61 4.22-2.61 7.082v29.44h-12.121V49.156c0-2.656-.811-4.781-2.433-6.375-1.622-1.594-3.745-2.405-6.37-2.435-2.713-.03-4.969.96-6.768 2.966-1.799 2.007-2.698 4.56-2.698 7.659v28.686h-12.122Zm105.096-49.714c6.812 0 12.386 2.39 16.721 7.172 4.336 4.751 6.488 10.846 6.459 18.283-.029 7.467-2.241 13.56-6.636 18.283-4.394 4.722-10.026 7.068-16.898 7.038a20.316 20.316 0 0 1-8.67-1.814c-2.743-1.27-4.969-2.981-6.68-5.136v23.862h-12.121V30.874h12.032l-.044 6.463c1.829-2.273 4.173-4.073 7.034-5.4 2.861-1.329 5.795-1.993 8.803-1.993Zm-16.102 25.499c-.03 4.161 1.283 7.614 3.937 10.359 2.654 2.715 5.913 4.058 9.776 4.028 3.864.03 6.989-1.284 9.378-3.94 2.419-2.655 3.628-6.138 3.628-10.447 0-4.309-1.209-7.791-3.628-10.447-2.389-2.686-5.514-4.029-9.378-4.029-3.834 0-7.078 1.372-9.732 4.117-2.654 2.745-3.981 6.198-3.981 10.359ZM314.056 12.9v66.758h-12.077V12.9h12.077Zm5.165 66.758V30.874h12.12v48.784h-12.12Zm-.133-53.92v-12.35h12.651v12.35h-12.651Zm40.687 54.983c-7.462.03-13.596-2.332-18.403-7.083-4.778-4.752-7.181-10.861-7.211-18.328 0-4.928 1.092-9.34 3.274-13.236 2.183-3.896 5.22-6.906 9.113-9.031 3.892-2.155 8.301-3.232 13.227-3.232 3.716 0 7.166.635 10.351 1.904 3.214 1.24 5.942 2.98 8.184 5.223 2.241 2.214 3.996 4.914 5.264 8.102 1.297 3.158 1.946 6.581 1.946 10.27 0 3.69-.649 7.113-1.946 10.27-1.268 3.158-3.023 5.844-5.264 8.058-2.242 2.213-4.97 3.954-8.184 5.223-3.185 1.24-6.635 1.86-10.351 1.86Zm-13.05-25.41c0 4.249 1.194 7.702 3.583 10.358 2.418 2.627 5.573 3.94 9.467 3.94 3.922 0 7.092-1.313 9.511-3.94 2.447-2.656 3.671-6.11 3.671-10.359 0-4.309-1.224-7.776-3.671-10.403-2.419-2.656-5.589-3.984-9.511-3.984-3.923 0-7.093 1.328-9.512 3.984-2.388 2.656-3.568 6.124-3.538 10.403ZM87.455 40.877H5.76A5.763 5.763 0 0 0 0 46.642a5.763 5.763 0 0 0 5.76 5.764h81.695a5.763 5.763 0 0 0 5.76-5.764 5.763 5.763 0 0 0-5.76-5.765Z"/>
+          <path fill="#FFFFFF" d="M40.848 5.764V87.52a5.761 5.761 0 1 0 11.52 0V5.764A5.763 5.763 0 0 0 46.609 0a5.763 5.763 0 0 0-5.76 5.764Z"/>
+          <path fill="#FFFFFF" d="M71.418 13.662 13.65 71.47a5.768 5.768 0 0 0 0 8.152 5.757 5.757 0 0 0 8.147 0l57.766-57.809a5.768 5.768 0 0 0 0-8.152 5.757 5.757 0 0 0-8.146 0Z"/>
+        </svg>
+        <p style="color:rgba(255,255,255,0.5); font-size:14px;letter-spacing:-0.2px;">Better Data. Smarter Campaigns. Proven ROI.</p>
+      </div>
+      <div style="text-align:right;">
+        <p style="color:rgba(255,255,255,0.35); font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase;">PM Onboarding · Confidential</p>
+        <p style="color:rgba(255,255,255,0.35); font-family:'Roboto Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase; margin-top:4px;">Amplio Data® · Barcelona</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+function switchTab(event, tabId) {
+  const section = event.target.closest('section');
+  section.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  section.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+}
+function toggleAccordion(header) {
+  const item = header.parentElement;
+  const wasOpen = item.classList.contains('open');
+  item.parentElement.querySelectorAll('.accordion-item').forEach(a => a.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+const progressBar = document.getElementById('progressBar');
+const sideNavLinks = document.querySelectorAll('.side-nav a');
+const sections = Array.from(sideNavLinks).map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+function onScroll() {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  progressBar.style.width = Math.min(100, (scrollTop / docHeight) * 100) + '%';
+  let currentId = sections[0]?.id;
+  const middle = scrollTop + window.innerHeight / 3;
+  sections.forEach(s => { if (s.offsetTop <= middle) currentId = s.id; });
+  sideNavLinks.forEach(a => { a.classList.toggle('active', a.getAttribute('href') === '#' + currentId); });
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener('click', e => {
+    const href = link.getAttribute('href');
+    if (href.length > 1) {
+      const target = document.querySelector(href);
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+    }
+  });
+});
+</script>
+
+</body>
+</html>
