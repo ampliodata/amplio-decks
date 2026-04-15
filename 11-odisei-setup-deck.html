@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Evaluation Harness — Odisei Pilot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --amplio-charcoal:#131313;
+    --amplio-off-black:#121212;
+    --amplio-white:#FFFFFF;
+    --amplio-off-white:#F3F3F3;
+    --amplio-purple:#ECCFFF;
+    --amplio-purple-deep:#8B2CF5;
+    --amplio-dark-gray:#3A3A3A;
+    --amplio-mid-gray:#797979;
+    --amplio-light-gray:#D3D3D3;
+    --amplio-pale-gray:#E5E5E5;
+    --amplio-red:#DE362A;
+    --amplio-orange:#81e4a1;
+    --font-primary:'Satoshi','Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+    --font-mono:'Roboto Mono','SF Mono','Consolas',monospace;
+    --radius-card:16px;
+    --radius-pill:999px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:var(--amplio-charcoal);color:var(--amplio-white);font-family:var(--font-primary);font-weight:500;-webkit-font-smoothing:antialiased;overflow:hidden}
+
+  .deck{position:relative;width:100vw;height:100vh;overflow:hidden}
+  .slide{position:absolute;inset:0;display:none;padding:64px 80px;flex-direction:column;justify-content:space-between;opacity:0;transition:opacity .25s ease}
+  .slide.active{display:flex;opacity:1}
+  .slide.light{background:var(--amplio-off-white);color:var(--amplio-charcoal)}
+
+  .eyebrow{font-family:var(--font-mono);font-size:14px;font-weight:500;letter-spacing:.02em;text-transform:uppercase;color:var(--amplio-mid-gray)}
+  .slide.light .eyebrow{color:var(--amplio-mid-gray)}
+
+  h1{font-size:80px;line-height:.9;letter-spacing:-.04em;font-weight:400;max-width:1100px}
+  h1 b{font-weight:700}
+  h2{font-size:56px;line-height:1;letter-spacing:-.04em;font-weight:400;max-width:1100px}
+  h2 b{font-weight:700}
+  h3{font-size:24px;line-height:1.2;letter-spacing:-.03em;font-weight:700}
+  p{font-size:18px;line-height:1.5;letter-spacing:-.02em;font-weight:500;color:var(--amplio-light-gray);max-width:900px}
+  .slide.light p{color:var(--amplio-charcoal)}
+  .lead{font-size:24px;line-height:1.5;letter-spacing:-.01em;font-weight:500;color:var(--amplio-white);max-width:1000px}
+  .slide.light .lead{color:var(--amplio-charcoal)}
+
+  .top{display:flex;justify-content:space-between;align-items:center}
+  .logo{font-family:var(--font-mono);font-size:14px;font-weight:500;text-transform:uppercase;color:var(--amplio-mid-gray)}
+  .logo b{color:var(--amplio-purple);font-weight:500}
+
+  .body{flex:1;display:flex;flex-direction:column;justify-content:center;gap:32px}
+
+  .bottom{display:flex;justify-content:space-between;align-items:center;color:var(--amplio-mid-gray);font-family:var(--font-mono);font-size:12px;text-transform:uppercase}
+
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:24px}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:24px}
+  .grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:24px}
+
+  .card{background:var(--amplio-dark-gray);border:1px solid var(--amplio-dark-gray);border-radius:var(--radius-card);padding:28px}
+  .slide.light .card{background:var(--amplio-white);border:1px solid var(--amplio-pale-gray)}
+  .card .num{font-family:var(--font-mono);font-size:12px;color:var(--amplio-mid-gray);text-transform:uppercase;margin-bottom:8px;letter-spacing:.05em}
+  .card h3{margin-bottom:10px}
+  .card p{font-size:15px;color:var(--amplio-light-gray)}
+  .slide.light .card p{color:#3a3a3a}
+
+  .kpi{background:var(--amplio-dark-gray);border-radius:var(--radius-card);padding:28px}
+  .kpi .label{font-family:var(--font-mono);font-size:12px;color:var(--amplio-mid-gray);text-transform:uppercase;letter-spacing:.05em}
+  .kpi .value{font-size:48px;font-weight:700;letter-spacing:-.04em;color:var(--amplio-purple);margin-top:8px;line-height:1}
+  .kpi .sub{font-size:14px;color:var(--amplio-light-gray);margin-top:8px}
+
+  .tag{display:inline-block;font-family:var(--font-mono);font-size:12px;padding:6px 12px;border-radius:var(--radius-pill);background:var(--amplio-dark-gray);color:var(--amplio-light-gray);text-transform:uppercase;letter-spacing:.05em}
+  .tag.purple{background:var(--amplio-purple);color:var(--amplio-charcoal);font-weight:500}
+  .tag.warn{background:var(--amplio-orange);color:var(--amplio-charcoal)}
+  .tag.red{background:var(--amplio-red);color:var(--amplio-white)}
+
+  .list{list-style:none;display:flex;flex-direction:column;gap:14px;margin-top:16px}
+  .list li{display:flex;gap:16px;font-size:18px;color:var(--amplio-light-gray);line-height:1.5}
+  .slide.light .list li{color:var(--amplio-charcoal)}
+  .list li::before{content:"";display:block;width:6px;height:6px;background:var(--amplio-purple);border-radius:50%;margin-top:11px;flex-shrink:0}
+
+  .flow{display:flex;align-items:stretch;gap:12px;margin-top:32px;flex-wrap:wrap}
+  .flow-step{flex:1;min-width:150px;background:var(--amplio-dark-gray);border-radius:var(--radius-card);padding:20px;position:relative}
+  .flow-step .n{font-family:var(--font-mono);font-size:11px;color:var(--amplio-purple);text-transform:uppercase;letter-spacing:.05em}
+  .flow-step .t{font-size:16px;font-weight:700;letter-spacing:-.02em;margin-top:6px;color:var(--amplio-white)}
+  .flow-arrow{align-self:center;color:var(--amplio-mid-gray);font-family:var(--font-mono);font-size:20px}
+
+  .nav{position:fixed;bottom:24px;left:0;right:0;display:flex;justify-content:center;gap:8px;z-index:10}
+  .dot{width:8px;height:8px;background:var(--amplio-dark-gray);border-radius:50%;cursor:pointer;border:none;padding:0}
+  .dot.active{background:var(--amplio-purple);width:24px;border-radius:4px}
+
+  .counter{position:fixed;top:24px;right:32px;font-family:var(--font-mono);font-size:12px;color:var(--amplio-mid-gray);text-transform:uppercase;z-index:10}
+
+  kbd{font-family:var(--font-mono);font-size:11px;background:var(--amplio-dark-gray);color:var(--amplio-light-gray);padding:3px 8px;border-radius:4px;border:1px solid #555}
+
+  .status-row{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap}
+  .status-row .tag{font-size:13px}
+
+  .big-mono{font-family:var(--font-mono);font-size:14px;color:var(--amplio-purple);letter-spacing:.05em;text-transform:uppercase}
+
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:24px}
+  .two-col .col h3{margin-bottom:12px}
+
+  .callout{background:rgba(236,207,255,.08);border-left:3px solid var(--amplio-purple);padding:20px 24px;border-radius:8px;margin-top:24px;max-width:900px}
+  .callout p{color:var(--amplio-white);font-size:16px}
+
+  /* Light slides keep deep purple for contrast on white */
+  .slide.light .logo b{color:var(--amplio-purple-deep)}
+  .slide.light .list li::before{background:var(--amplio-purple-deep)}
+  .slide.light .kpi .value{color:var(--amplio-purple-deep)}
+  .slide.light .flow-step .n{color:var(--amplio-purple-deep)}
+  .slide.light .big-mono{color:var(--amplio-purple-deep)}
+
+  .footer-note{font-family:var(--font-mono);font-size:11px;color:var(--amplio-mid-gray);text-transform:uppercase;letter-spacing:.05em}
+</style>
+</head>
+<body>
+
+<div class="counter" id="counter">01 / 09</div>
+
+<div class="deck" id="deck">
+
+  <!-- 1 TITLE -->
+  <section class="slide active">
+    <div class="top">
+      <div class="logo"><b>AMPLIO</b> / INTERNAL</div>
+      <div class="eyebrow">/EVALUATION HARNESS</div>
+    </div>
+    <div class="body">
+      <div class="eyebrow">Pilot · 2026-04-14</div>
+      <h1>Can our reporting prompt <b>actually</b> read Odisei's data <b>reliably</b>?</h1>
+      <p class="lead">Scaffolding an evaluation harness against one real client — ten ground-truth tasks, a grading rubric, and a runbook. Odisei as the test domain.</p>
+    </div>
+    <div class="bottom">
+      <div>Walter Masseroni Gonzalez · Amplio Data</div>
+      <div>01 / 09 · <kbd>→</kbd> next</div>
+    </div>
+  </section>
+
+  <!-- 2 WHAT IS A HARNESS -->
+  <section class="slide">
+    <div class="top"><div class="logo"><b>AMPLIO</b> / INTERNAL</div><div class="eyebrow">/01 · DEFINITION</div></div>
+    <div class="body">
+      <div class="eyebrow">/WHAT IS AN EVALUATION HARNESS</div>
+      <h2>A framework that runs a model against a <b>fixed task suite</b> and <b>scores</b> the outputs.</h2>
+      <div class="grid-5">
+        <div class="card"><div class="num">01</div><h3>Task suite</h3><p>Questions + expected answers or rubric.</p></div>
+        <div class="card"><div class="num">02</div><h3>Runner</h3><p>Executes the system under test.</p></div>
+        <div class="card"><div class="num">03</div><h3>Grader</h3><p>Deterministic checks or LLM-as-judge.</p></div>
+        <div class="card"><div class="num">04</div><h3>Aggregator</h3><p>Combines runs, computes variance.</p></div>
+        <div class="card"><div class="num">05</div><h3>Reporter</h3><p>Surfaces results, trends, regressions.</p></div>
+      </div>
+    </div>
+    <div class="bottom"><div>Examples: Inspect · promptfoo · lm-evaluation-harness · HELM</div><div>02 / 09</div></div>
+  </section>
+
+  <!-- 3 WE ALREADY HAVE ONE -->
+  <section class="slide light">
+    <div class="top"><div class="logo" style="color:#797979"><b style="color:#8B2CF5">AMPLIO</b> / INTERNAL</div><div class="eyebrow">/02 · WHAT WE ALREADY HAVE</div></div>
+    <div class="body">
+      <h2><b>skill-creator</b> is already a harness — just scoped to our skills.</h2>
+      <p class="lead">The five canonical components map 1:1 to files already on disk.</p>
+      <div class="grid-5">
+        <div class="card"><div class="num">01 · TASK SUITE</div><h3>agents/</h3><p>Graders + task definitions per skill.</p></div>
+        <div class="card"><div class="num">02 · RUNNER</div><h3>run_eval.py</h3><p>Executes skill against tasks.</p></div>
+        <div class="card"><div class="num">03 · GRADER</div><h3>run_eval.py</h3><p>Scoring + LLM-as-judge agents.</p></div>
+        <div class="card"><div class="num">04 · AGGREGATOR</div><h3>aggregate_benchmark.py</h3><p>Variance analysis across runs.</p></div>
+        <div class="card"><div class="num">05 · REPORTER</div><h3>eval-viewer/</h3><p>UI + generate_report.py.</p></div>
+      </div>
+      <div class="callout" style="background:rgba(139,44,245,.08);border-left:3px solid #8B2CF5"><p style="color:#131313"><b>So this pilot isn't "build a harness." It's "extend the pattern from skills to a real client workflow, starting with Odisei."</b></p></div>
+    </div>
+    <div class="bottom" style="color:#797979"><div>/sessions/…/.claude/skills/skill-creator/</div><div>03 / 09</div></div>
+  </section>
+
+  <!-- 4 WHY ODISEI -->
+  <section class="slide">
+    <div class="top"><div class="logo"><b>AMPLIO</b> / INTERNAL</div><div class="eyebrow">/03 · WHY ODISEI</div></div>
+    <div class="body">
+      <h2>Odisei has everything a <b>test domain</b> needs.</h2>
+      <div class="grid-2">
+        <div class="kpi"><div class="label">ACTIVE SINCE</div><div class="value">Sep 2025</div><div class="sub">7+ months of history</div></div>
+        <div class="kpi"><div class="label">DATA STACK</div><div class="value">4 sources</div><div class="sub">GA4 · Google Ads · Meta · Klaviyo</div></div>
+        <div class="kpi"><div class="label">GROUND TRUTH ARTIFACTS</div><div class="value">7+ reports</div><div class="sub">Daily insights · HTML dashboards · Q1 2026</div></div>
+        <div class="kpi"><div class="label">FEEDBACK LOOP</div><div class="value">Tracked</div><div class="sub">recommendations-tracker.md already in place</div></div>
+      </div>
+      <div class="callout"><p>And critically — we already <b>know</b> the answers. The reports exist. That's the ground truth the harness grades against.</p></div>
+    </div>
+    <div class="bottom"><div>06-Clients/Odisei/</div><div>04 / 09</div></div>
+  </section>
+
+  <!-- 5 PILOT SCOPE -->
+  <section class="slide">
+    <div class="top"><div class="logo"><b>AMPLIO</b> / INTERNAL</div><div class="eyebrow">/04 · PILOT SCOPE V1</div></div>
+    <div class="body">
+      <h2>Small, honest, <b>one source</b>.</h2>
+      <p class="lead">One report. Ten tasks. Comprehension mode only. Manual execution. Call it what it is: a pilot.</p>
+      <div class="grid-3">
+        <div class="kpi"><div class="label">SOURCE</div><div class="value">1</div><div class="sub">daily-insights-2026-04-09.md</div></div>
+        <div class="kpi"><div class="label">TASKS</div><div class="value">10</div><div class="sub">Five categories</div></div>
+        <div class="kpi"><div class="label">RUNS PER TASK</div><div class="value">3</div><div class="sub">Variance captured</div></div>
+      </div>
+      <div class="status-row" style="margin-top:24px">
+        <span class="tag">ONE SOURCE · NOT GENERALISABLE YET</span>
+        <span class="tag">COMPREHENSION ≠ GENERATION</span>
+        <span class="tag purple">V2: ADD 2 SOURCES + CROSS-CLIENT SANITY</span>
+      </div>
+    </div>
+    <div class="bottom"><div>01-Projects/Active/Internal/odisei-report-harness-pilot/</div><div>05 / 09</div></div>
+  </section>
+
+  <!-- 6 TASK CATEGORIES -->
+  <section class="slide">
+    <div class="top"><div class="logo"><b>AMPLIO</b> / INTERNAL</div><div class="eyebrow">/05 · TASK CATEGORIES</div></div>
+    <div class="body">
+      <h2>Five categories — so failures tell us <b>where</b>, not just <b>whether</b>.</h2>
+      <div class="grid-5">
+        <div class="card"><div class="num">FACTUAL</div><h3>T-01, T-02, T-06</h3><p>Look up a specific metric. Deterministic grading, exact match.</p></div>
+        <div class="card"><div class="num">COMPUTATION</div><h3>T-03, T-04</h3><p>Derive values from multiple inputs — ratios, run-rates, deltas.</p></div>
+        <div class="card"><div class="num">ATTRIBUTION</div><h3>T-05, T-09</h3><p>Map values across channels or time windows. Named-entity exact match.</p></div>
+        <div class="card"><div class="num">REASONING</div><h3>T-07</h3><p>Explain why something is happening. LLM-as-judge.</p></div>
+        <div class="card"><div class="num">JUDGMENT</div><h3>T-08, T-10</h3><p>Prioritise. Recommend. Rank. LLM-as-judge + actionability score.</p></div>
+      </div>
+      <div class="callout"><p>A prompt that aces factual but tanks judgment is a different fix than one that's shaky on computation. Categorising isolates the failure mode.</p></div>
+    </div>
+    <div class="bottom"><div>task-suite.md</div><div>06 / 09</div></div>
+  </section>
+
+  <!-- 7 RUBRIC -->
+  <section class="slide light">
+    <div class="top"><div class="logo" style="color:#797979"><b style="color:#8B2CF5">AMPLIO</b> / INTERNAL</div><div class="eyebrow">/06 · RUBRIC</div></div>
+    <div class="body">
+      <h2>Grade <b>what it produced</b>, not the path it took.</h2>
+      <div class="two-col">
+        <div class="col">
+          <div class="eyebrow" style="color:#797979">/DETERMINISTIC TASKS</div>
+          <h3 style="margin-top:8px">Numeric tolerance bands</h3>
+          <ul class="list" style="color:#131313">
+            <li><span><b>Pass</b> — values in tolerance, entities exact.</span></li>
+            <li><span><b>Partial</b> — 2× tolerance, or one entity fuzzy but recognisable.</span></li>
+            <li><span><b>Fail</b> — anything worse.</span></li>
+            <li><span><b>Fabrication → auto-Fail.</b> Always. Even if everything else is right.</span></li>
+          </ul>
+        </div>
+        <div class="col">
+          <div class="eyebrow" style="color:#797979">/LLM-AS-JUDGE TASKS</div>
+          <h3 style="margin-top:8px">Four-criteria scoring (0–2 each)</h3>
+          <ul class="list" style="color:#131313">
+            <li><span>Factual grounding — no fabrication</span></li>
+            <li><span>Reasoning quality — internally consistent</span></li>
+            <li><span>Completeness — addresses all parts</span></li>
+            <li><span>Actionability — concrete recommendation (T-08, T-10)</span></li>
+          </ul>
+          <p style="color:#131313;margin-top:16px;font-size:15px">≥75% total → Pass · 50–74% → Partial · &lt;50% → Fail</p>
+        </div>
+      </div>
+      <div class="callout" style="background:rgba(139,44,245,.06);border-left:3px solid #8B2CF5;margin-top:24px"><p style="color:#131313"><b>Reward-hacking guardrail:</b> The judge never sees expected answers. The model under test never sees the rubric. Anti-gaming by construction — see [[reward-hacking-in-autoresearch-loops]].</p></div>
+    </div>
+    <div class="bottom" style="color:#797979"><div>rubric.md</div><div>07 / 09</div></div>
+  </section>
+
+  <!-- 8 TWO MODES -->
+  <section class="slide">
+    <div class="top"><div class="logo"><b>AMPLIO</b> / INTERNAL</div><div class="eyebrow">/07 · TWO MODES</div></div>
+    <div class="body">
+      <h2>Comprehension <b>now</b>. Generation <b>next</b>.</h2>
+      <div class="grid-2" style="margin-top:32px">
+        <div class="card" style="padding:32px;border:1px solid #ECCFFF">
+          <span class="tag purple">MODE A · RUNNABLE NOW</span>
+          <h3 style="margin-top:16px;font-size:28px">Comprehension eval</h3>
+          <p style="margin-top:12px">Feed the source report as context. Ask the 10 questions. Grade the answers.</p>
+          <p style="margin-top:12px"><span class="big-mono">Tests:</span> Can the prompt <b style="color:#fff">read and reason</b> over a report?</p>
+          <p style="margin-top:12px;color:#D3D3D3;font-size:14px;font-family:var(--font-mono)">No external data needed. Fresh Claude session + source doc.</p>
+        </div>
+        <div class="card" style="padding:32px">
+          <span class="tag warn">MODE B · BLOCKED</span>
+          <h3 style="margin-top:16px;font-size:28px">Generation eval</h3>
+          <p style="margin-top:12px">Re-run the reporting prompt against live GA4/Ads/Meta data. Grade the generated report.</p>
+          <p style="margin-top:12px"><span class="big-mono">Tests:</span> Can the prompt <b style="color:#fff">produce a correct report</b> end-to-end?</p>
+          <p style="margin-top:12px;color:#81e4a1;font-size:14px;font-family:var(--font-mono)">Blocker: GA4 / Google Ads MCP not connected.</p>
+        </div>
+      </div>
+    </div>
+    <div class="bottom"><div>runbook.md</div><div>08 / 09</div></div>
+  </section>
+
+  <!-- 9 STATUS + NEXT -->
+  <section class="slide">
+    <div class="top"><div class="logo"><b>AMPLIO</b> / INTERNAL</div><div class="eyebrow">/08 · STATUS &amp; NEXT</div></div>
+    <div class="body">
+      <div class="eyebrow">/WHERE WE ARE · 2026-04-14</div>
+      <h2><b>Scaffolding done.</b> First run pending.</h2>
+      <div class="flow">
+        <div class="flow-step"><div class="n">DONE</div><div class="t">Galaxy concept note</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><div class="n">DONE</div><div class="t">Task suite v1</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><div class="n">DONE</div><div class="t">Rubric</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><div class="n">DONE</div><div class="t">Runbook</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step" style="border:1px solid #ECCFFF"><div class="n" style="color:#ECCFFF">NEXT</div><div class="t">Mode A dry run</div></div>
+      </div>
+      <div class="two-col" style="margin-top:40px">
+        <div class="col">
+          <div class="eyebrow">/NEXT THIS WEEK</div>
+          <ul class="list">
+            <li><span>Fresh Claude session — no vault context</span></li>
+            <li><span>Paste daily-insights + run all 10 tasks × 3</span></li>
+            <li><span>Log to runs/2026-04-14-comprehension-mode.md</span></li>
+            <li><span>Triage failures: prompt · suite · rubric</span></li>
+          </ul>
+        </div>
+        <div class="col">
+          <div class="eyebrow">/STOP CRITERIA (V2)</div>
+          <ul class="list">
+            <li><span>Aggregate pass rate &lt; 60% → fix the prompt</span></li>
+            <li><span>Pass on Odisei but fail cross-client → suite overfit</span></li>
+            <li><span>Run-to-run disagreement &gt; 30% → unstable prompt</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="bottom"><div>README.md · 01-Projects/Active/Internal/odisei-report-harness-pilot/</div><div>09 / 09</div></div>
+  </section>
+
+</div>
+
+<div class="nav" id="nav"></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const nav = document.getElementById('nav');
+  const counter = document.getElementById('counter');
+  let i = 0;
+
+  slides.forEach((_, idx) => {
+    const b = document.createElement('button');
+    b.className = 'dot' + (idx === 0 ? ' active' : '');
+    b.onclick = () => go(idx);
+    nav.appendChild(b);
+  });
+
+  function go(n){
+    if (n < 0 || n >= slides.length) return;
+    slides[i].classList.remove('active');
+    nav.children[i].classList.remove('active');
+    i = n;
+    slides[i].classList.add('active');
+    nav.children[i].classList.add('active');
+    counter.textContent = String(i+1).padStart(2,'0') + ' / ' + String(slides.length).padStart(2,'0');
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') go(i+1);
+    if (e.key === 'ArrowLeft') go(i-1);
+    if (e.key === 'Home') go(0);
+    if (e.key === 'End') go(slides.length-1);
+  });
+</script>
+</body>
+</html>
